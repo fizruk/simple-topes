@@ -1,0 +1,338 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-pragma">{-# LANGUAGE GeneralizedNewtypeDeriving #-}</span><span>
+</span><span id="line-2"></span><span class="hs-pragma">{-# LANGUAGE LambdaCase                 #-}</span><span>
+</span><span id="line-3"></span><span class="hs-pragma">{-# LANGUAGE OverloadedStrings          #-}</span><span>
+</span><span id="line-4"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">RSTT.Cube</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-5"></span><span>
+</span><span id="line-6"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Data.List</span></span><span>   </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">intercalate</span></span><span class="hs-special">)</span><span>
+</span><span id="line-7"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Data.String</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">IsString</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-8"></span><span>
+</span><span id="line-9"></span><span class="hs-comment">-- | A label (constructor symbol).</span><span>
+</span><span id="line-10"></span><span class="hs-keyword">newtype</span><span> </span><span id="Label"><span class="annot"><a href="RSTT.Cube.html#Label"><span class="hs-identifier hs-var">Label</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="Label"><span class="annot"><a href="RSTT.Cube.html#Label"><span class="hs-identifier hs-var">Label</span></a></span></span><span> </span><span class="hs-special">{</span><span> </span><span id="getLabel"><span class="annot"><span class="annottext">Label -&gt; String
+</span><a href="RSTT.Cube.html#getLabel"><span class="hs-identifier hs-var hs-var">getLabel</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span> </span><span class="hs-special">}</span><span>
+</span><span id="line-11"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679043466"><span id="local-6989586621679043472"><span class="annot"><span class="annottext">Label -&gt; Label -&gt; Bool
+(Label -&gt; Label -&gt; Bool) -&gt; (Label -&gt; Label -&gt; Bool) -&gt; Eq Label
+forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
+/= :: Label -&gt; Label -&gt; Bool
+$c/= :: Label -&gt; Label -&gt; Bool
+== :: Label -&gt; Label -&gt; Bool
+$c== :: Label -&gt; Label -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679043449"><span id="local-6989586621679043451"><span id="local-6989586621679043458"><span class="annot"><span class="annottext">Int -&gt; Label -&gt; ShowS
+[Label] -&gt; ShowS
+Label -&gt; String
+(Int -&gt; Label -&gt; ShowS)
+-&gt; (Label -&gt; String) -&gt; ([Label] -&gt; ShowS) -&gt; Show Label
+forall a.
+(Int -&gt; a -&gt; ShowS) -&gt; (a -&gt; String) -&gt; ([a] -&gt; ShowS) -&gt; Show a
+showList :: [Label] -&gt; ShowS
+$cshowList :: [Label] -&gt; ShowS
+show :: Label -&gt; String
+$cshow :: Label -&gt; String
+showsPrec :: Int -&gt; Label -&gt; ShowS
+$cshowsPrec :: Int -&gt; Label -&gt; ShowS
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679043445"><span class="annot"><span class="annottext">String -&gt; Label
+(String -&gt; Label) -&gt; IsString Label
+forall a. (String -&gt; a) -&gt; IsString a
+fromString :: String -&gt; Label
+$cfromString :: String -&gt; Label
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var">IsString</span></span></span><span class="hs-special">)</span><span>
+</span><span id="line-12"></span><span>
+</span><span id="line-13"></span><span class="hs-comment">-- | A variable.</span><span>
+</span><span id="line-14"></span><span class="hs-keyword">newtype</span><span> </span><span id="Var"><span class="annot"><a href="RSTT.Cube.html#Var"><span class="hs-identifier hs-var">Var</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="Var"><span class="annot"><a href="RSTT.Cube.html#Var"><span class="hs-identifier hs-var">Var</span></a></span></span><span> </span><span class="hs-special">{</span><span> </span><span id="getVar"><span class="annot"><span class="annottext">Var -&gt; String
+</span><a href="RSTT.Cube.html#getVar"><span class="hs-identifier hs-var hs-var">getVar</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span> </span><span class="hs-special">}</span><span>
+</span><span id="line-15"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679043432"><span id="local-6989586621679043437"><span class="annot"><span class="annottext">Var -&gt; Var -&gt; Bool
+(Var -&gt; Var -&gt; Bool) -&gt; (Var -&gt; Var -&gt; Bool) -&gt; Eq Var
+forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
+/= :: Var -&gt; Var -&gt; Bool
+$c/= :: Var -&gt; Var -&gt; Bool
+== :: Var -&gt; Var -&gt; Bool
+$c== :: Var -&gt; Var -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679043419"><span id="local-6989586621679043421"><span id="local-6989586621679043426"><span class="annot"><span class="annottext">Int -&gt; Var -&gt; ShowS
+[Var] -&gt; ShowS
+Var -&gt; String
+(Int -&gt; Var -&gt; ShowS)
+-&gt; (Var -&gt; String) -&gt; ([Var] -&gt; ShowS) -&gt; Show Var
+forall a.
+(Int -&gt; a -&gt; ShowS) -&gt; (a -&gt; String) -&gt; ([a] -&gt; ShowS) -&gt; Show a
+showList :: [Var] -&gt; ShowS
+$cshowList :: [Var] -&gt; ShowS
+show :: Var -&gt; String
+$cshow :: Var -&gt; String
+showsPrec :: Int -&gt; Var -&gt; ShowS
+$cshowsPrec :: Int -&gt; Var -&gt; ShowS
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679043417"><span class="annot"><span class="annottext">String -&gt; Var
+(String -&gt; Var) -&gt; IsString Var
+forall a. (String -&gt; a) -&gt; IsString a
+fromString :: String -&gt; Var
+$cfromString :: String -&gt; Var
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var">IsString</span></span></span><span class="hs-special">)</span><span>
+</span><span id="line-16"></span><span>
+</span><span id="line-17"></span><span class="hs-comment">-- | A cube expression.</span><span>
+</span><span id="line-18"></span><span class="hs-keyword">data</span><span> </span><span id="Cube"><span class="annot"><a href="RSTT.Cube.html#Cube"><span class="hs-identifier hs-var">Cube</span></a></span></span><span>
+</span><span id="line-19"></span><span>  </span><span class="hs-glyph">=</span><span> </span><span id="CubeUnit"><span class="annot"><a href="RSTT.Cube.html#CubeUnit"><span class="hs-identifier hs-var">CubeUnit</span></a></span></span><span>                </span><span class="hs-comment">-- ^ Unit cube: \(\mathbb{1}\).</span><span>
+</span><span id="line-20"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span id="CubeProduct"><span class="annot"><a href="RSTT.Cube.html#CubeProduct"><span class="hs-identifier hs-var">CubeProduct</span></a></span></span><span> </span><span class="annot"><a href="RSTT.Cube.html#Cube"><span class="hs-identifier hs-type">Cube</span></a></span><span> </span><span class="annot"><a href="RSTT.Cube.html#Cube"><span class="hs-identifier hs-type">Cube</span></a></span><span>   </span><span class="hs-comment">-- ^ Product of cubes: \(I \times J\).</span><span>
+</span><span id="line-21"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span id="CubeCon"><span class="annot"><a href="RSTT.Cube.html#CubeCon"><span class="hs-identifier hs-var">CubeCon</span></a></span></span><span> </span><span class="annot"><a href="RSTT.Cube.html#Label"><span class="hs-identifier hs-type">Label</span></a></span><span>           </span><span class="hs-comment">-- ^ A user-defined cube, e.g. \(\mathbb{2}, \mathbb{I}\).</span><span>
+</span><span id="line-22"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span id="CubeVar"><span class="annot"><a href="RSTT.Cube.html#CubeVar"><span class="hs-identifier hs-var">CubeVar</span></a></span></span><span> </span><span class="annot"><a href="RSTT.Cube.html#Var"><span class="hs-identifier hs-type">Var</span></a></span><span>             </span><span class="hs-comment">-- ^ A cube variable: \(I, J\).</span><span>
+</span><span id="line-23"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679043402"><span id="local-6989586621679043408"><span class="annot"><span class="annottext">Cube -&gt; Cube -&gt; Bool
+(Cube -&gt; Cube -&gt; Bool) -&gt; (Cube -&gt; Cube -&gt; Bool) -&gt; Eq Cube
+forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
+/= :: Cube -&gt; Cube -&gt; Bool
+$c/= :: Cube -&gt; Cube -&gt; Bool
+== :: Cube -&gt; Cube -&gt; Bool
+$c== :: Cube -&gt; Cube -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679043389"><span id="local-6989586621679043391"><span id="local-6989586621679043400"><span class="annot"><span class="annottext">Int -&gt; Cube -&gt; ShowS
+[Cube] -&gt; ShowS
+Cube -&gt; String
+(Int -&gt; Cube -&gt; ShowS)
+-&gt; (Cube -&gt; String) -&gt; ([Cube] -&gt; ShowS) -&gt; Show Cube
+forall a.
+(Int -&gt; a -&gt; ShowS) -&gt; (a -&gt; String) -&gt; ([a] -&gt; ShowS) -&gt; Show a
+showList :: [Cube] -&gt; ShowS
+$cshowList :: [Cube] -&gt; ShowS
+show :: Cube -&gt; String
+$cshow :: Cube -&gt; String
+showsPrec :: Int -&gt; Cube -&gt; ShowS
+$cshowsPrec :: Int -&gt; Cube -&gt; ShowS
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">)</span><span>
+</span><span id="line-24"></span><span>
+</span><span id="line-25"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IsString</span></span><span> </span><span class="annot"><a href="RSTT.Cube.html#Cube"><span class="hs-identifier hs-type">Cube</span></a></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-26"></span><span>  </span><span id="local-6989586621679043385"><span class="annot"><span class="annottext">fromString :: String -&gt; Cube
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var">fromString</span></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Var -&gt; Cube
+</span><a href="RSTT.Cube.html#CubeVar"><span class="hs-identifier hs-var">CubeVar</span></a></span><span> </span><span class="annot"><span class="annottext">(Var -&gt; Cube) -&gt; (String -&gt; Var) -&gt; String -&gt; Cube
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; Var
+forall a. IsString a =&gt; String -&gt; a
+</span><span class="hs-identifier hs-var">fromString</span></span><span>
+</span><span id="line-27"></span><span>
+</span><span id="line-28"></span><span class="hs-comment">-- | A point in a cube.</span><span>
+</span><span id="line-29"></span><span class="hs-keyword">data</span><span> </span><span id="Point"><span class="annot"><a href="RSTT.Cube.html#Point"><span class="hs-identifier hs-var">Point</span></a></span></span><span>
+</span><span id="line-30"></span><span>  </span><span class="hs-glyph">=</span><span> </span><span id="PointUnit"><span class="annot"><a href="RSTT.Cube.html#PointUnit"><span class="hs-identifier hs-var">PointUnit</span></a></span></span><span>               </span><span class="hs-comment">-- ^ The only point in the unit cube: \(\star : \mathbb{1}\).</span><span>
+</span><span id="line-31"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span id="PointPair"><span class="annot"><a href="RSTT.Cube.html#PointPair"><span class="hs-identifier hs-var">PointPair</span></a></span></span><span> </span><span class="annot"><a href="RSTT.Cube.html#Point"><span class="hs-identifier hs-type">Point</span></a></span><span> </span><span class="annot"><a href="RSTT.Cube.html#Point"><span class="hs-identifier hs-type">Point</span></a></span><span>   </span><span class="hs-comment">-- ^ A pair of points: \(t : I, s : J \vdash \langle t, s \rangle : I \times J\).</span><span>
+</span><span id="line-32"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span id="PointFirst"><span class="annot"><a href="RSTT.Cube.html#PointFirst"><span class="hs-identifier hs-var">PointFirst</span></a></span></span><span> </span><span class="annot"><a href="RSTT.Cube.html#Point"><span class="hs-identifier hs-type">Point</span></a></span><span>        </span><span class="hs-comment">-- ^ First projection: \(\pi_1\;t\).</span><span>
+</span><span id="line-33"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span id="PointSecond"><span class="annot"><a href="RSTT.Cube.html#PointSecond"><span class="hs-identifier hs-var">PointSecond</span></a></span></span><span> </span><span class="annot"><a href="RSTT.Cube.html#Point"><span class="hs-identifier hs-type">Point</span></a></span><span>       </span><span class="hs-comment">-- ^ Second projection: \(\pi_2\;t\).</span><span>
+</span><span id="line-34"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span id="PointCon"><span class="annot"><a href="RSTT.Cube.html#PointCon"><span class="hs-identifier hs-var">PointCon</span></a></span></span><span> </span><span class="annot"><a href="RSTT.Cube.html#Label"><span class="hs-identifier hs-type">Label</span></a></span><span> </span><span class="hs-special">[</span><span class="annot"><a href="RSTT.Cube.html#Point"><span class="hs-identifier hs-type">Point</span></a></span><span class="hs-special">]</span><span>  </span><span class="hs-comment">-- ^ A user-defined point constructor, e.g. \(0 : \mathbb{2}\) or \(t \land s : \mathbb{I}\).</span><span>
+</span><span id="line-35"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span id="PointVar"><span class="annot"><a href="RSTT.Cube.html#PointVar"><span class="hs-identifier hs-var">PointVar</span></a></span></span><span> </span><span class="annot"><a href="RSTT.Cube.html#Var"><span class="hs-identifier hs-type">Var</span></a></span><span>            </span><span class="hs-comment">-- ^ A point variable: \(t, s\).</span><span>
+</span><span id="line-36"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679043367"><span id="local-6989586621679043376"><span class="annot"><span class="annottext">Point -&gt; Point -&gt; Bool
+(Point -&gt; Point -&gt; Bool) -&gt; (Point -&gt; Point -&gt; Bool) -&gt; Eq Point
+forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
+/= :: Point -&gt; Point -&gt; Bool
+$c/= :: Point -&gt; Point -&gt; Bool
+== :: Point -&gt; Point -&gt; Bool
+$c== :: Point -&gt; Point -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679043349"><span id="local-6989586621679043351"><span id="local-6989586621679043365"><span class="annot"><span class="annottext">Int -&gt; Point -&gt; ShowS
+[Point] -&gt; ShowS
+Point -&gt; String
+(Int -&gt; Point -&gt; ShowS)
+-&gt; (Point -&gt; String) -&gt; ([Point] -&gt; ShowS) -&gt; Show Point
+forall a.
+(Int -&gt; a -&gt; ShowS) -&gt; (a -&gt; String) -&gt; ([a] -&gt; ShowS) -&gt; Show a
+showList :: [Point] -&gt; ShowS
+$cshowList :: [Point] -&gt; ShowS
+show :: Point -&gt; String
+$cshow :: Point -&gt; String
+showsPrec :: Int -&gt; Point -&gt; ShowS
+$cshowsPrec :: Int -&gt; Point -&gt; ShowS
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">)</span><span>
+</span><span id="line-37"></span><span>
+</span><span id="line-38"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IsString</span></span><span> </span><span class="annot"><a href="RSTT.Cube.html#Point"><span class="hs-identifier hs-type">Point</span></a></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-39"></span><span>  </span><span id="local-6989586621679043345"><span class="annot"><span class="annottext">fromString :: String -&gt; Point
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var">fromString</span></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Var -&gt; Point
+</span><a href="RSTT.Cube.html#PointVar"><span class="hs-identifier hs-var">PointVar</span></a></span><span> </span><span class="annot"><span class="annottext">(Var -&gt; Point) -&gt; (String -&gt; Var) -&gt; String -&gt; Point
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; Var
+forall a. IsString a =&gt; String -&gt; a
+</span><span class="hs-identifier hs-var">fromString</span></span><span>
+</span><span id="line-40"></span><span>
+</span><span id="line-41"></span><span class="hs-comment">-- | A cube context consists of point variables with corresponding cubes.</span><span>
+</span><span id="line-42"></span><span class="hs-keyword">type</span><span> </span><span id="CubeContext"><span class="annot"><a href="RSTT.Cube.html#CubeContext"><span class="hs-identifier hs-var">CubeContext</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Cube.html#Var"><span class="hs-identifier hs-type">Var</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="RSTT.Cube.html#Cube"><span class="hs-identifier hs-type">Cube</span></a></span><span class="hs-special">)</span><span class="hs-special">]</span><span>
+</span><span id="line-43"></span><span>
+</span><span id="line-44"></span><span class="hs-comment">-- * Pretty-printing</span><span>
+</span><span id="line-45"></span><span>
+</span><span id="line-46"></span><span class="hs-comment">-- | Pretty-print a 'CubeContext'.</span><span>
+</span><span id="line-47"></span><span class="annot"><a href="RSTT.Cube.html#ppCubeContext"><span class="hs-identifier hs-type">ppCubeContext</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="RSTT.Cube.html#CubeContext"><span class="hs-identifier hs-type">CubeContext</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
+</span><span id="line-48"></span><span id="ppCubeContext"><span class="annot"><span class="annottext">ppCubeContext :: CubeContext -&gt; String
+</span><a href="RSTT.Cube.html#ppCubeContext"><span class="hs-identifier hs-var hs-var">ppCubeContext</span></a></span></span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;&#8901;&quot;</span></span><span>
+</span><span id="line-49"></span><span class="annot"><a href="RSTT.Cube.html#ppCubeContext"><span class="hs-identifier hs-var">ppCubeContext</span></a></span><span> </span><span id="local-6989586621679043343"><span class="annot"><span class="annottext">CubeContext
+</span><a href="#local-6989586621679043343"><span class="hs-identifier hs-var">xs</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String -&gt; [String] -&gt; String
+forall a. [a] -&gt; [[a]] -&gt; [a]
+</span><span class="hs-identifier hs-var">intercalate</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;, &quot;</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">((Var, Cube) -&gt; String) -&gt; CubeContext -&gt; [String]
+forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
+</span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">\</span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Cube.html#Var"><span class="hs-identifier hs-type">Var</span></a></span><span> </span><span id="local-6989586621679043342"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679043342"><span class="hs-identifier hs-var">x</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679043341"><span class="annot"><span class="annottext">Cube
+</span><a href="#local-6989586621679043341"><span class="hs-identifier hs-var">c</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679043342"><span class="hs-identifier hs-var">x</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; ShowS
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot; : &quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; ShowS
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Cube -&gt; String
+</span><a href="RSTT.Cube.html#ppCube"><span class="hs-identifier hs-var">ppCube</span></a></span><span> </span><span class="annot"><span class="annottext">Cube
+</span><a href="#local-6989586621679043341"><span class="hs-identifier hs-var">c</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">CubeContext
+</span><a href="#local-6989586621679043343"><span class="hs-identifier hs-var">xs</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-50"></span><span>
+</span><span id="line-51"></span><span class="hs-comment">-- | Pretty-print a 'Cube'.</span><span>
+</span><span id="line-52"></span><span class="annot"><a href="RSTT.Cube.html#ppCube"><span class="hs-identifier hs-type">ppCube</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="RSTT.Cube.html#Cube"><span class="hs-identifier hs-type">Cube</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
+</span><span id="line-53"></span><span id="ppCube"><span class="annot"><span class="annottext">ppCube :: Cube -&gt; String
+</span><a href="RSTT.Cube.html#ppCube"><span class="hs-identifier hs-var hs-var">ppCube</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int -&gt; Cube -&gt; String
+</span><a href="RSTT.Cube.html#ppCubePrec"><span class="hs-identifier hs-var">ppCubePrec</span></a></span><span> </span><span class="annot"><span class="annottext">Int
+</span><span class="hs-number">0</span></span><span>
+</span><span id="line-54"></span><span>
+</span><span id="line-55"></span><span class="hs-comment">-- | Pretty-print a 'Cube' expression in a given precedence environment.</span><span>
+</span><span id="line-56"></span><span class="annot"><a href="RSTT.Cube.html#ppCubePrec"><span class="hs-identifier hs-type">ppCubePrec</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="RSTT.Cube.html#Cube"><span class="hs-identifier hs-type">Cube</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
+</span><span id="line-57"></span><span id="ppCubePrec"><span class="annot"><span class="annottext">ppCubePrec :: Int -&gt; Cube -&gt; String
+</span><a href="RSTT.Cube.html#ppCubePrec"><span class="hs-identifier hs-var hs-var">ppCubePrec</span></a></span></span><span> </span><span id="local-6989586621679043338"><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679043338"><span class="hs-identifier hs-var">prec</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-glyph">\</span><span class="hs-glyph">case</span><span>
+</span><span id="line-58"></span><span>  </span><span class="annot"><a href="RSTT.Cube.html#CubeVar"><span class="hs-identifier hs-type">CubeVar</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Cube.html#Var"><span class="hs-identifier hs-type">Var</span></a></span><span> </span><span id="local-6989586621679043337"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679043337"><span class="hs-identifier hs-var">x</span></a></span></span><span class="hs-special">)</span><span>   </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679043337"><span class="hs-identifier hs-var">x</span></a></span><span>
+</span><span id="line-59"></span><span>  </span><span class="annot"><a href="RSTT.Cube.html#CubeCon"><span class="hs-identifier hs-type">CubeCon</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Cube.html#Label"><span class="hs-identifier hs-type">Label</span></a></span><span> </span><span id="local-6989586621679043336"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679043336"><span class="hs-identifier hs-var">l</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679043336"><span class="hs-identifier hs-var">l</span></a></span><span>
+</span><span id="line-60"></span><span>  </span><span class="annot"><span class="annottext">Cube
+</span><a href="RSTT.Cube.html#CubeUnit"><span class="hs-identifier hs-var">CubeUnit</span></a></span><span>          </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;&#120793;&quot;</span></span><span>
+</span><span id="line-61"></span><span>  </span><span class="annot"><a href="RSTT.Cube.html#CubeProduct"><span class="hs-identifier hs-type">CubeProduct</span></a></span><span> </span><span id="local-6989586621679043335"><span class="annot"><span class="annottext">Cube
+</span><a href="#local-6989586621679043335"><span class="hs-identifier hs-var">l</span></a></span></span><span> </span><span id="local-6989586621679043334"><span class="annot"><span class="annottext">Cube
+</span><a href="#local-6989586621679043334"><span class="hs-identifier hs-var">r</span></a></span></span><span>   </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">(Int -&gt; Cube -&gt; String) -&gt; Int -&gt; Cube -&gt; String -&gt; Cube -&gt; String
+forall {a} {t}.
+(Semigroup a, IsString a) =&gt;
+(Int -&gt; t -&gt; a) -&gt; Int -&gt; t -&gt; a -&gt; t -&gt; a
+</span><a href="#local-6989586621679043333"><span class="hs-identifier hs-var">binOp</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Cube -&gt; String
+</span><a href="RSTT.Cube.html#ppCubePrec"><span class="hs-identifier hs-var">ppCubePrec</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679043338"><span class="hs-identifier hs-var">prec</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
+forall a. Num a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-glyph hs-var">-</span></span><span> </span><span class="annot"><span class="annottext">Int
+</span><span class="hs-number">1</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Cube
+</span><a href="#local-6989586621679043335"><span class="hs-identifier hs-var">l</span></a></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;&#215;&quot;</span></span><span> </span><span class="annot"><span class="annottext">Cube
+</span><a href="#local-6989586621679043334"><span class="hs-identifier hs-var">r</span></a></span><span>
+</span><span id="line-62"></span><span>  </span><span class="hs-keyword">where</span><span>
+</span><span id="line-63"></span><span>    </span><span id="local-6989586621679043326"><span class="annot"><span class="annottext">parens :: a -&gt; a
+</span><a href="#local-6989586621679043326"><span class="hs-identifier hs-var hs-var">parens</span></a></span></span><span> </span><span id="local-6989586621679043325"><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679043325"><span class="hs-identifier hs-var">s</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">a
+</span><span class="hs-string">&quot;(&quot;</span></span><span> </span><span class="annot"><span class="annottext">a -&gt; a -&gt; a
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679043325"><span class="hs-identifier hs-var">s</span></a></span><span> </span><span class="annot"><span class="annottext">a -&gt; a -&gt; a
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">a
+</span><span class="hs-string">&quot;)&quot;</span></span><span>
+</span><span id="line-64"></span><span>    </span><span id="local-6989586621679043333"><span class="annot"><span class="annottext">binOp :: (Int -&gt; t -&gt; a) -&gt; Int -&gt; t -&gt; a -&gt; t -&gt; a
+</span><a href="#local-6989586621679043333"><span class="hs-identifier hs-var hs-var">binOp</span></a></span></span><span> </span><span id="local-6989586621679043313"><span class="annot"><span class="annottext">Int -&gt; t -&gt; a
+</span><a href="#local-6989586621679043313"><span class="hs-identifier hs-var">pp</span></a></span></span><span> </span><span id="local-6989586621679043312"><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679043312"><span class="hs-identifier hs-var">opPrec</span></a></span></span><span> </span><span id="local-6989586621679043311"><span class="annot"><span class="annottext">t
+</span><a href="#local-6989586621679043311"><span class="hs-identifier hs-var">l</span></a></span></span><span> </span><span id="local-6989586621679043310"><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679043310"><span class="hs-identifier hs-var">op</span></a></span></span><span> </span><span id="local-6989586621679043309"><span class="annot"><span class="annottext">t
+</span><a href="#local-6989586621679043309"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">(</span><span class="hs-keyword">if</span><span> </span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679043338"><span class="hs-identifier hs-var">prec</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Bool
+forall a. Ord a =&gt; a -&gt; a -&gt; Bool
+</span><span class="hs-operator hs-var">&gt;</span></span><span> </span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679043312"><span class="hs-identifier hs-var">opPrec</span></a></span><span> </span><span class="hs-keyword">then</span><span> </span><span class="annot"><span class="annottext">a -&gt; a
+forall {a}. (Semigroup a, IsString a) =&gt; a -&gt; a
+</span><a href="#local-6989586621679043326"><span class="hs-identifier hs-var">parens</span></a></span><span> </span><span class="hs-keyword">else</span><span> </span><span class="annot"><span class="annottext">a -&gt; a
+forall a. a -&gt; a
+</span><span class="hs-identifier hs-var">id</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">(a -&gt; a) -&gt; a -&gt; a
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span>
+</span><span id="line-65"></span><span>      </span><span class="annot"><span class="annottext">Int -&gt; t -&gt; a
+</span><a href="#local-6989586621679043313"><span class="hs-identifier hs-var">pp</span></a></span><span> </span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679043312"><span class="hs-identifier hs-var">opPrec</span></a></span><span> </span><span class="annot"><span class="annottext">t
+</span><a href="#local-6989586621679043311"><span class="hs-identifier hs-var">l</span></a></span><span> </span><span class="annot"><span class="annottext">a -&gt; a -&gt; a
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">a
+</span><span class="hs-string">&quot; &quot;</span></span><span> </span><span class="annot"><span class="annottext">a -&gt; a -&gt; a
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679043310"><span class="hs-identifier hs-var">op</span></a></span><span> </span><span class="annot"><span class="annottext">a -&gt; a -&gt; a
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">a
+</span><span class="hs-string">&quot; &quot;</span></span><span> </span><span class="annot"><span class="annottext">a -&gt; a -&gt; a
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Int -&gt; t -&gt; a
+</span><a href="#local-6989586621679043313"><span class="hs-identifier hs-var">pp</span></a></span><span> </span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679043312"><span class="hs-identifier hs-var">opPrec</span></a></span><span> </span><span class="annot"><span class="annottext">t
+</span><a href="#local-6989586621679043309"><span class="hs-identifier hs-var">r</span></a></span><span>
+</span><span id="line-66"></span><span>
+</span><span id="line-67"></span><span class="hs-comment">-- | Pretty-print a 'Point'.</span><span>
+</span><span id="line-68"></span><span class="annot"><a href="RSTT.Cube.html#ppPoint"><span class="hs-identifier hs-type">ppPoint</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="RSTT.Cube.html#Point"><span class="hs-identifier hs-type">Point</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
+</span><span id="line-69"></span><span id="ppPoint"><span class="annot"><span class="annottext">ppPoint :: Point -&gt; String
+</span><a href="RSTT.Cube.html#ppPoint"><span class="hs-identifier hs-var hs-var">ppPoint</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int -&gt; Point -&gt; String
+</span><a href="RSTT.Cube.html#ppPointPrec"><span class="hs-identifier hs-var">ppPointPrec</span></a></span><span> </span><span class="annot"><span class="annottext">Int
+</span><span class="hs-number">0</span></span><span>
+</span><span id="line-70"></span><span>
+</span><span id="line-71"></span><span class="hs-comment">-- | Pretty-print a 'Point' expression in a given precedence environment.</span><span>
+</span><span id="line-72"></span><span class="annot"><a href="RSTT.Cube.html#ppPointPrec"><span class="hs-identifier hs-type">ppPointPrec</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="RSTT.Cube.html#Point"><span class="hs-identifier hs-type">Point</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
+</span><span id="line-73"></span><span id="ppPointPrec"><span class="annot"><span class="annottext">ppPointPrec :: Int -&gt; Point -&gt; String
+</span><a href="RSTT.Cube.html#ppPointPrec"><span class="hs-identifier hs-var hs-var">ppPointPrec</span></a></span></span><span> </span><span id="local-6989586621679043304"><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679043304"><span class="hs-identifier hs-var">prec</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-glyph">\</span><span class="hs-glyph">case</span><span>
+</span><span id="line-74"></span><span>  </span><span class="annot"><a href="RSTT.Cube.html#PointVar"><span class="hs-identifier hs-type">PointVar</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Cube.html#Var"><span class="hs-identifier hs-type">Var</span></a></span><span> </span><span id="local-6989586621679043303"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679043303"><span class="hs-identifier hs-var">x</span></a></span></span><span class="hs-special">)</span><span>     </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679043303"><span class="hs-identifier hs-var">x</span></a></span><span>
+</span><span id="line-75"></span><span>  </span><span class="annot"><span class="annottext">Point
+</span><a href="RSTT.Cube.html#PointUnit"><span class="hs-identifier hs-var">PointUnit</span></a></span><span>     </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;&#8902;&quot;</span></span><span>
+</span><span id="line-76"></span><span>  </span><span class="annot"><a href="RSTT.Cube.html#PointPair"><span class="hs-identifier hs-type">PointPair</span></a></span><span> </span><span id="local-6989586621679043302"><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679043302"><span class="hs-identifier hs-var">l</span></a></span></span><span> </span><span id="local-6989586621679043301"><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679043301"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;&#10216;&quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; ShowS
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Point -&gt; String
+</span><a href="RSTT.Cube.html#ppPointPrec"><span class="hs-identifier hs-var">ppPointPrec</span></a></span><span> </span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679043304"><span class="hs-identifier hs-var">prec</span></a></span><span> </span><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679043302"><span class="hs-identifier hs-var">l</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; ShowS
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;, &quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; ShowS
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Point -&gt; String
+</span><a href="RSTT.Cube.html#ppPointPrec"><span class="hs-identifier hs-var">ppPointPrec</span></a></span><span> </span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679043304"><span class="hs-identifier hs-var">prec</span></a></span><span> </span><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679043301"><span class="hs-identifier hs-var">r</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; ShowS
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;&#10217;&quot;</span></span><span>
+</span><span id="line-77"></span><span>  </span><span class="annot"><a href="RSTT.Cube.html#PointFirst"><span class="hs-identifier hs-type">PointFirst</span></a></span><span> </span><span id="local-6989586621679043300"><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679043300"><span class="hs-identifier hs-var">p</span></a></span></span><span>  </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;&#120587;&#8321;(&quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; ShowS
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Point -&gt; String
+</span><a href="RSTT.Cube.html#ppPointPrec"><span class="hs-identifier hs-var">ppPointPrec</span></a></span><span> </span><span class="annot"><span class="annottext">Int
+</span><span class="hs-number">0</span></span><span> </span><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679043300"><span class="hs-identifier hs-var">p</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; ShowS
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;)&quot;</span></span><span>
+</span><span id="line-78"></span><span>  </span><span class="annot"><a href="RSTT.Cube.html#PointSecond"><span class="hs-identifier hs-type">PointSecond</span></a></span><span> </span><span id="local-6989586621679043299"><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679043299"><span class="hs-identifier hs-var">p</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;&#120587;&#8322;(&quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; ShowS
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Point -&gt; String
+</span><a href="RSTT.Cube.html#ppPointPrec"><span class="hs-identifier hs-var">ppPointPrec</span></a></span><span> </span><span class="annot"><span class="annottext">Int
+</span><span class="hs-number">0</span></span><span> </span><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679043299"><span class="hs-identifier hs-var">p</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; ShowS
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;)&quot;</span></span><span>
+</span><span id="line-79"></span><span>  </span><span class="annot"><a href="RSTT.Cube.html#PointCon"><span class="hs-identifier hs-type">PointCon</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Cube.html#Label"><span class="hs-identifier hs-type">Label</span></a></span><span> </span><span id="local-6989586621679043298"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679043298"><span class="hs-identifier hs-var">l</span></a></span></span><span class="hs-special">)</span><span> </span><span id="local-6989586621679043297"><span class="annot"><span class="annottext">[Point]
+</span><a href="#local-6989586621679043297"><span class="hs-identifier hs-var">args</span></a></span></span><span>  </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679043298"><span class="hs-identifier hs-var">l</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; ShowS
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;(&quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; ShowS
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; [String] -&gt; String
+forall a. [a] -&gt; [[a]] -&gt; [a]
+</span><span class="hs-identifier hs-var">intercalate</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;, &quot;</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(Point -&gt; String) -&gt; [Point] -&gt; [String]
+forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
+</span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Int -&gt; Point -&gt; String
+</span><a href="RSTT.Cube.html#ppPointPrec"><span class="hs-identifier hs-var">ppPointPrec</span></a></span><span> </span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679043304"><span class="hs-identifier hs-var">prec</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">[Point]
+</span><a href="#local-6989586621679043297"><span class="hs-identifier hs-var">args</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">String -&gt; ShowS
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;)&quot;</span></span><span>
+</span><span id="line-80"></span><span>
+</span><span id="line-81"></span></pre></body></html>
