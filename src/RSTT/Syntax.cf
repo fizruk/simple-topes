@@ -1,0 +1,65 @@
+comment "--" ;
+comment "{-" "-}" ;
+
+layout toplevel ;
+layout "with", "where", "prove" ;
+
+token Label (upper (letter | digit | '_')*) ;
+token Var (lower (letter | digit | '_')*) ;
+token Line (('-' | '—') ('-' | '—') ('-' | '—') ('-' | '—')*) ;
+
+Program.  Program ::= [Decl] ;
+
+DeclCube.         Decl ::= "cube" Label "with" "{" [PointConDecl] "}" ;
+DeclTopePrefix.   Decl ::= "tope" Label "(" [Cube] ")" "with" "{" [TopeRule] "}" ;
+DeclCommandProve. Decl ::= "prove" "{" Sequent "}" ;
+separator Decl ";" ;
+
+NullaryPointConDecl.  PointConDecl ::= "point" Label ;
+PrefixPointConDecl.   PointConDecl ::= "point" Label "(" [Cube] ")" ;
+separator PointConDecl ";" ;
+
+CubeProduct.  Cube  ::= Cube "×" Cube1 ;
+CubeUnit.     Cube1 ::= "𝟙" ;
+CubeCon.      Cube1 ::= Label ;
+CubeVar.      Cube1 ::= Var ;
+coercions Cube 1 ;
+separator nonempty Cube "," ;
+
+TopeRule. TopeRule ::= "rule" RuleName "where" "{" [Sequent] Line ";" Sequent "}" ;
+separator TopeRule ";" ;
+
+RuleName. RuleName ::= String ;
+
+Sequent. Sequent ::= CubeContext "|" TopeContext "⊢" Tope ;
+separator Sequent ";" ;
+
+CubeContextEmpty. CubeContext ::= "⋅" ;
+CubeContextNonEmpty. CubeContext ::= [PointDecl] ;
+
+PointDecl. PointDecl ::= Var ":" Cube ;
+separator nonempty PointDecl "," ;
+
+TopeContextEmpty. TopeContext ::= "⋅" ;
+TopeContextNonEmpty. TopeContext ::= [Tope] ;
+
+TopeTop.      Tope  ::= "⊤" ;
+TopeBottom.   Tope  ::= "⊥" ;
+TopeImplies.  Tope  ::= Tope "⇒" Tope1 ;
+TopeOr.       Tope1 ::= Tope1 "∨" Tope2 ;
+TopeAnd.      Tope2 ::= Tope2 "∧" Tope3 ;
+TopeEQ.       Tope3 ::= Point "≡" Point ;
+TopeCon.      Tope3 ::= Label "(" [Point] ")" ;
+TopeVar.      Tope3 ::= Var ;
+coercions Tope 3 ;
+separator nonempty Tope "," ;
+
+PointUnit.    Point ::= "⋆" ;
+PointPair.    Point ::= "⟨" Point "," Point "⟩" ;
+PointFirst.   Point ::= "𝜋₁" "(" Point ")" ;
+PointSecond.  Point ::= "𝜋₂" "(" Point ")" ;
+PointCon.     Point ::= Label "(" [Point] ")" ;
+nullaryPoint. Point ::= Label ;
+PointVar.     Point ::= Var ;
+define nullaryPoint con = PointCon con [] ;
+separator nonempty Point "," ;
