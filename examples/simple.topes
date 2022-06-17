@@ -1,0 +1,47 @@
+cube TWO with
+  point Zero
+  point One
+
+tope LEQ(TWO, TWO) with
+  rule "(≤) reflexivity" where
+    ———————————————————————
+    t : TWO | ⋅ ⊢ LEQ(t, t)
+
+  rule "(≤) antisymmetry" where
+    t : TWO, s : TWO | LEQ(t, s), LEQ(s, t), s ≡ t ⊢ phi
+    ————————————————————————————————————————————————————
+    t : TWO, s : TWO | LEQ(t, s), LEQ(s, t) ⊢ phi
+
+  rule "(≤) transitivity" where
+    t : TWO, s : TWO, u : TWO | LEQ(t, s), LEQ(s, u), LEQ (t, u) ⊢ phi
+    ——————————————————————————————————————————————————————————————————
+    t : TWO, s : TWO, u : TWO | LEQ(t, s), LEQ(s, u) ⊢ phi
+
+  rule "(≤) one" where
+    ———————————————————————
+    t : TWO | ⋅ ⊢ LEQ(t, One)
+
+  rule "(≤) zero" where
+    ———————————————————————
+    t : TWO | ⋅ ⊢ LEQ(Zero, t)
+
+  rule "(≤) excluded middle" where
+    ————————————————————————————————————————————
+    t : TWO, s : TWO | ⋅ ⊢ LEQ(t, s) ∨ LEQ(s, t)
+
+prove
+  ⋅ | (phi ∨ zeta) ∧ (psi ∨ chi) ⊢ phi ∧ psi ∨ zeta ∧ psi ∨ chi
+
+prove
+  ⋅ | phi ∧ psi ∨ zeta ∧ chi ⊢ (phi ∨ zeta) ∧ (psi ∨ chi)
+
+prove
+  x : cube_I, y : cube_I, z : cube_I | x ≡ y ∧ y ≡ z ⊢ z ≡ x
+
+prove
+  t : cube_I, s : cube_I, u : cube_I | (t ≡ s ∨ t ≡ u) ∧ s ≡ u ⊢ t ≡ s
+
+prove
+  t : TWO, s : TWO, u : TWO |
+    (LEQ(t, s) ∨ LEQ(s, u)) ∧ LEQ(t, u)
+    ⊢ LEQ(t, u) ∨ LEQ(s, t) ∨ LEQ(u, s)
