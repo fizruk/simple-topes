@@ -38,6 +38,14 @@ jobs:
             .stack
           key: ${{ runner.os }}-${{ hashFiles('stack.yaml.lock', 'simple-topes.cabal') }}-stack
 
+      - name: 🔨 Install BNFC, alex and happy (with Stack)
+        run: |
+          stack install alex happy BNFC
+
+      - name: 🔨 Generate Syntax files using BNFC
+        run: |
+          make syntax
+
       - name: 🔨 Build and test (with Stack)
         run: |
           stack test
