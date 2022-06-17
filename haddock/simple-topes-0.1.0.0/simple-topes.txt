@@ -87,6 +87,396 @@ instance GHC.Classes.Eq RSTT.Cube.Point
 instance Data.String.IsString RSTT.Cube.Point
 instance Data.String.IsString RSTT.Cube.Cube
 
+
+-- | The abstract syntax of language Syntax.
+module RSTT.Syntax.Abs
+data Program
+Program :: [Decl] -> Program
+data Decl
+DeclCube :: Label -> [PointConDecl] -> Decl
+DeclTopePrefix :: Label -> [Cube] -> [TopeRule] -> Decl
+DeclCommandProve :: Sequent -> Decl
+data PointConDecl
+NullaryPointConDecl :: Label -> PointConDecl
+PrefixPointConDecl :: Label -> [Cube] -> PointConDecl
+data Cube
+CubeProduct :: Cube -> Cube -> Cube
+CubeUnit :: Cube
+CubeCon :: Label -> Cube
+CubeVar :: Var -> Cube
+data TopeRule
+TopeRule :: RuleName -> [Sequent] -> Line -> Sequent -> TopeRule
+data RuleName
+RuleName :: String -> RuleName
+data Sequent
+Sequent :: CubeContext -> TopeContext -> Tope -> Sequent
+data CubeContext
+CubeContextEmpty :: CubeContext
+CubeContextNonEmpty :: [PointDecl] -> CubeContext
+data PointDecl
+PointDecl :: Var -> Cube -> PointDecl
+data TopeContext
+TopeContextEmpty :: TopeContext
+TopeContextNonEmpty :: [Tope] -> TopeContext
+data Tope
+TopeTop :: Tope
+TopeBottom :: Tope
+TopeImplies :: Tope -> Tope -> Tope
+TopeOr :: Tope -> Tope -> Tope
+TopeAnd :: Tope -> Tope -> Tope
+TopeEQ :: Point -> Point -> Tope
+TopeCon :: Label -> [Point] -> Tope
+TopeVar :: Var -> Tope
+data Point
+PointUnit :: Point
+PointPair :: Point -> Point -> Point
+PointFirst :: Point -> Point
+PointSecond :: Point -> Point
+PointCon :: Label -> [Point] -> Point
+PointVar :: Var -> Point
+nullaryPoint :: Label -> Point
+newtype Label
+Label :: String -> Label
+newtype Var
+Var :: String -> Var
+newtype Line
+Line :: String -> Line
+instance GHC.Read.Read RSTT.Syntax.Abs.RuleName
+instance GHC.Show.Show RSTT.Syntax.Abs.RuleName
+instance GHC.Classes.Ord RSTT.Syntax.Abs.RuleName
+instance GHC.Classes.Eq RSTT.Syntax.Abs.RuleName
+instance Data.String.IsString RSTT.Syntax.Abs.Label
+instance GHC.Read.Read RSTT.Syntax.Abs.Label
+instance GHC.Show.Show RSTT.Syntax.Abs.Label
+instance GHC.Classes.Ord RSTT.Syntax.Abs.Label
+instance GHC.Classes.Eq RSTT.Syntax.Abs.Label
+instance Data.String.IsString RSTT.Syntax.Abs.Var
+instance GHC.Read.Read RSTT.Syntax.Abs.Var
+instance GHC.Show.Show RSTT.Syntax.Abs.Var
+instance GHC.Classes.Ord RSTT.Syntax.Abs.Var
+instance GHC.Classes.Eq RSTT.Syntax.Abs.Var
+instance GHC.Read.Read RSTT.Syntax.Abs.Point
+instance GHC.Show.Show RSTT.Syntax.Abs.Point
+instance GHC.Classes.Ord RSTT.Syntax.Abs.Point
+instance GHC.Classes.Eq RSTT.Syntax.Abs.Point
+instance GHC.Read.Read RSTT.Syntax.Abs.Tope
+instance GHC.Show.Show RSTT.Syntax.Abs.Tope
+instance GHC.Classes.Ord RSTT.Syntax.Abs.Tope
+instance GHC.Classes.Eq RSTT.Syntax.Abs.Tope
+instance GHC.Read.Read RSTT.Syntax.Abs.TopeContext
+instance GHC.Show.Show RSTT.Syntax.Abs.TopeContext
+instance GHC.Classes.Ord RSTT.Syntax.Abs.TopeContext
+instance GHC.Classes.Eq RSTT.Syntax.Abs.TopeContext
+instance GHC.Read.Read RSTT.Syntax.Abs.Cube
+instance GHC.Show.Show RSTT.Syntax.Abs.Cube
+instance GHC.Classes.Ord RSTT.Syntax.Abs.Cube
+instance GHC.Classes.Eq RSTT.Syntax.Abs.Cube
+instance GHC.Read.Read RSTT.Syntax.Abs.PointDecl
+instance GHC.Show.Show RSTT.Syntax.Abs.PointDecl
+instance GHC.Classes.Ord RSTT.Syntax.Abs.PointDecl
+instance GHC.Classes.Eq RSTT.Syntax.Abs.PointDecl
+instance GHC.Read.Read RSTT.Syntax.Abs.CubeContext
+instance GHC.Show.Show RSTT.Syntax.Abs.CubeContext
+instance GHC.Classes.Ord RSTT.Syntax.Abs.CubeContext
+instance GHC.Classes.Eq RSTT.Syntax.Abs.CubeContext
+instance GHC.Read.Read RSTT.Syntax.Abs.Sequent
+instance GHC.Show.Show RSTT.Syntax.Abs.Sequent
+instance GHC.Classes.Ord RSTT.Syntax.Abs.Sequent
+instance GHC.Classes.Eq RSTT.Syntax.Abs.Sequent
+instance GHC.Read.Read RSTT.Syntax.Abs.PointConDecl
+instance GHC.Show.Show RSTT.Syntax.Abs.PointConDecl
+instance GHC.Classes.Ord RSTT.Syntax.Abs.PointConDecl
+instance GHC.Classes.Eq RSTT.Syntax.Abs.PointConDecl
+instance Data.String.IsString RSTT.Syntax.Abs.Line
+instance GHC.Read.Read RSTT.Syntax.Abs.Line
+instance GHC.Show.Show RSTT.Syntax.Abs.Line
+instance GHC.Classes.Ord RSTT.Syntax.Abs.Line
+instance GHC.Classes.Eq RSTT.Syntax.Abs.Line
+instance GHC.Read.Read RSTT.Syntax.Abs.TopeRule
+instance GHC.Show.Show RSTT.Syntax.Abs.TopeRule
+instance GHC.Classes.Ord RSTT.Syntax.Abs.TopeRule
+instance GHC.Classes.Eq RSTT.Syntax.Abs.TopeRule
+instance GHC.Read.Read RSTT.Syntax.Abs.Decl
+instance GHC.Show.Show RSTT.Syntax.Abs.Decl
+instance GHC.Classes.Ord RSTT.Syntax.Abs.Decl
+instance GHC.Classes.Eq RSTT.Syntax.Abs.Decl
+instance GHC.Read.Read RSTT.Syntax.Abs.Program
+instance GHC.Show.Show RSTT.Syntax.Abs.Program
+instance GHC.Classes.Ord RSTT.Syntax.Abs.Program
+instance GHC.Classes.Eq RSTT.Syntax.Abs.Program
+
+
+-- | BNF Converter: Error Monad.
+--   
+--   Module for backwards compatibility.
+--   
+--   The generated parser now uses <tt><a>Either</a> String</tt> as error
+--   monad. This module defines a type synonym <a>Err</a> and pattern
+--   synonyms <a>Bad</a> and <a>Ok</a> for <a>Left</a> and <a>Right</a>.
+module RSTT.Syntax.ErrM
+
+-- | Error monad with <a>String</a> error messages.
+type Err = Either String
+pattern Bad :: a -> Either a b
+pattern Ok :: forall {a} {b}. b -> Either a b
+instance Control.Monad.Fail.MonadFail RSTT.Syntax.ErrM.Err
+instance GHC.Base.Alternative RSTT.Syntax.ErrM.Err
+instance GHC.Base.MonadPlus RSTT.Syntax.ErrM.Err
+
+module RSTT.Syntax.Lex
+alex_tab_size :: Int
+alex_base :: AlexAddr
+alex_table :: AlexAddr
+alex_check :: AlexAddr
+alex_deflt :: AlexAddr
+alex_accept :: Array Int (AlexAcc user)
+alex_actions :: Array Int (Posn -> String -> Token)
+data AlexAddr
+AlexA# :: Addr# -> AlexAddr
+alexIndexInt16OffAddr :: AlexAddr -> Int# -> Int#
+alexIndexInt32OffAddr :: AlexAddr -> Int# -> Int#
+quickIndex :: Array Int (AlexAcc (Any :: Type)) -> Int -> AlexAcc (Any :: Type)
+data AlexReturn a
+AlexEOF :: AlexReturn a
+AlexError :: !AlexInput -> AlexReturn a
+AlexSkip :: !AlexInput -> !Int -> AlexReturn a
+AlexToken :: !AlexInput -> !Int -> a -> AlexReturn a
+alexScan :: AlexInput -> Int -> AlexReturn (Posn -> String -> Token)
+alexScanUser :: t -> AlexInput -> Int -> AlexReturn (Posn -> String -> Token)
+alex_scan_tkn :: t -> t -> Int# -> AlexInput -> Int# -> AlexLastAcc -> (AlexLastAcc, AlexInput)
+data AlexLastAcc
+AlexNone :: AlexLastAcc
+AlexLastAcc :: !Int -> !AlexInput -> !Int -> AlexLastAcc
+AlexLastSkip :: !AlexInput -> !Int -> AlexLastAcc
+data AlexAcc user
+AlexAccNone :: AlexAcc user
+AlexAcc :: Int -> AlexAcc user
+AlexAccSkip :: AlexAcc user
+tok :: (Posn -> String -> Token) -> Posn -> String -> Token
+data Tok
+TS :: !String -> !Int -> Tok
+TL :: !String -> Tok
+TI :: !String -> Tok
+TV :: !String -> Tok
+TD :: !String -> Tok
+TC :: !String -> Tok
+T_Label :: !String -> Tok
+T_Var :: !String -> Tok
+T_Line :: !String -> Tok
+data Token
+PT :: Posn -> Tok -> Token
+Err :: Posn -> Token
+printPosn :: Posn -> String
+tokenPos :: [Token] -> String
+tokenPosn :: Token -> Posn
+tokenLineCol :: Token -> (Int, Int)
+posLineCol :: Posn -> (Int, Int)
+mkPosToken :: Token -> ((Int, Int), String)
+tokenText :: Token -> String
+prToken :: Token -> String
+data BTree
+N :: BTree
+B :: String -> Tok -> BTree -> BTree -> BTree
+eitherResIdent :: (String -> Tok) -> String -> Tok
+resWords :: BTree
+unescapeInitTail :: String -> String
+data Posn
+Pn :: !Int -> !Int -> !Int -> Posn
+alexStartPos :: Posn
+alexMove :: Posn -> Char -> Posn
+type Byte = Word8
+type AlexInput = (Posn, Char, [Byte], String)
+tokens :: String -> [Token]
+alexGetByte :: AlexInput -> Maybe (Byte, AlexInput)
+alexInputPrevChar :: AlexInput -> Char
+
+-- | Encode a Haskell String to a list of Word8 values, in UTF8 format.
+utf8Encode :: Char -> [Word8]
+alex_action_3 :: Posn -> String -> Token
+alex_action_4 :: Posn -> String -> Token
+alex_action_5 :: Posn -> String -> Token
+alex_action_6 :: Posn -> String -> Token
+alex_action_7 :: Posn -> String -> Token
+alex_action_8 :: Posn -> String -> Token
+instance GHC.Classes.Ord RSTT.Syntax.Lex.Tok
+instance GHC.Show.Show RSTT.Syntax.Lex.Tok
+instance GHC.Classes.Eq RSTT.Syntax.Lex.Tok
+instance GHC.Show.Show RSTT.Syntax.Lex.BTree
+instance GHC.Classes.Ord RSTT.Syntax.Lex.Posn
+instance GHC.Show.Show RSTT.Syntax.Lex.Posn
+instance GHC.Classes.Eq RSTT.Syntax.Lex.Posn
+instance GHC.Classes.Ord RSTT.Syntax.Lex.Token
+instance GHC.Show.Show RSTT.Syntax.Lex.Token
+instance GHC.Classes.Eq RSTT.Syntax.Lex.Token
+
+module RSTT.Syntax.Layout
+topLayout :: Bool
+layoutWords :: [String]
+layoutStopWords :: [String]
+layoutOpen :: String
+layoutClose :: String
+layoutSep :: String
+
+-- | Replace layout syntax with explicit layout tokens.
+resolveLayout :: Bool -> [Token] -> [Token]
+data Block
+
+-- | An implicit layout block with its start column.
+Implicit :: Int -> Block
+Explicit :: Block
+
+-- | Get current indentation. 0 if we are in an explicit block.
+indentation :: [Block] -> Int
+
+-- | Check if s block is implicit.
+isImplicit :: Block -> Bool
+type Position = Posn
+
+-- | Insert a number of tokens at the begninning of a list of tokens.
+addTokens :: Position -> [String] -> [Token] -> [Token]
+
+-- | Insert a new symbol token at the begninning of a list of tokens.
+addToken :: Position -> String -> [Token] -> [Token]
+
+-- | Get the position immediately to the right of the given token. If no
+--   token is given, gets the first position in the file.
+afterPrev :: Maybe Token -> Position
+
+-- | Get the position immediately to the right of the given token.
+nextPos :: Token -> Position
+
+-- | Add to the global and column positions of a token. The column position
+--   is only changed if the token is on the same line as the given
+--   position.
+incrGlobal :: Position -> Int -> Token -> Token
+
+-- | Create a symbol token.
+sToken :: Position -> String -> Token
+
+-- | Get the position of a token.
+position :: Token -> Position
+
+-- | Get the line number of a token.
+line :: Token -> Int
+
+-- | Get the column number of a token.
+column :: Token -> Int
+
+-- | Check if a token is one of the given symbols.
+isTokenIn :: [String] -> Token -> Bool
+
+-- | Check if a word is a layout start token.
+isLayout :: Token -> Bool
+
+-- | Check if a token is a layout stop token.
+isStop :: Token -> Bool
+
+-- | Check if a token is the layout open token.
+isLayoutOpen :: Token -> Bool
+
+-- | Check if a token is the layout close token.
+isLayoutClose :: Token -> Bool
+
+-- | Get the number of characters in the token.
+tokenLength :: Token -> Int
+instance GHC.Show.Show RSTT.Syntax.Layout.Block
+
+module RSTT.Syntax.Par
+happyError :: [Token] -> Err a
+myLexer :: String -> [Token]
+pProgram :: [Token] -> Err Program
+pDecl :: [Token] -> Err Decl
+pListDecl :: [Token] -> Err [Decl]
+pPointConDecl :: [Token] -> Err PointConDecl
+pListPointConDecl :: [Token] -> Err [PointConDecl]
+pCube :: [Token] -> Err Cube
+pCube1 :: [Token] -> Err Cube
+pListCube :: [Token] -> Err [Cube]
+pTopeRule :: [Token] -> Err TopeRule
+pListTopeRule :: [Token] -> Err [TopeRule]
+pRuleName :: [Token] -> Err RuleName
+pSequent :: [Token] -> Err Sequent
+pListSequent :: [Token] -> Err [Sequent]
+pCubeContext :: [Token] -> Err CubeContext
+pPointDecl :: [Token] -> Err PointDecl
+pListPointDecl :: [Token] -> Err [PointDecl]
+pTopeContext :: [Token] -> Err TopeContext
+pTope :: [Token] -> Err Tope
+pTope1 :: [Token] -> Err Tope
+pTope2 :: [Token] -> Err Tope
+pTope3 :: [Token] -> Err Tope
+pListTope :: [Token] -> Err [Tope]
+pPoint :: [Token] -> Err Point
+pListPoint :: [Token] -> Err [Point]
+
+
+-- | Pretty-printer for RSTT. Generated by the BNF converter.
+module RSTT.Syntax.Print
+
+-- | The top-level printing method.
+printTree :: Print a => a -> String
+type Doc = [ShowS] -> [ShowS]
+doc :: ShowS -> Doc
+render :: Doc -> String
+parenth :: Doc -> Doc
+concatS :: [ShowS] -> ShowS
+concatD :: [Doc] -> Doc
+replicateS :: Int -> ShowS -> ShowS
+
+-- | The printer class does the job.
+class Print a
+prt :: Print a => Int -> a -> Doc
+prtList :: Print a => Int -> [a] -> Doc
+mkEsc :: Char -> Char -> ShowS
+prPrec :: Int -> Int -> Doc -> Doc
+instance RSTT.Syntax.Print.Print a => RSTT.Syntax.Print.Print [a]
+instance RSTT.Syntax.Print.Print GHC.Types.Char
+instance RSTT.Syntax.Print.Print GHC.Num.Integer.Integer
+instance RSTT.Syntax.Print.Print GHC.Types.Double
+instance RSTT.Syntax.Print.Print RSTT.Syntax.Abs.Label
+instance RSTT.Syntax.Print.Print RSTT.Syntax.Abs.Var
+instance RSTT.Syntax.Print.Print RSTT.Syntax.Abs.Line
+instance RSTT.Syntax.Print.Print RSTT.Syntax.Abs.Program
+instance RSTT.Syntax.Print.Print RSTT.Syntax.Abs.Decl
+instance RSTT.Syntax.Print.Print [RSTT.Syntax.Abs.Decl]
+instance RSTT.Syntax.Print.Print RSTT.Syntax.Abs.PointConDecl
+instance RSTT.Syntax.Print.Print [RSTT.Syntax.Abs.PointConDecl]
+instance RSTT.Syntax.Print.Print RSTT.Syntax.Abs.Cube
+instance RSTT.Syntax.Print.Print [RSTT.Syntax.Abs.Cube]
+instance RSTT.Syntax.Print.Print RSTT.Syntax.Abs.TopeRule
+instance RSTT.Syntax.Print.Print [RSTT.Syntax.Abs.TopeRule]
+instance RSTT.Syntax.Print.Print RSTT.Syntax.Abs.RuleName
+instance RSTT.Syntax.Print.Print RSTT.Syntax.Abs.Sequent
+instance RSTT.Syntax.Print.Print [RSTT.Syntax.Abs.Sequent]
+instance RSTT.Syntax.Print.Print RSTT.Syntax.Abs.CubeContext
+instance RSTT.Syntax.Print.Print RSTT.Syntax.Abs.PointDecl
+instance RSTT.Syntax.Print.Print [RSTT.Syntax.Abs.PointDecl]
+instance RSTT.Syntax.Print.Print RSTT.Syntax.Abs.TopeContext
+instance RSTT.Syntax.Print.Print RSTT.Syntax.Abs.Tope
+instance RSTT.Syntax.Print.Print [RSTT.Syntax.Abs.Tope]
+instance RSTT.Syntax.Print.Print RSTT.Syntax.Abs.Point
+instance RSTT.Syntax.Print.Print [RSTT.Syntax.Abs.Point]
+
+module RSTT.Syntax.Skel
+type Err = Either String
+type Result = Err String
+failure :: Show a => a -> Result
+transLabel :: Label -> Result
+transVar :: Var -> Result
+transLine :: Line -> Result
+transProgram :: Program -> Result
+transDecl :: Decl -> Result
+transPointConDecl :: PointConDecl -> Result
+transCube :: Cube -> Result
+transTopeRule :: TopeRule -> Result
+transRuleName :: RuleName -> Result
+transSequent :: Sequent -> Result
+transCubeContext :: CubeContext -> Result
+transPointDecl :: PointDecl -> Result
+transTopeContext :: TopeContext -> Result
+transTope :: Tope -> Result
+transPoint :: Point -> Result
+
 module RSTT.Tope
 
 -- | A tope expression.
@@ -475,3 +865,31 @@ instance GHC.Base.Applicative RSTT.Tope.Proof.ProofTree
 instance GHC.Base.Monad RSTT.Tope.Proof.ProofTree
 instance GHC.Base.Semigroup (RSTT.Tope.Proof.RulesM a)
 instance GHC.Base.Monoid (RSTT.Tope.Proof.RulesM a)
+
+module RSTT.Interpret
+interpret :: Program -> IO ()
+interpretDecl :: Decl -> StateT Rules IO ()
+convertRule :: TopeRule -> Rules
+data Substs
+Substs :: [(Var, Cube)] -> [(Var, Point)] -> [(Var, Tope)] -> Substs
+[substCubeVars] :: Substs -> [(Var, Cube)]
+[substPointVars] :: Substs -> [(Var, Point)]
+[substTopeVars] :: Substs -> [(Var, Tope)]
+matchSequent :: (MonadPlus f, MonadFail f) => Sequent -> Sequent -> f Substs
+matchTope :: MonadPlus f => Tope -> Tope -> f Substs
+matchPoint :: MonadPlus f => Point -> Point -> f Substs
+matchTopes :: (MonadPlus f, MonadFail f) => Substs -> [Tope] -> [Tope] -> f Substs
+mergeSubsts :: MonadPlus f => Substs -> Substs -> f Substs
+mergeManySubsts :: MonadPlus f => [Substs] -> f Substs
+merge :: (MonadPlus f, Eq k, Eq v) => [(k, v)] -> [(k, v)] -> f [(k, v)]
+normalizeSequent :: Sequent -> Sequent
+applySubsts :: Substs -> Sequent -> Sequent
+substInCubeContext :: [(Var, Cube)] -> CubeContext -> CubeContext
+substInTopeContext :: [(Var, Point)] -> [(Var, Tope)] -> TopeContext -> TopeContext
+substInTope :: [(Var, Point)] -> [(Var, Tope)] -> Tope -> Tope
+convertSequent :: Sequent -> Sequent
+convertCubeContext :: CubeContext -> CubeContext
+convertCube :: Cube -> Cube
+convertPoint :: Point -> Point
+convertTope :: Tope -> Tope
+convertTopeContext :: TopeContext -> TopeContext

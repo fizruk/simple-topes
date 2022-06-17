@@ -1,0 +1,832 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-pragma">{-# LANGUAGE LambdaCase      #-}</span><span>
+</span><span id="line-2"></span><span class="hs-pragma">{-# LANGUAGE RecordWildCards #-}</span><span>
+</span><span id="line-3"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">RSTT.Interpret</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-4"></span><span>
+</span><span id="line-5"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Control.Applicative</span></span><span>
+</span><span id="line-6"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Control.Monad.Reader</span></span><span>
+</span><span id="line-7"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><span class="hs-identifier">Control.Monad.State</span></span><span>
+</span><span id="line-8"></span><span>
+</span><span id="line-9"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><a href="RSTT.Syntax.Abs.html"><span class="hs-identifier">RSTT.Syntax.Abs</span></a></span><span>
+</span><span id="line-10"></span><span>
+</span><span id="line-11"></span><span class="hs-keyword">import</span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="annot"><a href="RSTT.Cube.html"><span class="hs-identifier">RSTT.Cube</span></a></span><span>            </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">RSTT</span></span><span>
+</span><span id="line-12"></span><span class="hs-keyword">import</span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="annot"><a href="RSTT.Tope.html"><span class="hs-identifier">RSTT.Tope</span></a></span><span>            </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">RSTT</span></span><span>
+</span><span id="line-13"></span><span class="hs-keyword">import</span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="annot"><a href="RSTT.Tope.Proof.html"><span class="hs-identifier">RSTT.Tope.Proof</span></a></span><span>      </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">Prover</span></span><span>
+</span><span id="line-14"></span><span>
+</span><span id="line-15"></span><span class="annot"><a href="RSTT.Interpret.html#interpret"><span class="hs-identifier hs-type">interpret</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="RSTT.Syntax.Abs.html#Program"><span class="hs-identifier hs-type">Program</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
+</span><span id="line-16"></span><span id="interpret"><span class="annot"><span class="annottext">interpret :: Program -&gt; IO ()
+</span><a href="RSTT.Interpret.html#interpret"><span class="hs-identifier hs-var hs-var">interpret</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#Program"><span class="hs-identifier hs-type">Program</span></a></span><span> </span><span id="local-6989586621679070668"><span class="annot"><span class="annottext">[Decl]
+</span><a href="#local-6989586621679070668"><span class="hs-identifier hs-var">decls</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-17"></span><span>  </span><span class="annot"><span class="annottext">StateT Rules IO () -&gt; Rules -&gt; IO ()
+forall (m :: * -&gt; *) s a. Monad m =&gt; StateT s m a -&gt; s -&gt; m a
+</span><span class="hs-identifier hs-var">evalStateT</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(Decl -&gt; StateT Rules IO ()) -&gt; [Decl] -&gt; StateT Rules IO ()
+forall (t :: * -&gt; *) (m :: * -&gt; *) a b.
+(Foldable t, Monad m) =&gt;
+(a -&gt; m b) -&gt; t a -&gt; m ()
+</span><span class="hs-identifier hs-var">mapM_</span></span><span> </span><span class="annot"><span class="annottext">Decl -&gt; StateT Rules IO ()
+</span><a href="RSTT.Interpret.html#interpretDecl"><span class="hs-identifier hs-var">interpretDecl</span></a></span><span> </span><span class="annot"><span class="annottext">[Decl]
+</span><a href="#local-6989586621679070668"><span class="hs-identifier hs-var">decls</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Rules
+</span><a href="RSTT.Tope.Proof.html#rulesLJE"><span class="hs-identifier hs-var">Prover.rulesLJE</span></a></span><span>
+</span><span id="line-18"></span><span>
+</span><span id="line-19"></span><span class="annot"><a href="RSTT.Interpret.html#interpretDecl"><span class="hs-identifier hs-type">interpretDecl</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="RSTT.Syntax.Abs.html#Decl"><span class="hs-identifier hs-type">Decl</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">StateT</span></span><span> </span><span class="annot"><a href="RSTT.Tope.Proof.html#Rules"><span class="hs-identifier hs-type">Prover.Rules</span></a></span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
+</span><span id="line-20"></span><span id="interpretDecl"><span class="annot"><span class="annottext">interpretDecl :: Decl -&gt; StateT Rules IO ()
+</span><a href="RSTT.Interpret.html#interpretDecl"><span class="hs-identifier hs-var hs-var">interpretDecl</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-glyph">\</span><span class="hs-glyph">case</span><span>
+</span><span id="line-21"></span><span>  </span><span class="annot"><a href="RSTT.Syntax.Abs.html#DeclCube"><span class="hs-identifier hs-type">DeclCube</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#Label"><span class="hs-identifier hs-type">Label</span></a></span><span> </span><span id="local-6989586621679070661"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679070661"><span class="hs-identifier hs-var">con</span></a></span></span><span class="hs-special">)</span><span> </span><span id="local-6989586621679070660"><span class="annot"><span class="annottext">[PointConDecl]
+</span><a href="#local-6989586621679070660"><span class="hs-identifier hs-var">_points</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">IO () -&gt; StateT Rules IO ()
+forall (t :: (* -&gt; *) -&gt; * -&gt; *) (m :: * -&gt; *) a.
+(MonadTrans t, Monad m) =&gt;
+m a -&gt; t m a
+</span><span class="hs-identifier hs-var">lift</span></span><span> </span><span class="annot"><span class="annottext">(IO () -&gt; StateT Rules IO ()) -&gt; IO () -&gt; StateT Rules IO ()
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span>
+</span><span id="line-22"></span><span>    </span><span class="annot"><span class="annottext">String -&gt; IO ()
+</span><span class="hs-identifier hs-var">putStrLn</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;WARNING: cube declaration is ignored for cube &quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; String
+forall a. Show a =&gt; a -&gt; String
+</span><span class="hs-identifier hs-var">show</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679070661"><span class="hs-identifier hs-var">con</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-23"></span><span>  </span><span class="annot"><a href="RSTT.Syntax.Abs.html#DeclTopePrefix"><span class="hs-identifier hs-type">DeclTopePrefix</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#Label"><span class="hs-identifier hs-type">Label</span></a></span><span> </span><span id="local-6989586621679070655"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679070655"><span class="hs-identifier hs-var">con</span></a></span></span><span class="hs-special">)</span><span> </span><span id="local-6989586621679070654"><span class="annot"><span class="annottext">[Cube]
+</span><a href="#local-6989586621679070654"><span class="hs-identifier hs-var">_cubes</span></a></span></span><span> </span><span id="local-6989586621679070653"><span class="annot"><span class="annottext">[TopeRule]
+</span><a href="#local-6989586621679070653"><span class="hs-identifier hs-var">rules</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-24"></span><span>    </span><span class="annot"><span class="annottext">[TopeRule]
+-&gt; (TopeRule -&gt; StateT Rules IO ()) -&gt; StateT Rules IO ()
+forall (t :: * -&gt; *) (m :: * -&gt; *) a b.
+(Foldable t, Monad m) =&gt;
+t a -&gt; (a -&gt; m b) -&gt; m ()
+</span><span class="hs-identifier hs-var">forM_</span></span><span> </span><span class="annot"><span class="annottext">[TopeRule]
+</span><a href="#local-6989586621679070653"><span class="hs-identifier hs-var">rules</span></a></span><span> </span><span class="annot"><span class="annottext">((TopeRule -&gt; StateT Rules IO ()) -&gt; StateT Rules IO ())
+-&gt; (TopeRule -&gt; StateT Rules IO ()) -&gt; StateT Rules IO ()
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679070651"><span class="annot"><span class="annottext">rule :: TopeRule
+</span><a href="#local-6989586621679070651"><span class="hs-identifier hs-var">rule</span></a></span></span><span class="hs-glyph">@</span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#TopeRule"><span class="hs-identifier hs-type">TopeRule</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#RuleName"><span class="hs-identifier hs-type">RuleName</span></a></span><span> </span><span id="local-6989586621679070648"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679070648"><span class="hs-identifier hs-var">name</span></a></span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">[Sequent]
+</span><span class="hs-identifier">_</span></span><span> </span><span class="annot"><span class="annottext">Line
+</span><span class="hs-identifier">_</span></span><span> </span><span class="annot"><span class="annottext">Sequent
+</span><span class="hs-identifier">_</span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-25"></span><span>      </span><span class="annot"><span class="annottext">IO () -&gt; StateT Rules IO ()
+forall (t :: (* -&gt; *) -&gt; * -&gt; *) (m :: * -&gt; *) a.
+(MonadTrans t, Monad m) =&gt;
+m a -&gt; t m a
+</span><span class="hs-identifier hs-var">lift</span></span><span> </span><span class="annot"><span class="annottext">(IO () -&gt; StateT Rules IO ()) -&gt; IO () -&gt; StateT Rules IO ()
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; IO ()
+</span><span class="hs-identifier hs-var">putStrLn</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;INFO: Adding new rule for tope &quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679070655"><span class="hs-identifier hs-var">con</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;: &quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679070648"><span class="hs-identifier hs-var">name</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-26"></span><span>      </span><span class="annot"><span class="annottext">(Rules -&gt; Rules) -&gt; StateT Rules IO ()
+forall s (m :: * -&gt; *). MonadState s m =&gt; (s -&gt; s) -&gt; m ()
+</span><span class="hs-identifier hs-var">modify</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Rules -&gt; Rules -&gt; Rules
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">TopeRule -&gt; Rules
+</span><a href="RSTT.Interpret.html#convertRule"><span class="hs-identifier hs-var">convertRule</span></a></span><span> </span><span class="annot"><span class="annottext">TopeRule
+</span><a href="#local-6989586621679070651"><span class="hs-identifier hs-var">rule</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-27"></span><span>  </span><span class="annot"><a href="RSTT.Syntax.Abs.html#DeclCommandProve"><span class="hs-identifier hs-type">DeclCommandProve</span></a></span><span> </span><span id="local-6989586621679070644"><span class="annot"><span class="annottext">Sequent
+</span><a href="#local-6989586621679070644"><span class="hs-identifier hs-var">sequent</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-28"></span><span>    </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679070641"><span class="annot"><span class="annottext">maxDepth :: Int
+</span><a href="#local-6989586621679070641"><span class="hs-identifier hs-var hs-var">maxDepth</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int
+</span><span class="hs-number">10</span></span><span>
+</span><span id="line-29"></span><span>    </span><span id="local-6989586621679070640"><span class="annot"><span class="annottext">Rules
+</span><a href="#local-6989586621679070640"><span class="hs-identifier hs-var">rules</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">StateT Rules IO Rules
+forall s (m :: * -&gt; *). MonadState s m =&gt; m s
+</span><span class="hs-identifier hs-var">get</span></span><span>
+</span><span id="line-30"></span><span>    </span><span class="annot"><span class="annottext">IO () -&gt; StateT Rules IO ()
+forall (t :: (* -&gt; *) -&gt; * -&gt; *) (m :: * -&gt; *) a.
+(MonadTrans t, Monad m) =&gt;
+m a -&gt; t m a
+</span><span class="hs-identifier hs-var">lift</span></span><span> </span><span class="annot"><span class="annottext">(IO () -&gt; StateT Rules IO ()) -&gt; IO () -&gt; StateT Rules IO ()
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-31"></span><span>      </span><span class="annot"><span class="annottext">String -&gt; IO ()
+</span><span class="hs-identifier hs-var">putStrLn</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;INFO: running BFS prover with max depth = &quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Int -&gt; String
+forall a. Show a =&gt; a -&gt; String
+</span><span class="hs-identifier hs-var">show</span></span><span> </span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679070641"><span class="hs-identifier hs-var">maxDepth</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-32"></span><span>      </span><span class="annot"><span class="annottext">Int -&gt; Rules -&gt; Sequent -&gt; IO ()
+</span><a href="RSTT.Tope.Proof.html#proveAndPrintBFS"><span class="hs-identifier hs-var">Prover.proveAndPrintBFS</span></a></span><span> </span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679070641"><span class="hs-identifier hs-var">maxDepth</span></a></span><span> </span><span class="annot"><span class="annottext">Rules
+</span><a href="#local-6989586621679070640"><span class="hs-identifier hs-var">rules</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Sequent -&gt; Sequent
+</span><a href="RSTT.Interpret.html#convertSequent"><span class="hs-identifier hs-var">convertSequent</span></a></span><span> </span><span class="annot"><span class="annottext">Sequent
+</span><a href="#local-6989586621679070644"><span class="hs-identifier hs-var">sequent</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-33"></span><span>
+</span><span id="line-34"></span><span class="hs-comment">-- ** Compiling rules</span><span>
+</span><span id="line-35"></span><span>
+</span><span id="line-36"></span><span class="annot"><a href="RSTT.Interpret.html#convertRule"><span class="hs-identifier hs-type">convertRule</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="RSTT.Syntax.Abs.html#TopeRule"><span class="hs-identifier hs-type">TopeRule</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="RSTT.Tope.Proof.html#Rules"><span class="hs-identifier hs-type">Prover.Rules</span></a></span><span>
+</span><span id="line-37"></span><span id="convertRule"><span class="annot"><span class="annottext">convertRule :: TopeRule -&gt; Rules
+</span><a href="RSTT.Interpret.html#convertRule"><span class="hs-identifier hs-var hs-var">convertRule</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#TopeRule"><span class="hs-identifier hs-type">TopeRule</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#RuleName"><span class="hs-identifier hs-type">RuleName</span></a></span><span> </span><span id="local-6989586621679070636"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679070636"><span class="hs-identifier hs-var">name</span></a></span></span><span class="hs-special">)</span><span> </span><span id="local-6989586621679070635"><span class="annot"><span class="annottext">[Sequent]
+</span><a href="#local-6989586621679070635"><span class="hs-identifier hs-var">premises</span></a></span></span><span> </span><span id="local-6989586621679070634"><span class="annot"><span class="annottext">Line
+</span><a href="#local-6989586621679070634"><span class="hs-identifier hs-var">_line</span></a></span></span><span> </span><span id="local-6989586621679070633"><span class="annot"><span class="annottext">Sequent
+</span><a href="#local-6989586621679070633"><span class="hs-identifier hs-var">conclusion</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-38"></span><span>  </span><span id="local-6989586621679070632"><span class="annot"><span class="annottext">Sequent
+</span><a href="#local-6989586621679070632"><span class="hs-identifier hs-var">currentGoal</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">RulesM Sequent
+forall r (m :: * -&gt; *). MonadReader r m =&gt; m r
+</span><span class="hs-identifier hs-var">ask</span></span><span>
+</span><span id="line-39"></span><span>  </span><span id="local-6989586621679070630"><span class="annot"><span class="annottext">Substs
+</span><a href="#local-6989586621679070630"><span class="hs-identifier hs-var">substs</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Sequent -&gt; Sequent -&gt; RulesM Substs
+forall (f :: * -&gt; *).
+(MonadPlus f, MonadFail f) =&gt;
+Sequent -&gt; Sequent -&gt; f Substs
+</span><a href="RSTT.Interpret.html#matchSequent"><span class="hs-identifier hs-var">matchSequent</span></a></span><span> </span><span class="annot"><span class="annottext">Sequent
+</span><a href="#local-6989586621679070633"><span class="hs-identifier hs-var">conclusion</span></a></span><span> </span><span class="annot"><span class="annottext">Sequent
+</span><a href="#local-6989586621679070632"><span class="hs-identifier hs-var">currentGoal</span></a></span><span>
+</span><span id="line-40"></span><span>  </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679070628"><span class="annot"><span class="annottext">goals :: [Sequent]
+</span><a href="#local-6989586621679070628"><span class="hs-identifier hs-var hs-var">goals</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Sequent -&gt; Sequent) -&gt; [Sequent] -&gt; [Sequent]
+forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
+</span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Sequent -&gt; Sequent
+</span><a href="RSTT.Interpret.html#normalizeSequent"><span class="hs-identifier hs-var">normalizeSequent</span></a></span><span> </span><span class="annot"><span class="annottext">(Sequent -&gt; Sequent) -&gt; (Sequent -&gt; Sequent) -&gt; Sequent -&gt; Sequent
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">Substs -&gt; Sequent -&gt; Sequent
+</span><a href="RSTT.Interpret.html#applySubsts"><span class="hs-identifier hs-var">applySubsts</span></a></span><span> </span><span class="annot"><span class="annottext">Substs
+</span><a href="#local-6989586621679070630"><span class="hs-identifier hs-var">substs</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">[Sequent]
+</span><a href="#local-6989586621679070635"><span class="hs-identifier hs-var">premises</span></a></span><span>
+</span><span id="line-41"></span><span>  </span><span class="annot"><span class="annottext">Bool -&gt; RulesM ()
+forall (f :: * -&gt; *). Alternative f =&gt; Bool -&gt; f ()
+</span><span class="hs-identifier hs-var">guard</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(Sequent -&gt; Bool) -&gt; [Sequent] -&gt; Bool
+forall (t :: * -&gt; *) a. Foldable t =&gt; (a -&gt; Bool) -&gt; t a -&gt; Bool
+</span><span class="hs-identifier hs-var">all</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Sequent -&gt; Sequent -&gt; Bool
+forall a. Eq a =&gt; a -&gt; a -&gt; Bool
+</span><span class="hs-operator hs-var">/=</span></span><span> </span><span class="annot"><span class="annottext">Sequent
+</span><a href="#local-6989586621679070632"><span class="hs-identifier hs-var">currentGoal</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">[Sequent]
+</span><a href="#local-6989586621679070628"><span class="hs-identifier hs-var">goals</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-42"></span><span>  </span><span class="annot"><span class="annottext">(String, [Sequent]) -&gt; Rules
+forall (m :: * -&gt; *) a. Monad m =&gt; a -&gt; m a
+</span><span class="hs-identifier hs-var">return</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679070636"><span class="hs-identifier hs-var">name</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">[Sequent]
+</span><a href="#local-6989586621679070628"><span class="hs-identifier hs-var">goals</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-43"></span><span>
+</span><span id="line-44"></span><span class="hs-keyword">data</span><span> </span><span id="Substs"><span class="annot"><a href="RSTT.Interpret.html#Substs"><span class="hs-identifier hs-var">Substs</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="Substs"><span class="annot"><a href="RSTT.Interpret.html#Substs"><span class="hs-identifier hs-var">Substs</span></a></span></span><span>
+</span><span id="line-45"></span><span>  </span><span class="hs-special">{</span><span> </span><span id="substCubeVars"><span class="annot"><span class="annottext">Substs -&gt; [(Var, Cube)]
+</span><a href="RSTT.Interpret.html#substCubeVars"><span class="hs-identifier hs-var hs-var">substCubeVars</span></a></span></span><span>  </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Cube.html#Var"><span class="hs-identifier hs-type">RSTT.Var</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="RSTT.Cube.html#Cube"><span class="hs-identifier hs-type">RSTT.Cube</span></a></span><span class="hs-special">)</span><span class="hs-special">]</span><span>
+</span><span id="line-46"></span><span>  </span><span class="hs-special">,</span><span> </span><span id="substPointVars"><span class="annot"><span class="annottext">Substs -&gt; [(Var, Point)]
+</span><a href="RSTT.Interpret.html#substPointVars"><span class="hs-identifier hs-var hs-var">substPointVars</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Cube.html#Var"><span class="hs-identifier hs-type">RSTT.Var</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="RSTT.Cube.html#Point"><span class="hs-identifier hs-type">RSTT.Point</span></a></span><span class="hs-special">)</span><span class="hs-special">]</span><span>
+</span><span id="line-47"></span><span>  </span><span class="hs-special">,</span><span> </span><span id="substTopeVars"><span class="annot"><span class="annottext">Substs -&gt; [(Var, Tope)]
+</span><a href="RSTT.Interpret.html#substTopeVars"><span class="hs-identifier hs-var hs-var">substTopeVars</span></a></span></span><span>  </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Cube.html#Var"><span class="hs-identifier hs-type">RSTT.Var</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="RSTT.Tope.html#Tope"><span class="hs-identifier hs-type">RSTT.Tope</span></a></span><span class="hs-special">)</span><span class="hs-special">]</span><span>
+</span><span id="line-48"></span><span>  </span><span class="hs-special">}</span><span>
+</span><span id="line-49"></span><span>
+</span><span id="line-50"></span><span id="local-6989586621679070792"><span class="annot"><a href="RSTT.Interpret.html#matchSequent"><span class="hs-identifier hs-type">matchSequent</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">MonadPlus</span></span><span> </span><span class="annot"><a href="#local-6989586621679070792"><span class="hs-identifier hs-type">f</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadFail</span></span><span> </span><span class="annot"><a href="#local-6989586621679070792"><span class="hs-identifier hs-type">f</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="RSTT.Syntax.Abs.html#Sequent"><span class="hs-identifier hs-type">Sequent</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="RSTT.Tope.Proof.html#Sequent"><span class="hs-identifier hs-type">Prover.Sequent</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679070792"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><a href="RSTT.Interpret.html#Substs"><span class="hs-identifier hs-type">Substs</span></a></span></span><span>
+</span><span id="line-51"></span><span id="matchSequent"><span class="annot"><span class="annottext">matchSequent :: forall (f :: * -&gt; *).
+(MonadPlus f, MonadFail f) =&gt;
+Sequent -&gt; Sequent -&gt; f Substs
+</span><a href="RSTT.Interpret.html#matchSequent"><span class="hs-identifier hs-var hs-var">matchSequent</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#Sequent"><span class="hs-identifier hs-type">Sequent</span></a></span><span> </span><span id="local-6989586621679070608"><span class="annot"><span class="annottext">CubeContext
+</span><a href="#local-6989586621679070608"><span class="hs-identifier hs-var">_points</span></a></span></span><span> </span><span id="local-6989586621679070607"><span class="annot"><span class="annottext">TopeContext
+</span><a href="#local-6989586621679070607"><span class="hs-identifier hs-var">topes</span></a></span></span><span> </span><span id="local-6989586621679070606"><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070606"><span class="hs-identifier hs-var">rhs</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Tope.Proof.html#Sequent"><span class="hs-identifier hs-type">Prover.Sequent</span></a></span><span> </span><span id="local-6989586621679070604"><span class="annot"><span class="annottext">[(Var, Cube)]
+</span><a href="#local-6989586621679070604"><span class="hs-identifier hs-var">_points'</span></a></span></span><span> </span><span id="local-6989586621679070603"><span class="annot"><span class="annottext">TopeContext
+</span><a href="#local-6989586621679070603"><span class="hs-identifier hs-var">topes'</span></a></span></span><span> </span><span id="local-6989586621679070602"><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070602"><span class="hs-identifier hs-var">rhs'</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-52"></span><span>  </span><span id="local-6989586621679070601"><span class="annot"><span class="annottext">Substs
+</span><a href="#local-6989586621679070601"><span class="hs-identifier hs-var">subst</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Tope -&gt; Tope -&gt; f Substs
+forall (f :: * -&gt; *). MonadPlus f =&gt; Tope -&gt; Tope -&gt; f Substs
+</span><a href="RSTT.Interpret.html#matchTope"><span class="hs-identifier hs-var">matchTope</span></a></span><span> </span><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070606"><span class="hs-identifier hs-var">rhs</span></a></span><span> </span><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070602"><span class="hs-identifier hs-var">rhs'</span></a></span><span>
+</span><span id="line-53"></span><span>  </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">TopeContext
+</span><a href="#local-6989586621679070607"><span class="hs-identifier hs-var">topes</span></a></span><span> </span><span class="hs-keyword">of</span><span>
+</span><span id="line-54"></span><span>    </span><span class="annot"><span class="annottext">TopeContext
+</span><a href="RSTT.Syntax.Abs.html#TopeContextEmpty"><span class="hs-identifier hs-var">TopeContextEmpty</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Substs -&gt; f Substs
+forall (m :: * -&gt; *) a. Monad m =&gt; a -&gt; m a
+</span><span class="hs-identifier hs-var">return</span></span><span> </span><span class="annot"><span class="annottext">Substs
+</span><a href="#local-6989586621679070601"><span class="hs-identifier hs-var">subst</span></a></span><span>
+</span><span id="line-55"></span><span>    </span><span class="annot"><a href="RSTT.Syntax.Abs.html#TopeContextNonEmpty"><span class="hs-identifier hs-type">TopeContextNonEmpty</span></a></span><span> </span><span id="local-6989586621679070597"><span class="annot"><span class="annottext">[Tope]
+</span><a href="#local-6989586621679070597"><span class="hs-identifier hs-var">topesList</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-56"></span><span>      </span><span class="annot"><span class="annottext">Substs -&gt; [Tope] -&gt; TopeContext -&gt; f Substs
+forall (f :: * -&gt; *).
+(MonadPlus f, MonadFail f) =&gt;
+Substs -&gt; [Tope] -&gt; TopeContext -&gt; f Substs
+</span><a href="RSTT.Interpret.html#matchTopes"><span class="hs-identifier hs-var">matchTopes</span></a></span><span> </span><span class="annot"><span class="annottext">Substs
+</span><a href="#local-6989586621679070601"><span class="hs-identifier hs-var">subst</span></a></span><span> </span><span class="annot"><span class="annottext">[Tope]
+</span><a href="#local-6989586621679070597"><span class="hs-identifier hs-var">topesList</span></a></span><span> </span><span class="annot"><span class="annottext">TopeContext
+</span><a href="#local-6989586621679070603"><span class="hs-identifier hs-var">topes'</span></a></span><span>
+</span><span id="line-57"></span><span>
+</span><span id="line-58"></span><span id="local-6989586621679070770"><span class="annot"><a href="RSTT.Interpret.html#matchTope"><span class="hs-identifier hs-type">matchTope</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadPlus</span></span><span> </span><span class="annot"><a href="#local-6989586621679070770"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="RSTT.Syntax.Abs.html#Tope"><span class="hs-identifier hs-type">Tope</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="RSTT.Tope.html#Tope"><span class="hs-identifier hs-type">RSTT.Tope</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679070770"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><a href="RSTT.Interpret.html#Substs"><span class="hs-identifier hs-type">Substs</span></a></span></span><span>
+</span><span id="line-59"></span><span id="matchTope"><span class="annot"><span class="annottext">matchTope :: forall (f :: * -&gt; *). MonadPlus f =&gt; Tope -&gt; Tope -&gt; f Substs
+</span><a href="RSTT.Interpret.html#matchTope"><span class="hs-identifier hs-var hs-var">matchTope</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#TopeVar"><span class="hs-identifier hs-type">TopeVar</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#Var"><span class="hs-identifier hs-type">Var</span></a></span><span> </span><span id="local-6989586621679070549"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679070549"><span class="hs-identifier hs-var">x</span></a></span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span id="local-6989586621679070548"><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070548"><span class="hs-identifier hs-var">tope</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Substs -&gt; f Substs
+forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
+</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">(Substs -&gt; f Substs) -&gt; Substs -&gt; f Substs
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">[(Var, Cube)] -&gt; [(Var, Point)] -&gt; [(Var, Tope)] -&gt; Substs
+</span><a href="RSTT.Interpret.html#Substs"><span class="hs-identifier hs-var">Substs</span></a></span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Var
+</span><a href="RSTT.Cube.html#Var"><span class="hs-identifier hs-var">RSTT.Var</span></a></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679070549"><span class="hs-identifier hs-var">x</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070548"><span class="hs-identifier hs-var">tope</span></a></span><span class="hs-special">)</span><span class="hs-special">]</span><span>
+</span><span id="line-60"></span><span class="annot"><a href="RSTT.Interpret.html#matchTope"><span class="hs-identifier hs-var">matchTope</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#TopeCon"><span class="hs-identifier hs-type">TopeCon</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#Label"><span class="hs-identifier hs-type">Label</span></a></span><span> </span><span id="local-6989586621679070545"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679070545"><span class="hs-identifier hs-var">con</span></a></span></span><span class="hs-special">)</span><span> </span><span id="local-6989586621679070544"><span class="annot"><span class="annottext">[Point]
+</span><a href="#local-6989586621679070544"><span class="hs-identifier hs-var">points</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Tope.html#TopeCon"><span class="hs-identifier hs-type">RSTT.TopeCon</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Cube.html#Label"><span class="hs-identifier hs-type">RSTT.Label</span></a></span><span> </span><span id="local-6989586621679070541"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679070541"><span class="hs-identifier hs-var">con'</span></a></span></span><span class="hs-special">)</span><span> </span><span id="local-6989586621679070540"><span class="annot"><span class="annottext">[Point]
+</span><a href="#local-6989586621679070540"><span class="hs-identifier hs-var">points'</span></a></span></span><span class="hs-special">)</span><span>
+</span><span id="line-61"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679070545"><span class="hs-identifier hs-var">con</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; Bool
+forall a. Eq a =&gt; a -&gt; a -&gt; Bool
+</span><span class="hs-operator hs-var">/=</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679070541"><span class="hs-identifier hs-var">con'</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">f Substs
+forall (f :: * -&gt; *) a. Alternative f =&gt; f a
+</span><span class="hs-identifier hs-var">empty</span></span><span>
+</span><span id="line-62"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">[Point] -&gt; Int
+forall (t :: * -&gt; *) a. Foldable t =&gt; t a -&gt; Int
+</span><span class="hs-identifier hs-var">length</span></span><span> </span><span class="annot"><span class="annottext">[Point]
+</span><a href="#local-6989586621679070544"><span class="hs-identifier hs-var">points</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Bool
+forall a. Eq a =&gt; a -&gt; a -&gt; Bool
+</span><span class="hs-operator hs-var">/=</span></span><span> </span><span class="annot"><span class="annottext">[Point] -&gt; Int
+forall (t :: * -&gt; *) a. Foldable t =&gt; t a -&gt; Int
+</span><span class="hs-identifier hs-var">length</span></span><span> </span><span class="annot"><span class="annottext">[Point]
+</span><a href="#local-6989586621679070540"><span class="hs-identifier hs-var">points'</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">f Substs
+forall (f :: * -&gt; *) a. Alternative f =&gt; f a
+</span><span class="hs-identifier hs-var">empty</span></span><span>
+</span><span id="line-63"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Bool
+</span><span class="hs-identifier hs-var">otherwise</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Point -&gt; Point -&gt; f Substs) -&gt; [Point] -&gt; [Point] -&gt; f [Substs]
+forall (m :: * -&gt; *) a b c.
+Applicative m =&gt;
+(a -&gt; b -&gt; m c) -&gt; [a] -&gt; [b] -&gt; m [c]
+</span><span class="hs-identifier hs-var">zipWithM</span></span><span> </span><span class="annot"><span class="annottext">Point -&gt; Point -&gt; f Substs
+forall (f :: * -&gt; *). MonadPlus f =&gt; Point -&gt; Point -&gt; f Substs
+</span><a href="RSTT.Interpret.html#matchPoint"><span class="hs-identifier hs-var">matchPoint</span></a></span><span> </span><span class="annot"><span class="annottext">[Point]
+</span><a href="#local-6989586621679070544"><span class="hs-identifier hs-var">points</span></a></span><span> </span><span class="annot"><span class="annottext">[Point]
+</span><a href="#local-6989586621679070540"><span class="hs-identifier hs-var">points'</span></a></span><span> </span><span class="annot"><span class="annottext">f [Substs] -&gt; ([Substs] -&gt; f Substs) -&gt; f Substs
+forall (m :: * -&gt; *) a b. Monad m =&gt; m a -&gt; (a -&gt; m b) -&gt; m b
+</span><span class="hs-operator hs-var">&gt;&gt;=</span></span><span> </span><span class="annot"><span class="annottext">[Substs] -&gt; f Substs
+forall (f :: * -&gt; *). MonadPlus f =&gt; [Substs] -&gt; f Substs
+</span><a href="RSTT.Interpret.html#mergeManySubsts"><span class="hs-identifier hs-var">mergeManySubsts</span></a></span><span>
+</span><span id="line-64"></span><span class="annot"><a href="RSTT.Interpret.html#matchTope"><span class="hs-identifier hs-var">matchTope</span></a></span><span> </span><span class="annot"><span class="annottext">Tope
+</span><a href="RSTT.Syntax.Abs.html#TopeTop"><span class="hs-identifier hs-var">TopeTop</span></a></span><span> </span><span class="annot"><span class="annottext">Tope
+</span><a href="RSTT.Tope.html#TopeTop"><span class="hs-identifier hs-var">RSTT.TopeTop</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Substs -&gt; f Substs
+forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
+</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[(Var, Cube)] -&gt; [(Var, Point)] -&gt; [(Var, Tope)] -&gt; Substs
+</span><a href="RSTT.Interpret.html#Substs"><span class="hs-identifier hs-var">Substs</span></a></span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span class="hs-special">)</span><span>
+</span><span id="line-65"></span><span class="annot"><a href="RSTT.Interpret.html#matchTope"><span class="hs-identifier hs-var">matchTope</span></a></span><span> </span><span class="annot"><span class="annottext">Tope
+</span><a href="RSTT.Syntax.Abs.html#TopeBottom"><span class="hs-identifier hs-var">TopeBottom</span></a></span><span> </span><span class="annot"><span class="annottext">Tope
+</span><a href="RSTT.Tope.html#TopeBottom"><span class="hs-identifier hs-var">RSTT.TopeBottom</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Substs -&gt; f Substs
+forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
+</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[(Var, Cube)] -&gt; [(Var, Point)] -&gt; [(Var, Tope)] -&gt; Substs
+</span><a href="RSTT.Interpret.html#Substs"><span class="hs-identifier hs-var">Substs</span></a></span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span class="hs-special">)</span><span>
+</span><span id="line-66"></span><span class="annot"><a href="RSTT.Interpret.html#matchTope"><span class="hs-identifier hs-var">matchTope</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#TopeImplies"><span class="hs-identifier hs-type">TopeImplies</span></a></span><span> </span><span id="local-6989586621679070529"><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070529"><span class="hs-identifier hs-var">x</span></a></span></span><span> </span><span id="local-6989586621679070528"><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070528"><span class="hs-identifier hs-var">y</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Tope.html#TopeImplies"><span class="hs-identifier hs-type">RSTT.TopeImplies</span></a></span><span> </span><span id="local-6989586621679070526"><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070526"><span class="hs-identifier hs-var">x'</span></a></span></span><span> </span><span id="local-6989586621679070525"><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070525"><span class="hs-identifier hs-var">y'</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-67"></span><span>  </span><span id="local-6989586621679070524"><span class="annot"><span class="annottext">Substs
+</span><a href="#local-6989586621679070524"><span class="hs-identifier hs-var">s1</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Tope -&gt; Tope -&gt; f Substs
+forall (f :: * -&gt; *). MonadPlus f =&gt; Tope -&gt; Tope -&gt; f Substs
+</span><a href="RSTT.Interpret.html#matchTope"><span class="hs-identifier hs-var">matchTope</span></a></span><span> </span><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070529"><span class="hs-identifier hs-var">x</span></a></span><span> </span><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070526"><span class="hs-identifier hs-var">x'</span></a></span><span>
+</span><span id="line-68"></span><span>  </span><span id="local-6989586621679070523"><span class="annot"><span class="annottext">Substs
+</span><a href="#local-6989586621679070523"><span class="hs-identifier hs-var">s2</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Tope -&gt; Tope -&gt; f Substs
+forall (f :: * -&gt; *). MonadPlus f =&gt; Tope -&gt; Tope -&gt; f Substs
+</span><a href="RSTT.Interpret.html#matchTope"><span class="hs-identifier hs-var">matchTope</span></a></span><span> </span><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070528"><span class="hs-identifier hs-var">y</span></a></span><span> </span><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070525"><span class="hs-identifier hs-var">y'</span></a></span><span>
+</span><span id="line-69"></span><span>  </span><span class="annot"><span class="annottext">Substs -&gt; Substs -&gt; f Substs
+forall (f :: * -&gt; *). MonadPlus f =&gt; Substs -&gt; Substs -&gt; f Substs
+</span><a href="RSTT.Interpret.html#mergeSubsts"><span class="hs-identifier hs-var">mergeSubsts</span></a></span><span> </span><span class="annot"><span class="annottext">Substs
+</span><a href="#local-6989586621679070524"><span class="hs-identifier hs-var">s1</span></a></span><span> </span><span class="annot"><span class="annottext">Substs
+</span><a href="#local-6989586621679070523"><span class="hs-identifier hs-var">s2</span></a></span><span>
+</span><span id="line-70"></span><span class="annot"><a href="RSTT.Interpret.html#matchTope"><span class="hs-identifier hs-var">matchTope</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#TopeOr"><span class="hs-identifier hs-type">TopeOr</span></a></span><span> </span><span id="local-6989586621679070520"><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070520"><span class="hs-identifier hs-var">x</span></a></span></span><span> </span><span id="local-6989586621679070519"><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070519"><span class="hs-identifier hs-var">y</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Tope.html#TopeOr"><span class="hs-identifier hs-type">RSTT.TopeOr</span></a></span><span> </span><span id="local-6989586621679070517"><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070517"><span class="hs-identifier hs-var">x'</span></a></span></span><span> </span><span id="local-6989586621679070516"><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070516"><span class="hs-identifier hs-var">y'</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-71"></span><span>  </span><span id="local-6989586621679070515"><span class="annot"><span class="annottext">Substs
+</span><a href="#local-6989586621679070515"><span class="hs-identifier hs-var">s1</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Tope -&gt; Tope -&gt; f Substs
+forall (f :: * -&gt; *). MonadPlus f =&gt; Tope -&gt; Tope -&gt; f Substs
+</span><a href="RSTT.Interpret.html#matchTope"><span class="hs-identifier hs-var">matchTope</span></a></span><span> </span><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070520"><span class="hs-identifier hs-var">x</span></a></span><span> </span><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070517"><span class="hs-identifier hs-var">x'</span></a></span><span>
+</span><span id="line-72"></span><span>  </span><span id="local-6989586621679070514"><span class="annot"><span class="annottext">Substs
+</span><a href="#local-6989586621679070514"><span class="hs-identifier hs-var">s2</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Tope -&gt; Tope -&gt; f Substs
+forall (f :: * -&gt; *). MonadPlus f =&gt; Tope -&gt; Tope -&gt; f Substs
+</span><a href="RSTT.Interpret.html#matchTope"><span class="hs-identifier hs-var">matchTope</span></a></span><span> </span><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070519"><span class="hs-identifier hs-var">y</span></a></span><span> </span><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070516"><span class="hs-identifier hs-var">y'</span></a></span><span>
+</span><span id="line-73"></span><span>  </span><span class="annot"><span class="annottext">Substs -&gt; Substs -&gt; f Substs
+forall (f :: * -&gt; *). MonadPlus f =&gt; Substs -&gt; Substs -&gt; f Substs
+</span><a href="RSTT.Interpret.html#mergeSubsts"><span class="hs-identifier hs-var">mergeSubsts</span></a></span><span> </span><span class="annot"><span class="annottext">Substs
+</span><a href="#local-6989586621679070515"><span class="hs-identifier hs-var">s1</span></a></span><span> </span><span class="annot"><span class="annottext">Substs
+</span><a href="#local-6989586621679070514"><span class="hs-identifier hs-var">s2</span></a></span><span>
+</span><span id="line-74"></span><span class="annot"><a href="RSTT.Interpret.html#matchTope"><span class="hs-identifier hs-var">matchTope</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#TopeAnd"><span class="hs-identifier hs-type">TopeAnd</span></a></span><span> </span><span id="local-6989586621679070512"><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070512"><span class="hs-identifier hs-var">x</span></a></span></span><span> </span><span id="local-6989586621679070511"><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070511"><span class="hs-identifier hs-var">y</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Tope.html#TopeAnd"><span class="hs-identifier hs-type">RSTT.TopeAnd</span></a></span><span> </span><span id="local-6989586621679070509"><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070509"><span class="hs-identifier hs-var">x'</span></a></span></span><span> </span><span id="local-6989586621679070508"><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070508"><span class="hs-identifier hs-var">y'</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-75"></span><span>  </span><span id="local-6989586621679070507"><span class="annot"><span class="annottext">Substs
+</span><a href="#local-6989586621679070507"><span class="hs-identifier hs-var">s1</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Tope -&gt; Tope -&gt; f Substs
+forall (f :: * -&gt; *). MonadPlus f =&gt; Tope -&gt; Tope -&gt; f Substs
+</span><a href="RSTT.Interpret.html#matchTope"><span class="hs-identifier hs-var">matchTope</span></a></span><span> </span><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070512"><span class="hs-identifier hs-var">x</span></a></span><span> </span><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070509"><span class="hs-identifier hs-var">x'</span></a></span><span>
+</span><span id="line-76"></span><span>  </span><span id="local-6989586621679070506"><span class="annot"><span class="annottext">Substs
+</span><a href="#local-6989586621679070506"><span class="hs-identifier hs-var">s2</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Tope -&gt; Tope -&gt; f Substs
+forall (f :: * -&gt; *). MonadPlus f =&gt; Tope -&gt; Tope -&gt; f Substs
+</span><a href="RSTT.Interpret.html#matchTope"><span class="hs-identifier hs-var">matchTope</span></a></span><span> </span><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070511"><span class="hs-identifier hs-var">y</span></a></span><span> </span><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070508"><span class="hs-identifier hs-var">y'</span></a></span><span>
+</span><span id="line-77"></span><span>  </span><span class="annot"><span class="annottext">Substs -&gt; Substs -&gt; f Substs
+forall (f :: * -&gt; *). MonadPlus f =&gt; Substs -&gt; Substs -&gt; f Substs
+</span><a href="RSTT.Interpret.html#mergeSubsts"><span class="hs-identifier hs-var">mergeSubsts</span></a></span><span> </span><span class="annot"><span class="annottext">Substs
+</span><a href="#local-6989586621679070507"><span class="hs-identifier hs-var">s1</span></a></span><span> </span><span class="annot"><span class="annottext">Substs
+</span><a href="#local-6989586621679070506"><span class="hs-identifier hs-var">s2</span></a></span><span>
+</span><span id="line-78"></span><span class="annot"><a href="RSTT.Interpret.html#matchTope"><span class="hs-identifier hs-var">matchTope</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#TopeEQ"><span class="hs-identifier hs-type">TopeEQ</span></a></span><span> </span><span id="local-6989586621679070504"><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070504"><span class="hs-identifier hs-var">t</span></a></span></span><span> </span><span id="local-6989586621679070503"><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070503"><span class="hs-identifier hs-var">s</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Tope.html#TopeEQ"><span class="hs-identifier hs-type">RSTT.TopeEQ</span></a></span><span> </span><span id="local-6989586621679070501"><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070501"><span class="hs-identifier hs-var">t'</span></a></span></span><span> </span><span id="local-6989586621679070500"><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070500"><span class="hs-identifier hs-var">s'</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-79"></span><span>  </span><span id="local-6989586621679070499"><span class="annot"><span class="annottext">Substs
+</span><a href="#local-6989586621679070499"><span class="hs-identifier hs-var">s1</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Point -&gt; Point -&gt; f Substs
+forall (f :: * -&gt; *). MonadPlus f =&gt; Point -&gt; Point -&gt; f Substs
+</span><a href="RSTT.Interpret.html#matchPoint"><span class="hs-identifier hs-var">matchPoint</span></a></span><span> </span><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070504"><span class="hs-identifier hs-var">t</span></a></span><span> </span><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070501"><span class="hs-identifier hs-var">t'</span></a></span><span>
+</span><span id="line-80"></span><span>  </span><span id="local-6989586621679070498"><span class="annot"><span class="annottext">Substs
+</span><a href="#local-6989586621679070498"><span class="hs-identifier hs-var">s2</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Point -&gt; Point -&gt; f Substs
+forall (f :: * -&gt; *). MonadPlus f =&gt; Point -&gt; Point -&gt; f Substs
+</span><a href="RSTT.Interpret.html#matchPoint"><span class="hs-identifier hs-var">matchPoint</span></a></span><span> </span><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070503"><span class="hs-identifier hs-var">s</span></a></span><span> </span><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070500"><span class="hs-identifier hs-var">s'</span></a></span><span>
+</span><span id="line-81"></span><span>  </span><span class="annot"><span class="annottext">Substs -&gt; Substs -&gt; f Substs
+forall (f :: * -&gt; *). MonadPlus f =&gt; Substs -&gt; Substs -&gt; f Substs
+</span><a href="RSTT.Interpret.html#mergeSubsts"><span class="hs-identifier hs-var">mergeSubsts</span></a></span><span> </span><span class="annot"><span class="annottext">Substs
+</span><a href="#local-6989586621679070499"><span class="hs-identifier hs-var">s1</span></a></span><span> </span><span class="annot"><span class="annottext">Substs
+</span><a href="#local-6989586621679070498"><span class="hs-identifier hs-var">s2</span></a></span><span>
+</span><span id="line-82"></span><span class="annot"><a href="RSTT.Interpret.html#matchTope"><span class="hs-identifier hs-var">matchTope</span></a></span><span> </span><span class="annot"><span class="annottext">Tope
+</span><span class="hs-identifier">_</span></span><span> </span><span class="annot"><span class="annottext">Tope
+</span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">f Substs
+forall (f :: * -&gt; *) a. Alternative f =&gt; f a
+</span><span class="hs-identifier hs-var">empty</span></span><span>
+</span><span id="line-83"></span><span>
+</span><span id="line-84"></span><span id="local-6989586621679070752"><span class="annot"><a href="RSTT.Interpret.html#matchPoint"><span class="hs-identifier hs-type">matchPoint</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadPlus</span></span><span> </span><span class="annot"><a href="#local-6989586621679070752"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="RSTT.Syntax.Abs.html#Point"><span class="hs-identifier hs-type">Point</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="RSTT.Cube.html#Point"><span class="hs-identifier hs-type">RSTT.Point</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679070752"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><a href="RSTT.Interpret.html#Substs"><span class="hs-identifier hs-type">Substs</span></a></span></span><span>
+</span><span id="line-85"></span><span id="matchPoint"><span class="annot"><span class="annottext">matchPoint :: forall (f :: * -&gt; *). MonadPlus f =&gt; Point -&gt; Point -&gt; f Substs
+</span><a href="RSTT.Interpret.html#matchPoint"><span class="hs-identifier hs-var hs-var">matchPoint</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#PointVar"><span class="hs-identifier hs-type">PointVar</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#Var"><span class="hs-identifier hs-type">Var</span></a></span><span> </span><span id="local-6989586621679070471"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679070471"><span class="hs-identifier hs-var">x</span></a></span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span id="local-6989586621679070470"><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070470"><span class="hs-identifier hs-var">point</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Substs -&gt; f Substs
+forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
+</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">(Substs -&gt; f Substs) -&gt; Substs -&gt; f Substs
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">[(Var, Cube)] -&gt; [(Var, Point)] -&gt; [(Var, Tope)] -&gt; Substs
+</span><a href="RSTT.Interpret.html#Substs"><span class="hs-identifier hs-var">Substs</span></a></span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Var
+</span><a href="RSTT.Cube.html#Var"><span class="hs-identifier hs-var">RSTT.Var</span></a></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679070471"><span class="hs-identifier hs-var">x</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070470"><span class="hs-identifier hs-var">point</span></a></span><span class="hs-special">)</span><span class="hs-special">]</span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span>
+</span><span id="line-86"></span><span class="annot"><a href="RSTT.Interpret.html#matchPoint"><span class="hs-identifier hs-var">matchPoint</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#PointCon"><span class="hs-identifier hs-type">PointCon</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#Label"><span class="hs-identifier hs-type">Label</span></a></span><span> </span><span id="local-6989586621679070468"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679070468"><span class="hs-identifier hs-var">con</span></a></span></span><span class="hs-special">)</span><span> </span><span id="local-6989586621679070467"><span class="annot"><span class="annottext">[Point]
+</span><a href="#local-6989586621679070467"><span class="hs-identifier hs-var">points</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Cube.html#PointCon"><span class="hs-identifier hs-type">RSTT.PointCon</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Cube.html#Label"><span class="hs-identifier hs-type">RSTT.Label</span></a></span><span> </span><span id="local-6989586621679070465"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679070465"><span class="hs-identifier hs-var">con'</span></a></span></span><span class="hs-special">)</span><span> </span><span id="local-6989586621679070464"><span class="annot"><span class="annottext">[Point]
+</span><a href="#local-6989586621679070464"><span class="hs-identifier hs-var">points'</span></a></span></span><span class="hs-special">)</span><span>
+</span><span id="line-87"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679070468"><span class="hs-identifier hs-var">con</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; Bool
+forall a. Eq a =&gt; a -&gt; a -&gt; Bool
+</span><span class="hs-operator hs-var">/=</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679070465"><span class="hs-identifier hs-var">con'</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">f Substs
+forall (f :: * -&gt; *) a. Alternative f =&gt; f a
+</span><span class="hs-identifier hs-var">empty</span></span><span>
+</span><span id="line-88"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">[Point] -&gt; Int
+forall (t :: * -&gt; *) a. Foldable t =&gt; t a -&gt; Int
+</span><span class="hs-identifier hs-var">length</span></span><span> </span><span class="annot"><span class="annottext">[Point]
+</span><a href="#local-6989586621679070467"><span class="hs-identifier hs-var">points</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Bool
+forall a. Eq a =&gt; a -&gt; a -&gt; Bool
+</span><span class="hs-operator hs-var">/=</span></span><span> </span><span class="annot"><span class="annottext">[Point] -&gt; Int
+forall (t :: * -&gt; *) a. Foldable t =&gt; t a -&gt; Int
+</span><span class="hs-identifier hs-var">length</span></span><span> </span><span class="annot"><span class="annottext">[Point]
+</span><a href="#local-6989586621679070464"><span class="hs-identifier hs-var">points'</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">f Substs
+forall (f :: * -&gt; *) a. Alternative f =&gt; f a
+</span><span class="hs-identifier hs-var">empty</span></span><span>
+</span><span id="line-89"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Bool
+</span><span class="hs-identifier hs-var">otherwise</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Point -&gt; Point -&gt; f Substs) -&gt; [Point] -&gt; [Point] -&gt; f [Substs]
+forall (m :: * -&gt; *) a b c.
+Applicative m =&gt;
+(a -&gt; b -&gt; m c) -&gt; [a] -&gt; [b] -&gt; m [c]
+</span><span class="hs-identifier hs-var">zipWithM</span></span><span> </span><span class="annot"><span class="annottext">Point -&gt; Point -&gt; f Substs
+forall (f :: * -&gt; *). MonadPlus f =&gt; Point -&gt; Point -&gt; f Substs
+</span><a href="RSTT.Interpret.html#matchPoint"><span class="hs-identifier hs-var">matchPoint</span></a></span><span> </span><span class="annot"><span class="annottext">[Point]
+</span><a href="#local-6989586621679070467"><span class="hs-identifier hs-var">points</span></a></span><span> </span><span class="annot"><span class="annottext">[Point]
+</span><a href="#local-6989586621679070464"><span class="hs-identifier hs-var">points'</span></a></span><span> </span><span class="annot"><span class="annottext">f [Substs] -&gt; ([Substs] -&gt; f Substs) -&gt; f Substs
+forall (m :: * -&gt; *) a b. Monad m =&gt; m a -&gt; (a -&gt; m b) -&gt; m b
+</span><span class="hs-operator hs-var">&gt;&gt;=</span></span><span> </span><span class="annot"><span class="annottext">[Substs] -&gt; f Substs
+forall (f :: * -&gt; *). MonadPlus f =&gt; [Substs] -&gt; f Substs
+</span><a href="RSTT.Interpret.html#mergeManySubsts"><span class="hs-identifier hs-var">mergeManySubsts</span></a></span><span>
+</span><span id="line-90"></span><span class="annot"><a href="RSTT.Interpret.html#matchPoint"><span class="hs-identifier hs-var">matchPoint</span></a></span><span> </span><span class="annot"><span class="annottext">Point
+</span><a href="RSTT.Syntax.Abs.html#PointUnit"><span class="hs-identifier hs-var">PointUnit</span></a></span><span> </span><span class="annot"><span class="annottext">Point
+</span><a href="RSTT.Cube.html#PointUnit"><span class="hs-identifier hs-var">RSTT.PointUnit</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Substs -&gt; f Substs
+forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
+</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[(Var, Cube)] -&gt; [(Var, Point)] -&gt; [(Var, Tope)] -&gt; Substs
+</span><a href="RSTT.Interpret.html#Substs"><span class="hs-identifier hs-var">Substs</span></a></span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span class="hs-special">)</span><span>
+</span><span id="line-91"></span><span class="annot"><a href="RSTT.Interpret.html#matchPoint"><span class="hs-identifier hs-var">matchPoint</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#PointPair"><span class="hs-identifier hs-type">PointPair</span></a></span><span> </span><span id="local-6989586621679070460"><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070460"><span class="hs-identifier hs-var">x</span></a></span></span><span> </span><span id="local-6989586621679070459"><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070459"><span class="hs-identifier hs-var">y</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Cube.html#PointPair"><span class="hs-identifier hs-type">RSTT.PointPair</span></a></span><span> </span><span id="local-6989586621679070457"><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070457"><span class="hs-identifier hs-var">x'</span></a></span></span><span> </span><span id="local-6989586621679070456"><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070456"><span class="hs-identifier hs-var">y'</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-92"></span><span>  </span><span id="local-6989586621679070455"><span class="annot"><span class="annottext">Substs
+</span><a href="#local-6989586621679070455"><span class="hs-identifier hs-var">s1</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Point -&gt; Point -&gt; f Substs
+forall (f :: * -&gt; *). MonadPlus f =&gt; Point -&gt; Point -&gt; f Substs
+</span><a href="RSTT.Interpret.html#matchPoint"><span class="hs-identifier hs-var">matchPoint</span></a></span><span> </span><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070460"><span class="hs-identifier hs-var">x</span></a></span><span> </span><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070457"><span class="hs-identifier hs-var">x'</span></a></span><span>
+</span><span id="line-93"></span><span>  </span><span id="local-6989586621679070454"><span class="annot"><span class="annottext">Substs
+</span><a href="#local-6989586621679070454"><span class="hs-identifier hs-var">s2</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Point -&gt; Point -&gt; f Substs
+forall (f :: * -&gt; *). MonadPlus f =&gt; Point -&gt; Point -&gt; f Substs
+</span><a href="RSTT.Interpret.html#matchPoint"><span class="hs-identifier hs-var">matchPoint</span></a></span><span> </span><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070459"><span class="hs-identifier hs-var">y</span></a></span><span> </span><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070456"><span class="hs-identifier hs-var">y'</span></a></span><span>
+</span><span id="line-94"></span><span>  </span><span class="annot"><span class="annottext">Substs -&gt; Substs -&gt; f Substs
+forall (f :: * -&gt; *). MonadPlus f =&gt; Substs -&gt; Substs -&gt; f Substs
+</span><a href="RSTT.Interpret.html#mergeSubsts"><span class="hs-identifier hs-var">mergeSubsts</span></a></span><span> </span><span class="annot"><span class="annottext">Substs
+</span><a href="#local-6989586621679070455"><span class="hs-identifier hs-var">s1</span></a></span><span> </span><span class="annot"><span class="annottext">Substs
+</span><a href="#local-6989586621679070454"><span class="hs-identifier hs-var">s2</span></a></span><span>
+</span><span id="line-95"></span><span class="annot"><a href="RSTT.Interpret.html#matchPoint"><span class="hs-identifier hs-var">matchPoint</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#PointFirst"><span class="hs-identifier hs-type">PointFirst</span></a></span><span> </span><span id="local-6989586621679070452"><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070452"><span class="hs-identifier hs-var">x</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Cube.html#PointFirst"><span class="hs-identifier hs-type">RSTT.PointFirst</span></a></span><span> </span><span id="local-6989586621679070450"><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070450"><span class="hs-identifier hs-var">x'</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Point -&gt; Point -&gt; f Substs
+forall (f :: * -&gt; *). MonadPlus f =&gt; Point -&gt; Point -&gt; f Substs
+</span><a href="RSTT.Interpret.html#matchPoint"><span class="hs-identifier hs-var">matchPoint</span></a></span><span> </span><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070452"><span class="hs-identifier hs-var">x</span></a></span><span> </span><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070450"><span class="hs-identifier hs-var">x'</span></a></span><span>
+</span><span id="line-96"></span><span class="annot"><a href="RSTT.Interpret.html#matchPoint"><span class="hs-identifier hs-var">matchPoint</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#PointSecond"><span class="hs-identifier hs-type">PointSecond</span></a></span><span> </span><span id="local-6989586621679070448"><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070448"><span class="hs-identifier hs-var">x</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Cube.html#PointSecond"><span class="hs-identifier hs-type">RSTT.PointSecond</span></a></span><span> </span><span id="local-6989586621679070446"><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070446"><span class="hs-identifier hs-var">x'</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Point -&gt; Point -&gt; f Substs
+forall (f :: * -&gt; *). MonadPlus f =&gt; Point -&gt; Point -&gt; f Substs
+</span><a href="RSTT.Interpret.html#matchPoint"><span class="hs-identifier hs-var">matchPoint</span></a></span><span> </span><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070448"><span class="hs-identifier hs-var">x</span></a></span><span> </span><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070446"><span class="hs-identifier hs-var">x'</span></a></span><span>
+</span><span id="line-97"></span><span class="annot"><a href="RSTT.Interpret.html#matchPoint"><span class="hs-identifier hs-var">matchPoint</span></a></span><span> </span><span class="annot"><span class="annottext">Point
+</span><span class="hs-identifier">_</span></span><span> </span><span class="annot"><span class="annottext">Point
+</span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">f Substs
+forall (f :: * -&gt; *) a. Alternative f =&gt; f a
+</span><span class="hs-identifier hs-var">empty</span></span><span>
+</span><span id="line-98"></span><span>
+</span><span id="line-99"></span><span id="local-6989586621679070769"><span class="annot"><a href="RSTT.Interpret.html#matchTopes"><span class="hs-identifier hs-type">matchTopes</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">MonadPlus</span></span><span> </span><span class="annot"><a href="#local-6989586621679070769"><span class="hs-identifier hs-type">f</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadFail</span></span><span> </span><span class="annot"><a href="#local-6989586621679070769"><span class="hs-identifier hs-type">f</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="RSTT.Interpret.html#Substs"><span class="hs-identifier hs-type">Substs</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="RSTT.Syntax.Abs.html#Tope"><span class="hs-identifier hs-type">Tope</span></a></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="RSTT.Tope.html#Tope"><span class="hs-identifier hs-type">RSTT.Tope</span></a></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679070769"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><a href="RSTT.Interpret.html#Substs"><span class="hs-identifier hs-type">Substs</span></a></span></span><span>
+</span><span id="line-100"></span><span id="matchTopes"><span class="annot"><span class="annottext">matchTopes :: forall (f :: * -&gt; *).
+(MonadPlus f, MonadFail f) =&gt;
+Substs -&gt; [Tope] -&gt; TopeContext -&gt; f Substs
+</span><a href="RSTT.Interpret.html#matchTopes"><span class="hs-identifier hs-var hs-var">matchTopes</span></a></span></span><span> </span><span id="local-6989586621679070430"><span class="annot"><span class="annottext">Substs
+</span><a href="#local-6989586621679070430"><span class="hs-identifier hs-var">substs</span></a></span></span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span> </span><span class="annot"><span class="annottext">TopeContext
+</span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Substs -&gt; f Substs
+forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
+</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">Substs
+</span><a href="#local-6989586621679070430"><span class="hs-identifier hs-var">substs</span></a></span><span>
+</span><span id="line-101"></span><span class="annot"><a href="RSTT.Interpret.html#matchTopes"><span class="hs-identifier hs-var">matchTopes</span></a></span><span> </span><span id="local-6989586621679070429"><span class="annot"><span class="annottext">Substs
+</span><a href="#local-6989586621679070429"><span class="hs-identifier hs-var">substs</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679070428"><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070428"><span class="hs-identifier hs-var">tope</span></a></span></span><span class="annot"><span class="hs-glyph hs-type">:</span></span><span id="local-6989586621679070427"><span class="annot"><span class="annottext">[Tope]
+</span><a href="#local-6989586621679070427"><span class="hs-identifier hs-var">topes</span></a></span></span><span class="hs-special">)</span><span> </span><span id="local-6989586621679070426"><span class="annot"><span class="annottext">TopeContext
+</span><a href="#local-6989586621679070426"><span class="hs-identifier hs-var">topes'</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-102"></span><span>  </span><span class="hs-special">(</span><span id="local-6989586621679070425"><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070425"><span class="hs-identifier hs-var">tope''</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679070424"><span class="annot"><span class="annottext">TopeContext
+</span><a href="#local-6989586621679070424"><span class="hs-identifier hs-var">topes''</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">TopeContext -&gt; f (Tope, TopeContext)
+forall (f :: * -&gt; *) a.
+(Alternative f, MonadFail f) =&gt;
+[a] -&gt; f (a, [a])
+</span><a href="RSTT.Tope.Proof.html#selectOne"><span class="hs-identifier hs-var">Prover.selectOne</span></a></span><span> </span><span class="annot"><span class="annottext">TopeContext
+</span><a href="#local-6989586621679070426"><span class="hs-identifier hs-var">topes'</span></a></span><span>
+</span><span id="line-103"></span><span>  </span><span id="local-6989586621679070422"><span class="annot"><span class="annottext">Substs
+</span><a href="#local-6989586621679070422"><span class="hs-identifier hs-var">substs'</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Tope -&gt; Tope -&gt; f Substs
+forall (f :: * -&gt; *). MonadPlus f =&gt; Tope -&gt; Tope -&gt; f Substs
+</span><a href="RSTT.Interpret.html#matchTope"><span class="hs-identifier hs-var">matchTope</span></a></span><span> </span><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070428"><span class="hs-identifier hs-var">tope</span></a></span><span> </span><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070425"><span class="hs-identifier hs-var">tope''</span></a></span><span>
+</span><span id="line-104"></span><span>  </span><span id="local-6989586621679070421"><span class="annot"><span class="annottext">Substs
+</span><a href="#local-6989586621679070421"><span class="hs-identifier hs-var">substs''</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Substs -&gt; Substs -&gt; f Substs
+forall (f :: * -&gt; *). MonadPlus f =&gt; Substs -&gt; Substs -&gt; f Substs
+</span><a href="RSTT.Interpret.html#mergeSubsts"><span class="hs-identifier hs-var">mergeSubsts</span></a></span><span> </span><span class="annot"><span class="annottext">Substs
+</span><a href="#local-6989586621679070429"><span class="hs-identifier hs-var">substs</span></a></span><span> </span><span class="annot"><span class="annottext">Substs
+</span><a href="#local-6989586621679070422"><span class="hs-identifier hs-var">substs'</span></a></span><span>
+</span><span id="line-105"></span><span>  </span><span class="annot"><span class="annottext">Substs -&gt; [Tope] -&gt; TopeContext -&gt; f Substs
+forall (f :: * -&gt; *).
+(MonadPlus f, MonadFail f) =&gt;
+Substs -&gt; [Tope] -&gt; TopeContext -&gt; f Substs
+</span><a href="RSTT.Interpret.html#matchTopes"><span class="hs-identifier hs-var">matchTopes</span></a></span><span> </span><span class="annot"><span class="annottext">Substs
+</span><a href="#local-6989586621679070421"><span class="hs-identifier hs-var">substs''</span></a></span><span> </span><span class="annot"><span class="annottext">[Tope]
+</span><a href="#local-6989586621679070427"><span class="hs-identifier hs-var">topes</span></a></span><span> </span><span class="annot"><span class="annottext">TopeContext
+</span><a href="#local-6989586621679070424"><span class="hs-identifier hs-var">topes''</span></a></span><span>
+</span><span id="line-106"></span><span>
+</span><span id="line-107"></span><span id="local-6989586621679070748"><span class="annot"><a href="RSTT.Interpret.html#mergeSubsts"><span class="hs-identifier hs-type">mergeSubsts</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadPlus</span></span><span> </span><span class="annot"><a href="#local-6989586621679070748"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="RSTT.Interpret.html#Substs"><span class="hs-identifier hs-type">Substs</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="RSTT.Interpret.html#Substs"><span class="hs-identifier hs-type">Substs</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679070748"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><a href="RSTT.Interpret.html#Substs"><span class="hs-identifier hs-type">Substs</span></a></span></span><span>
+</span><span id="line-108"></span><span id="mergeSubsts"><span class="annot"><span class="annottext">mergeSubsts :: forall (f :: * -&gt; *). MonadPlus f =&gt; Substs -&gt; Substs -&gt; f Substs
+</span><a href="RSTT.Interpret.html#mergeSubsts"><span class="hs-identifier hs-var hs-var">mergeSubsts</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Interpret.html#Substs"><span class="hs-identifier hs-type">Substs</span></a></span><span> </span><span id="local-6989586621679070399"><span class="annot"><span class="annottext">[(Var, Cube)]
+</span><a href="#local-6989586621679070399"><span class="hs-identifier hs-var">cubes</span></a></span></span><span> </span><span id="local-6989586621679070398"><span class="annot"><span class="annottext">[(Var, Point)]
+</span><a href="#local-6989586621679070398"><span class="hs-identifier hs-var">points</span></a></span></span><span> </span><span id="local-6989586621679070397"><span class="annot"><span class="annottext">[(Var, Tope)]
+</span><a href="#local-6989586621679070397"><span class="hs-identifier hs-var">topes</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Interpret.html#Substs"><span class="hs-identifier hs-type">Substs</span></a></span><span> </span><span id="local-6989586621679070396"><span class="annot"><span class="annottext">[(Var, Cube)]
+</span><a href="#local-6989586621679070396"><span class="hs-identifier hs-var">cubes'</span></a></span></span><span> </span><span id="local-6989586621679070395"><span class="annot"><span class="annottext">[(Var, Point)]
+</span><a href="#local-6989586621679070395"><span class="hs-identifier hs-var">points'</span></a></span></span><span> </span><span id="local-6989586621679070394"><span class="annot"><span class="annottext">[(Var, Tope)]
+</span><a href="#local-6989586621679070394"><span class="hs-identifier hs-var">topes'</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[(Var, Cube)] -&gt; [(Var, Point)] -&gt; [(Var, Tope)] -&gt; Substs
+</span><a href="RSTT.Interpret.html#Substs"><span class="hs-identifier hs-var">Substs</span></a></span><span>
+</span><span id="line-109"></span><span>  </span><span class="annot"><span class="annottext">([(Var, Cube)] -&gt; [(Var, Point)] -&gt; [(Var, Tope)] -&gt; Substs)
+-&gt; f [(Var, Cube)] -&gt; f ([(Var, Point)] -&gt; [(Var, Tope)] -&gt; Substs)
+forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><span class="hs-operator hs-var">&lt;$&gt;</span></span><span> </span><span class="annot"><span class="annottext">[(Var, Cube)] -&gt; [(Var, Cube)] -&gt; f [(Var, Cube)]
+forall (f :: * -&gt; *) k v.
+(MonadPlus f, Eq k, Eq v) =&gt;
+[(k, v)] -&gt; [(k, v)] -&gt; f [(k, v)]
+</span><a href="RSTT.Interpret.html#merge"><span class="hs-identifier hs-var">merge</span></a></span><span> </span><span class="annot"><span class="annottext">[(Var, Cube)]
+</span><a href="#local-6989586621679070399"><span class="hs-identifier hs-var">cubes</span></a></span><span> </span><span class="annot"><span class="annottext">[(Var, Cube)]
+</span><a href="#local-6989586621679070396"><span class="hs-identifier hs-var">cubes'</span></a></span><span>
+</span><span id="line-110"></span><span>  </span><span class="annot"><span class="annottext">f ([(Var, Point)] -&gt; [(Var, Tope)] -&gt; Substs)
+-&gt; f [(Var, Point)] -&gt; f ([(Var, Tope)] -&gt; Substs)
+forall (f :: * -&gt; *) a b. Applicative f =&gt; f (a -&gt; b) -&gt; f a -&gt; f b
+</span><span class="hs-operator hs-var">&lt;*&gt;</span></span><span> </span><span class="annot"><span class="annottext">[(Var, Point)] -&gt; [(Var, Point)] -&gt; f [(Var, Point)]
+forall (f :: * -&gt; *) k v.
+(MonadPlus f, Eq k, Eq v) =&gt;
+[(k, v)] -&gt; [(k, v)] -&gt; f [(k, v)]
+</span><a href="RSTT.Interpret.html#merge"><span class="hs-identifier hs-var">merge</span></a></span><span> </span><span class="annot"><span class="annottext">[(Var, Point)]
+</span><a href="#local-6989586621679070398"><span class="hs-identifier hs-var">points</span></a></span><span> </span><span class="annot"><span class="annottext">[(Var, Point)]
+</span><a href="#local-6989586621679070395"><span class="hs-identifier hs-var">points'</span></a></span><span>
+</span><span id="line-111"></span><span>  </span><span class="annot"><span class="annottext">f ([(Var, Tope)] -&gt; Substs) -&gt; f [(Var, Tope)] -&gt; f Substs
+forall (f :: * -&gt; *) a b. Applicative f =&gt; f (a -&gt; b) -&gt; f a -&gt; f b
+</span><span class="hs-operator hs-var">&lt;*&gt;</span></span><span> </span><span class="annot"><span class="annottext">[(Var, Tope)] -&gt; [(Var, Tope)] -&gt; f [(Var, Tope)]
+forall (f :: * -&gt; *) k v.
+(MonadPlus f, Eq k, Eq v) =&gt;
+[(k, v)] -&gt; [(k, v)] -&gt; f [(k, v)]
+</span><a href="RSTT.Interpret.html#merge"><span class="hs-identifier hs-var">merge</span></a></span><span> </span><span class="annot"><span class="annottext">[(Var, Tope)]
+</span><a href="#local-6989586621679070397"><span class="hs-identifier hs-var">topes</span></a></span><span> </span><span class="annot"><span class="annottext">[(Var, Tope)]
+</span><a href="#local-6989586621679070394"><span class="hs-identifier hs-var">topes'</span></a></span><span>
+</span><span id="line-112"></span><span>
+</span><span id="line-113"></span><span id="local-6989586621679070749"><span class="annot"><a href="RSTT.Interpret.html#mergeManySubsts"><span class="hs-identifier hs-type">mergeManySubsts</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadPlus</span></span><span> </span><span class="annot"><a href="#local-6989586621679070749"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="RSTT.Interpret.html#Substs"><span class="hs-identifier hs-type">Substs</span></a></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679070749"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><a href="RSTT.Interpret.html#Substs"><span class="hs-identifier hs-type">Substs</span></a></span></span><span>
+</span><span id="line-114"></span><span id="mergeManySubsts"><span class="annot"><span class="annottext">mergeManySubsts :: forall (f :: * -&gt; *). MonadPlus f =&gt; [Substs] -&gt; f Substs
+</span><a href="RSTT.Interpret.html#mergeManySubsts"><span class="hs-identifier hs-var hs-var">mergeManySubsts</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Substs -&gt; Substs -&gt; f Substs) -&gt; Substs -&gt; [Substs] -&gt; f Substs
+forall (t :: * -&gt; *) (m :: * -&gt; *) b a.
+(Foldable t, Monad m) =&gt;
+(b -&gt; a -&gt; m b) -&gt; b -&gt; t a -&gt; m b
+</span><span class="hs-identifier hs-var">foldM</span></span><span> </span><span class="annot"><span class="annottext">Substs -&gt; Substs -&gt; f Substs
+forall (f :: * -&gt; *). MonadPlus f =&gt; Substs -&gt; Substs -&gt; f Substs
+</span><a href="RSTT.Interpret.html#mergeSubsts"><span class="hs-identifier hs-var">mergeSubsts</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[(Var, Cube)] -&gt; [(Var, Point)] -&gt; [(Var, Tope)] -&gt; Substs
+</span><a href="RSTT.Interpret.html#Substs"><span class="hs-identifier hs-var">Substs</span></a></span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span class="hs-special">)</span><span>
+</span><span id="line-115"></span><span>
+</span><span id="line-116"></span><span id="local-6989586621679070737"><span id="local-6989586621679070738"><span id="local-6989586621679070739"><span class="annot"><a href="RSTT.Interpret.html#merge"><span class="hs-identifier hs-type">merge</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">MonadPlus</span></span><span> </span><span class="annot"><a href="#local-6989586621679070739"><span class="hs-identifier hs-type">f</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Eq</span></span><span> </span><span class="annot"><a href="#local-6989586621679070738"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Eq</span></span><span> </span><span class="annot"><a href="#local-6989586621679070737"><span class="hs-identifier hs-type">v</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679070738"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679070737"><span class="hs-identifier hs-type">v</span></a></span><span class="hs-special">)</span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679070738"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679070737"><span class="hs-identifier hs-type">v</span></a></span><span class="hs-special">)</span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679070739"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679070738"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679070737"><span class="hs-identifier hs-type">v</span></a></span><span class="hs-special">)</span><span class="hs-special">]</span></span></span></span><span>
+</span><span id="line-117"></span><span id="merge"><span class="annot"><span class="annottext">merge :: forall (f :: * -&gt; *) k v.
+(MonadPlus f, Eq k, Eq v) =&gt;
+[(k, v)] -&gt; [(k, v)] -&gt; f [(k, v)]
+</span><a href="RSTT.Interpret.html#merge"><span class="hs-identifier hs-var hs-var">merge</span></a></span></span><span> </span><span id="local-6989586621679070378"><span class="annot"><span class="annottext">[(k, v)]
+</span><a href="#local-6989586621679070378"><span class="hs-identifier hs-var">xs</span></a></span></span><span> </span><span id="local-6989586621679070377"><span class="annot"><span class="annottext">[(k, v)]
+</span><a href="#local-6989586621679070377"><span class="hs-identifier hs-var">ys</span></a></span></span><span>
+</span><span id="line-118"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Bool
+</span><a href="#local-6989586621679070376"><span class="hs-identifier hs-var">conflicts</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">f [(k, v)]
+forall (f :: * -&gt; *) a. Alternative f =&gt; f a
+</span><span class="hs-identifier hs-var">empty</span></span><span>
+</span><span id="line-119"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Bool
+</span><span class="hs-identifier hs-var">otherwise</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[(k, v)] -&gt; f [(k, v)]
+forall (m :: * -&gt; *) a. Monad m =&gt; a -&gt; m a
+</span><span class="hs-identifier hs-var">return</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[(k, v)]
+</span><a href="#local-6989586621679070378"><span class="hs-identifier hs-var">xs</span></a></span><span> </span><span class="annot"><span class="annottext">[(k, v)] -&gt; [(k, v)] -&gt; [(k, v)]
+forall a. [a] -&gt; [a] -&gt; [a]
+</span><span class="hs-operator hs-var">++</span></span><span> </span><span class="annot"><span class="annottext">[(k, v)]
+</span><a href="#local-6989586621679070377"><span class="hs-identifier hs-var">ys</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-120"></span><span>  </span><span class="hs-keyword">where</span><span>
+</span><span id="line-121"></span><span>    </span><span id="local-6989586621679070376"><span class="annot"><span class="annottext">conflicts :: Bool
+</span><a href="#local-6989586621679070376"><span class="hs-identifier hs-var hs-var">conflicts</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">((k, v) -&gt; Bool) -&gt; [(k, v)] -&gt; Bool
+forall (t :: * -&gt; *) a. Foldable t =&gt; (a -&gt; Bool) -&gt; t a -&gt; Bool
+</span><span class="hs-identifier hs-var">any</span></span><span> </span><span class="annot"><span class="annottext">(k, v) -&gt; Bool
+</span><a href="#local-6989586621679070373"><span class="hs-identifier hs-var">conflict</span></a></span><span> </span><span class="annot"><span class="annottext">[(k, v)]
+</span><a href="#local-6989586621679070378"><span class="hs-identifier hs-var">xs</span></a></span><span>
+</span><span id="line-122"></span><span>    </span><span id="local-6989586621679070373"><span class="annot"><span class="annottext">conflict :: (k, v) -&gt; Bool
+</span><a href="#local-6989586621679070373"><span class="hs-identifier hs-var hs-var">conflict</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679070370"><span class="annot"><span class="annottext">k
+</span><a href="#local-6989586621679070370"><span class="hs-identifier hs-var">k</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679070369"><span class="annot"><span class="annottext">v
+</span><a href="#local-6989586621679070369"><span class="hs-identifier hs-var">v</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-123"></span><span>      </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">k -&gt; [(k, v)] -&gt; Maybe v
+forall a b. Eq a =&gt; a -&gt; [(a, b)] -&gt; Maybe b
+</span><span class="hs-identifier hs-var">lookup</span></span><span> </span><span class="annot"><span class="annottext">k
+</span><a href="#local-6989586621679070370"><span class="hs-identifier hs-var">k</span></a></span><span> </span><span class="annot"><span class="annottext">[(k, v)]
+</span><a href="#local-6989586621679070377"><span class="hs-identifier hs-var">ys</span></a></span><span> </span><span class="hs-keyword">of</span><span>
+</span><span id="line-124"></span><span>        </span><span class="annot"><span class="annottext">Maybe v
+</span><span class="hs-identifier hs-var">Nothing</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Bool
+</span><span class="hs-identifier hs-var">False</span></span><span>
+</span><span id="line-125"></span><span>        </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span id="local-6989586621679070367"><span class="annot"><span class="annottext">v
+</span><a href="#local-6989586621679070367"><span class="hs-identifier hs-var">v'</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">v
+</span><a href="#local-6989586621679070369"><span class="hs-identifier hs-var">v</span></a></span><span> </span><span class="annot"><span class="annottext">v -&gt; v -&gt; Bool
+forall a. Eq a =&gt; a -&gt; a -&gt; Bool
+</span><span class="hs-operator hs-var">/=</span></span><span> </span><span class="annot"><span class="annottext">v
+</span><a href="#local-6989586621679070367"><span class="hs-identifier hs-var">v'</span></a></span><span>
+</span><span id="line-126"></span><span>
+</span><span id="line-127"></span><span class="annot"><a href="RSTT.Interpret.html#normalizeSequent"><span class="hs-identifier hs-type">normalizeSequent</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="RSTT.Tope.Proof.html#Sequent"><span class="hs-identifier hs-type">Prover.Sequent</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="RSTT.Tope.Proof.html#Sequent"><span class="hs-identifier hs-type">Prover.Sequent</span></a></span><span>
+</span><span id="line-128"></span><span id="normalizeSequent"><span class="annot"><span class="annottext">normalizeSequent :: Sequent -&gt; Sequent
+</span><a href="RSTT.Interpret.html#normalizeSequent"><span class="hs-identifier hs-var hs-var">normalizeSequent</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Sequent -&gt; Sequent
+forall a. a -&gt; a
+</span><span class="hs-identifier hs-var">id</span></span><span> </span><span class="hs-comment">-- FIXME</span><span>
+</span><span id="line-129"></span><span>
+</span><span id="line-130"></span><span class="annot"><a href="RSTT.Interpret.html#applySubsts"><span class="hs-identifier hs-type">applySubsts</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="RSTT.Interpret.html#Substs"><span class="hs-identifier hs-type">Substs</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="RSTT.Syntax.Abs.html#Sequent"><span class="hs-identifier hs-type">Sequent</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="RSTT.Tope.Proof.html#Sequent"><span class="hs-identifier hs-type">Prover.Sequent</span></a></span><span>
+</span><span id="line-131"></span><span id="applySubsts"><span class="annot"><span class="annottext">applySubsts :: Substs -&gt; Sequent -&gt; Sequent
+</span><a href="RSTT.Interpret.html#applySubsts"><span class="hs-identifier hs-var hs-var">applySubsts</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Interpret.html#Substs"><span class="hs-identifier hs-type">Substs</span></a></span><span> </span><span id="local-6989586621679070365"><span class="annot"><span class="annottext">[(Var, Cube)]
+</span><a href="#local-6989586621679070365"><span class="hs-identifier hs-var">cubes</span></a></span></span><span> </span><span id="local-6989586621679070364"><span class="annot"><span class="annottext">[(Var, Point)]
+</span><a href="#local-6989586621679070364"><span class="hs-identifier hs-var">points</span></a></span></span><span> </span><span id="local-6989586621679070363"><span class="annot"><span class="annottext">[(Var, Tope)]
+</span><a href="#local-6989586621679070363"><span class="hs-identifier hs-var">topes</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#Sequent"><span class="hs-identifier hs-type">Sequent</span></a></span><span> </span><span id="local-6989586621679070362"><span class="annot"><span class="annottext">CubeContext
+</span><a href="#local-6989586621679070362"><span class="hs-identifier hs-var">cubeContext</span></a></span></span><span> </span><span id="local-6989586621679070361"><span class="annot"><span class="annottext">TopeContext
+</span><a href="#local-6989586621679070361"><span class="hs-identifier hs-var">topeContext</span></a></span></span><span> </span><span id="local-6989586621679070360"><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070360"><span class="hs-identifier hs-var">tope</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-132"></span><span>  </span><span class="annot"><span class="annottext">[(Var, Cube)] -&gt; TopeContext -&gt; Tope -&gt; Sequent
+</span><a href="RSTT.Tope.Proof.html#Sequent"><span class="hs-identifier hs-var">Prover.Sequent</span></a></span><span>
+</span><span id="line-133"></span><span>    </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[(Var, Cube)] -&gt; CubeContext -&gt; [(Var, Cube)]
+</span><a href="RSTT.Interpret.html#substInCubeContext"><span class="hs-identifier hs-var">substInCubeContext</span></a></span><span> </span><span class="annot"><span class="annottext">[(Var, Cube)]
+</span><a href="#local-6989586621679070365"><span class="hs-identifier hs-var">cubes</span></a></span><span> </span><span class="annot"><span class="annottext">CubeContext
+</span><a href="#local-6989586621679070362"><span class="hs-identifier hs-var">cubeContext</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-134"></span><span>    </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[(Var, Point)] -&gt; [(Var, Tope)] -&gt; TopeContext -&gt; TopeContext
+</span><a href="RSTT.Interpret.html#substInTopeContext"><span class="hs-identifier hs-var">substInTopeContext</span></a></span><span> </span><span class="annot"><span class="annottext">[(Var, Point)]
+</span><a href="#local-6989586621679070364"><span class="hs-identifier hs-var">points</span></a></span><span> </span><span class="annot"><span class="annottext">[(Var, Tope)]
+</span><a href="#local-6989586621679070363"><span class="hs-identifier hs-var">topes</span></a></span><span> </span><span class="annot"><span class="annottext">TopeContext
+</span><a href="#local-6989586621679070361"><span class="hs-identifier hs-var">topeContext</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-135"></span><span>    </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[(Var, Point)] -&gt; [(Var, Tope)] -&gt; Tope -&gt; Tope
+</span><a href="RSTT.Interpret.html#substInTope"><span class="hs-identifier hs-var">substInTope</span></a></span><span> </span><span class="annot"><span class="annottext">[(Var, Point)]
+</span><a href="#local-6989586621679070364"><span class="hs-identifier hs-var">points</span></a></span><span> </span><span class="annot"><span class="annottext">[(Var, Tope)]
+</span><a href="#local-6989586621679070363"><span class="hs-identifier hs-var">topes</span></a></span><span> </span><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070360"><span class="hs-identifier hs-var">tope</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-136"></span><span>
+</span><span id="line-137"></span><span class="annot"><a href="RSTT.Interpret.html#substInCubeContext"><span class="hs-identifier hs-type">substInCubeContext</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Cube.html#Var"><span class="hs-identifier hs-type">RSTT.Var</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="RSTT.Cube.html#Cube"><span class="hs-identifier hs-type">RSTT.Cube</span></a></span><span class="hs-special">)</span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="RSTT.Syntax.Abs.html#CubeContext"><span class="hs-identifier hs-type">CubeContext</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="RSTT.Cube.html#CubeContext"><span class="hs-identifier hs-type">RSTT.CubeContext</span></a></span><span>
+</span><span id="line-138"></span><span id="substInCubeContext"><span class="annot"><span class="annottext">substInCubeContext :: [(Var, Cube)] -&gt; CubeContext -&gt; [(Var, Cube)]
+</span><a href="RSTT.Interpret.html#substInCubeContext"><span class="hs-identifier hs-var hs-var">substInCubeContext</span></a></span></span><span> </span><span class="annot"><span class="annottext">[(Var, Cube)]
+</span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">CubeContext -&gt; [(Var, Cube)]
+</span><a href="RSTT.Interpret.html#convertCubeContext"><span class="hs-identifier hs-var">convertCubeContext</span></a></span><span> </span><span class="hs-comment">-- FIXME</span><span>
+</span><span id="line-139"></span><span>
+</span><span id="line-140"></span><span class="annot"><a href="RSTT.Interpret.html#substInTopeContext"><span class="hs-identifier hs-type">substInTopeContext</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Cube.html#Var"><span class="hs-identifier hs-type">RSTT.Var</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="RSTT.Cube.html#Point"><span class="hs-identifier hs-type">RSTT.Point</span></a></span><span class="hs-special">)</span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Cube.html#Var"><span class="hs-identifier hs-type">RSTT.Var</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="RSTT.Tope.html#Tope"><span class="hs-identifier hs-type">RSTT.Tope</span></a></span><span class="hs-special">)</span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="RSTT.Syntax.Abs.html#TopeContext"><span class="hs-identifier hs-type">TopeContext</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="RSTT.Tope.html#TopeContext"><span class="hs-identifier hs-type">RSTT.TopeContext</span></a></span><span>
+</span><span id="line-141"></span><span id="substInTopeContext"><span class="annot"><span class="annottext">substInTopeContext :: [(Var, Point)] -&gt; [(Var, Tope)] -&gt; TopeContext -&gt; TopeContext
+</span><a href="RSTT.Interpret.html#substInTopeContext"><span class="hs-identifier hs-var hs-var">substInTopeContext</span></a></span></span><span> </span><span class="annot"><span class="annottext">[(Var, Point)]
+</span><span class="hs-identifier">_</span></span><span> </span><span class="annot"><span class="annottext">[(Var, Tope)]
+</span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">TopeContext -&gt; TopeContext
+</span><a href="RSTT.Interpret.html#convertTopeContext"><span class="hs-identifier hs-var">convertTopeContext</span></a></span><span> </span><span class="hs-comment">-- FIXME</span><span>
+</span><span id="line-142"></span><span>
+</span><span id="line-143"></span><span class="annot"><a href="RSTT.Interpret.html#substInTope"><span class="hs-identifier hs-type">substInTope</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Cube.html#Var"><span class="hs-identifier hs-type">RSTT.Var</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="RSTT.Cube.html#Point"><span class="hs-identifier hs-type">RSTT.Point</span></a></span><span class="hs-special">)</span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Cube.html#Var"><span class="hs-identifier hs-type">RSTT.Var</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="RSTT.Tope.html#Tope"><span class="hs-identifier hs-type">RSTT.Tope</span></a></span><span class="hs-special">)</span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="RSTT.Syntax.Abs.html#Tope"><span class="hs-identifier hs-type">Tope</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="RSTT.Tope.html#Tope"><span class="hs-identifier hs-type">RSTT.Tope</span></a></span><span>
+</span><span id="line-144"></span><span id="substInTope"><span class="annot"><span class="annottext">substInTope :: [(Var, Point)] -&gt; [(Var, Tope)] -&gt; Tope -&gt; Tope
+</span><a href="RSTT.Interpret.html#substInTope"><span class="hs-identifier hs-var hs-var">substInTope</span></a></span></span><span> </span><span class="annot"><span class="annottext">[(Var, Point)]
+</span><span class="hs-identifier">_</span></span><span> </span><span class="annot"><span class="annottext">[(Var, Tope)]
+</span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Tope -&gt; Tope
+</span><a href="RSTT.Interpret.html#convertTope"><span class="hs-identifier hs-var">convertTope</span></a></span><span> </span><span class="hs-comment">-- FIXME</span><span>
+</span><span id="line-145"></span><span>
+</span><span id="line-146"></span><span class="hs-comment">-- ** Converting syntax</span><span>
+</span><span id="line-147"></span><span>
+</span><span id="line-148"></span><span class="annot"><a href="RSTT.Interpret.html#convertSequent"><span class="hs-identifier hs-type">convertSequent</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="RSTT.Syntax.Abs.html#Sequent"><span class="hs-identifier hs-type">Sequent</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="RSTT.Tope.Proof.html#Sequent"><span class="hs-identifier hs-type">Prover.Sequent</span></a></span><span>
+</span><span id="line-149"></span><span id="convertSequent"><span class="annot"><span class="annottext">convertSequent :: Sequent -&gt; Sequent
+</span><a href="RSTT.Interpret.html#convertSequent"><span class="hs-identifier hs-var hs-var">convertSequent</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#Sequent"><span class="hs-identifier hs-type">Sequent</span></a></span><span> </span><span id="local-6989586621679070352"><span class="annot"><span class="annottext">CubeContext
+</span><a href="#local-6989586621679070352"><span class="hs-identifier hs-var">points</span></a></span></span><span> </span><span id="local-6989586621679070351"><span class="annot"><span class="annottext">TopeContext
+</span><a href="#local-6989586621679070351"><span class="hs-identifier hs-var">topes</span></a></span></span><span> </span><span id="local-6989586621679070350"><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070350"><span class="hs-identifier hs-var">tope</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[(Var, Cube)] -&gt; TopeContext -&gt; Tope -&gt; Sequent
+</span><a href="RSTT.Tope.Proof.html#Sequent"><span class="hs-identifier hs-var">Prover.Sequent</span></a></span><span>
+</span><span id="line-150"></span><span>  </span><span class="hs-special">(</span><span class="annot"><span class="annottext">CubeContext -&gt; [(Var, Cube)]
+</span><a href="RSTT.Interpret.html#convertCubeContext"><span class="hs-identifier hs-var">convertCubeContext</span></a></span><span> </span><span class="annot"><span class="annottext">CubeContext
+</span><a href="#local-6989586621679070352"><span class="hs-identifier hs-var">points</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-151"></span><span>  </span><span class="hs-special">(</span><span class="annot"><span class="annottext">TopeContext -&gt; TopeContext
+</span><a href="RSTT.Interpret.html#convertTopeContext"><span class="hs-identifier hs-var">convertTopeContext</span></a></span><span> </span><span class="annot"><span class="annottext">TopeContext
+</span><a href="#local-6989586621679070351"><span class="hs-identifier hs-var">topes</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-152"></span><span>  </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Tope -&gt; Tope
+</span><a href="RSTT.Interpret.html#convertTope"><span class="hs-identifier hs-var">convertTope</span></a></span><span> </span><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070350"><span class="hs-identifier hs-var">tope</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-153"></span><span>
+</span><span id="line-154"></span><span class="annot"><a href="RSTT.Interpret.html#convertCubeContext"><span class="hs-identifier hs-type">convertCubeContext</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="RSTT.Syntax.Abs.html#CubeContext"><span class="hs-identifier hs-type">CubeContext</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="RSTT.Cube.html#CubeContext"><span class="hs-identifier hs-type">RSTT.CubeContext</span></a></span><span>
+</span><span id="line-155"></span><span id="convertCubeContext"><span class="annot"><span class="annottext">convertCubeContext :: CubeContext -&gt; [(Var, Cube)]
+</span><a href="RSTT.Interpret.html#convertCubeContext"><span class="hs-identifier hs-var hs-var">convertCubeContext</span></a></span></span><span> </span><span class="annot"><span class="annottext">CubeContext
+</span><a href="RSTT.Syntax.Abs.html#CubeContextEmpty"><span class="hs-identifier hs-var">CubeContextEmpty</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span>
+</span><span id="line-156"></span><span class="annot"><a href="RSTT.Interpret.html#convertCubeContext"><span class="hs-identifier hs-var">convertCubeContext</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#CubeContextNonEmpty"><span class="hs-identifier hs-type">CubeContextNonEmpty</span></a></span><span> </span><span id="local-6989586621679070347"><span class="annot"><span class="annottext">[PointDecl]
+</span><a href="#local-6989586621679070347"><span class="hs-identifier hs-var">pairs</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(PointDecl -&gt; (Var, Cube)) -&gt; [PointDecl] -&gt; [(Var, Cube)]
+forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
+</span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="annot"><span class="annottext">PointDecl -&gt; (Var, Cube)
+</span><a href="#local-6989586621679070346"><span class="hs-identifier hs-var">convert</span></a></span><span> </span><span class="annot"><span class="annottext">[PointDecl]
+</span><a href="#local-6989586621679070347"><span class="hs-identifier hs-var">pairs</span></a></span><span>
+</span><span id="line-157"></span><span>  </span><span class="hs-keyword">where</span><span>
+</span><span id="line-158"></span><span>    </span><span id="local-6989586621679070346"><span class="annot"><span class="annottext">convert :: PointDecl -&gt; (Var, Cube)
+</span><a href="#local-6989586621679070346"><span class="hs-identifier hs-var hs-var">convert</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#PointDecl"><span class="hs-identifier hs-type">PointDecl</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#Var"><span class="hs-identifier hs-type">Var</span></a></span><span> </span><span id="local-6989586621679070344"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679070344"><span class="hs-identifier hs-var">t</span></a></span></span><span class="hs-special">)</span><span> </span><span id="local-6989586621679070343"><span class="annot"><span class="annottext">Cube
+</span><a href="#local-6989586621679070343"><span class="hs-identifier hs-var">cube</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Var
+</span><a href="RSTT.Cube.html#Var"><span class="hs-identifier hs-var">RSTT.Var</span></a></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679070344"><span class="hs-identifier hs-var">t</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Cube -&gt; Cube
+</span><a href="RSTT.Interpret.html#convertCube"><span class="hs-identifier hs-var">convertCube</span></a></span><span> </span><span class="annot"><span class="annottext">Cube
+</span><a href="#local-6989586621679070343"><span class="hs-identifier hs-var">cube</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-159"></span><span>
+</span><span id="line-160"></span><span class="annot"><a href="RSTT.Interpret.html#convertCube"><span class="hs-identifier hs-type">convertCube</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="RSTT.Syntax.Abs.html#Cube"><span class="hs-identifier hs-type">Cube</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="RSTT.Cube.html#Cube"><span class="hs-identifier hs-type">RSTT.Cube</span></a></span><span>
+</span><span id="line-161"></span><span id="convertCube"><span class="annot"><span class="annottext">convertCube :: Cube -&gt; Cube
+</span><a href="RSTT.Interpret.html#convertCube"><span class="hs-identifier hs-var hs-var">convertCube</span></a></span></span><span> </span><span class="annot"><span class="annottext">Cube
+</span><a href="RSTT.Syntax.Abs.html#CubeUnit"><span class="hs-identifier hs-var">CubeUnit</span></a></span><span>              </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Cube
+</span><a href="RSTT.Cube.html#CubeUnit"><span class="hs-identifier hs-var">RSTT.CubeUnit</span></a></span><span>
+</span><span id="line-162"></span><span class="annot"><a href="RSTT.Interpret.html#convertCube"><span class="hs-identifier hs-var">convertCube</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#CubeProduct"><span class="hs-identifier hs-type">CubeProduct</span></a></span><span> </span><span id="local-6989586621679070338"><span class="annot"><span class="annottext">Cube
+</span><a href="#local-6989586621679070338"><span class="hs-identifier hs-var">i</span></a></span></span><span> </span><span id="local-6989586621679070337"><span class="annot"><span class="annottext">Cube
+</span><a href="#local-6989586621679070337"><span class="hs-identifier hs-var">j</span></a></span></span><span class="hs-special">)</span><span>     </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Cube -&gt; Cube -&gt; Cube
+</span><a href="RSTT.Cube.html#CubeProduct"><span class="hs-identifier hs-var">RSTT.CubeProduct</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Cube -&gt; Cube
+</span><a href="RSTT.Interpret.html#convertCube"><span class="hs-identifier hs-var">convertCube</span></a></span><span> </span><span class="annot"><span class="annottext">Cube
+</span><a href="#local-6989586621679070338"><span class="hs-identifier hs-var">i</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Cube -&gt; Cube
+</span><a href="RSTT.Interpret.html#convertCube"><span class="hs-identifier hs-var">convertCube</span></a></span><span> </span><span class="annot"><span class="annottext">Cube
+</span><a href="#local-6989586621679070337"><span class="hs-identifier hs-var">j</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-163"></span><span class="annot"><a href="RSTT.Interpret.html#convertCube"><span class="hs-identifier hs-var">convertCube</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#CubeCon"><span class="hs-identifier hs-type">CubeCon</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#Label"><span class="hs-identifier hs-type">Label</span></a></span><span> </span><span id="local-6989586621679070334"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679070334"><span class="hs-identifier hs-var">con</span></a></span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Label -&gt; Cube
+</span><a href="RSTT.Cube.html#CubeCon"><span class="hs-identifier hs-var">RSTT.CubeCon</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Label
+</span><a href="RSTT.Cube.html#Label"><span class="hs-identifier hs-var">RSTT.Label</span></a></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679070334"><span class="hs-identifier hs-var">con</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-164"></span><span class="annot"><a href="RSTT.Interpret.html#convertCube"><span class="hs-identifier hs-var">convertCube</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#CubeVar"><span class="hs-identifier hs-type">CubeVar</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#Var"><span class="hs-identifier hs-type">Var</span></a></span><span> </span><span id="local-6989586621679070331"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679070331"><span class="hs-identifier hs-var">i</span></a></span></span><span class="hs-special">)</span><span class="hs-special">)</span><span>     </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Var -&gt; Cube
+</span><a href="RSTT.Cube.html#CubeVar"><span class="hs-identifier hs-var">RSTT.CubeVar</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Var
+</span><a href="RSTT.Cube.html#Var"><span class="hs-identifier hs-var">RSTT.Var</span></a></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679070331"><span class="hs-identifier hs-var">i</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-165"></span><span>
+</span><span id="line-166"></span><span class="annot"><a href="RSTT.Interpret.html#convertPoint"><span class="hs-identifier hs-type">convertPoint</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="RSTT.Syntax.Abs.html#Point"><span class="hs-identifier hs-type">Point</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="RSTT.Cube.html#Point"><span class="hs-identifier hs-type">RSTT.Point</span></a></span><span>
+</span><span id="line-167"></span><span id="convertPoint"><span class="annot"><span class="annottext">convertPoint :: Point -&gt; Point
+</span><a href="RSTT.Interpret.html#convertPoint"><span class="hs-identifier hs-var hs-var">convertPoint</span></a></span></span><span> </span><span class="annot"><span class="annottext">Point
+</span><a href="RSTT.Syntax.Abs.html#PointUnit"><span class="hs-identifier hs-var">PointUnit</span></a></span><span>       </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Point
+</span><a href="RSTT.Cube.html#PointUnit"><span class="hs-identifier hs-var">RSTT.PointUnit</span></a></span><span>
+</span><span id="line-168"></span><span class="annot"><a href="RSTT.Interpret.html#convertPoint"><span class="hs-identifier hs-var">convertPoint</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#PointPair"><span class="hs-identifier hs-type">PointPair</span></a></span><span> </span><span id="local-6989586621679070328"><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070328"><span class="hs-identifier hs-var">t</span></a></span></span><span> </span><span id="local-6989586621679070327"><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070327"><span class="hs-identifier hs-var">s</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Point -&gt; Point -&gt; Point
+</span><a href="RSTT.Cube.html#PointPair"><span class="hs-identifier hs-var">RSTT.PointPair</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Point -&gt; Point
+</span><a href="RSTT.Interpret.html#convertPoint"><span class="hs-identifier hs-var">convertPoint</span></a></span><span> </span><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070328"><span class="hs-identifier hs-var">t</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Point -&gt; Point
+</span><a href="RSTT.Interpret.html#convertPoint"><span class="hs-identifier hs-var">convertPoint</span></a></span><span> </span><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070327"><span class="hs-identifier hs-var">s</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-169"></span><span class="annot"><a href="RSTT.Interpret.html#convertPoint"><span class="hs-identifier hs-var">convertPoint</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#PointFirst"><span class="hs-identifier hs-type">PointFirst</span></a></span><span> </span><span id="local-6989586621679070326"><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070326"><span class="hs-identifier hs-var">t</span></a></span></span><span class="hs-special">)</span><span>  </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Point -&gt; Point
+</span><a href="RSTT.Cube.html#PointFirst"><span class="hs-identifier hs-var">RSTT.PointFirst</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Point -&gt; Point
+</span><a href="RSTT.Interpret.html#convertPoint"><span class="hs-identifier hs-var">convertPoint</span></a></span><span> </span><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070326"><span class="hs-identifier hs-var">t</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-170"></span><span class="annot"><a href="RSTT.Interpret.html#convertPoint"><span class="hs-identifier hs-var">convertPoint</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#PointSecond"><span class="hs-identifier hs-type">PointSecond</span></a></span><span> </span><span id="local-6989586621679070325"><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070325"><span class="hs-identifier hs-var">t</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Point -&gt; Point
+</span><a href="RSTT.Cube.html#PointSecond"><span class="hs-identifier hs-var">RSTT.PointSecond</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Point -&gt; Point
+</span><a href="RSTT.Interpret.html#convertPoint"><span class="hs-identifier hs-var">convertPoint</span></a></span><span> </span><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070325"><span class="hs-identifier hs-var">t</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-171"></span><span class="annot"><a href="RSTT.Interpret.html#convertPoint"><span class="hs-identifier hs-var">convertPoint</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#PointCon"><span class="hs-identifier hs-type">PointCon</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#Label"><span class="hs-identifier hs-type">Label</span></a></span><span> </span><span id="local-6989586621679070324"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679070324"><span class="hs-identifier hs-var">con</span></a></span></span><span class="hs-special">)</span><span> </span><span id="local-6989586621679070323"><span class="annot"><span class="annottext">[Point]
+</span><a href="#local-6989586621679070323"><span class="hs-identifier hs-var">points</span></a></span></span><span class="hs-special">)</span><span>
+</span><span id="line-172"></span><span>  </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Label -&gt; [Point] -&gt; Point
+</span><a href="RSTT.Cube.html#PointCon"><span class="hs-identifier hs-var">RSTT.PointCon</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Label
+</span><a href="RSTT.Cube.html#Label"><span class="hs-identifier hs-var">RSTT.Label</span></a></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679070324"><span class="hs-identifier hs-var">con</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(Point -&gt; Point) -&gt; [Point] -&gt; [Point]
+forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
+</span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="annot"><span class="annottext">Point -&gt; Point
+</span><a href="RSTT.Interpret.html#convertPoint"><span class="hs-identifier hs-var">convertPoint</span></a></span><span> </span><span class="annot"><span class="annottext">[Point]
+</span><a href="#local-6989586621679070323"><span class="hs-identifier hs-var">points</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-173"></span><span class="annot"><a href="RSTT.Interpret.html#convertPoint"><span class="hs-identifier hs-var">convertPoint</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#PointVar"><span class="hs-identifier hs-type">PointVar</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#Var"><span class="hs-identifier hs-type">Var</span></a></span><span> </span><span id="local-6989586621679070322"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679070322"><span class="hs-identifier hs-var">i</span></a></span></span><span class="hs-special">)</span><span class="hs-special">)</span><span>     </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Var -&gt; Point
+</span><a href="RSTT.Cube.html#PointVar"><span class="hs-identifier hs-var">RSTT.PointVar</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Var
+</span><a href="RSTT.Cube.html#Var"><span class="hs-identifier hs-var">RSTT.Var</span></a></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679070322"><span class="hs-identifier hs-var">i</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-174"></span><span>
+</span><span id="line-175"></span><span class="annot"><a href="RSTT.Interpret.html#convertTope"><span class="hs-identifier hs-type">convertTope</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="RSTT.Syntax.Abs.html#Tope"><span class="hs-identifier hs-type">Tope</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="RSTT.Tope.html#Tope"><span class="hs-identifier hs-type">RSTT.Tope</span></a></span><span>
+</span><span id="line-176"></span><span id="convertTope"><span class="annot"><span class="annottext">convertTope :: Tope -&gt; Tope
+</span><a href="RSTT.Interpret.html#convertTope"><span class="hs-identifier hs-var hs-var">convertTope</span></a></span></span><span> </span><span class="annot"><span class="annottext">Tope
+</span><a href="RSTT.Syntax.Abs.html#TopeTop"><span class="hs-identifier hs-var">TopeTop</span></a></span><span>           </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Tope
+</span><a href="RSTT.Tope.html#TopeTop"><span class="hs-identifier hs-var">RSTT.TopeTop</span></a></span><span>
+</span><span id="line-177"></span><span class="annot"><a href="RSTT.Interpret.html#convertTope"><span class="hs-identifier hs-var">convertTope</span></a></span><span> </span><span class="annot"><span class="annottext">Tope
+</span><a href="RSTT.Syntax.Abs.html#TopeBottom"><span class="hs-identifier hs-var">TopeBottom</span></a></span><span>        </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Tope
+</span><a href="RSTT.Tope.html#TopeBottom"><span class="hs-identifier hs-var">RSTT.TopeBottom</span></a></span><span>
+</span><span id="line-178"></span><span class="annot"><a href="RSTT.Interpret.html#convertTope"><span class="hs-identifier hs-var">convertTope</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#TopeImplies"><span class="hs-identifier hs-type">TopeImplies</span></a></span><span> </span><span id="local-6989586621679070320"><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070320"><span class="hs-identifier hs-var">x</span></a></span></span><span> </span><span id="local-6989586621679070319"><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070319"><span class="hs-identifier hs-var">y</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Tope -&gt; Tope -&gt; Tope
+</span><a href="RSTT.Tope.html#TopeImplies"><span class="hs-identifier hs-var">RSTT.TopeImplies</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Tope -&gt; Tope
+</span><a href="RSTT.Interpret.html#convertTope"><span class="hs-identifier hs-var">convertTope</span></a></span><span> </span><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070320"><span class="hs-identifier hs-var">x</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Tope -&gt; Tope
+</span><a href="RSTT.Interpret.html#convertTope"><span class="hs-identifier hs-var">convertTope</span></a></span><span> </span><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070319"><span class="hs-identifier hs-var">y</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-179"></span><span class="annot"><a href="RSTT.Interpret.html#convertTope"><span class="hs-identifier hs-var">convertTope</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#TopeOr"><span class="hs-identifier hs-type">TopeOr</span></a></span><span> </span><span id="local-6989586621679070318"><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070318"><span class="hs-identifier hs-var">x</span></a></span></span><span> </span><span id="local-6989586621679070317"><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070317"><span class="hs-identifier hs-var">y</span></a></span></span><span class="hs-special">)</span><span>      </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Tope -&gt; Tope -&gt; Tope
+</span><a href="RSTT.Tope.html#TopeOr"><span class="hs-identifier hs-var">RSTT.TopeOr</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Tope -&gt; Tope
+</span><a href="RSTT.Interpret.html#convertTope"><span class="hs-identifier hs-var">convertTope</span></a></span><span> </span><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070318"><span class="hs-identifier hs-var">x</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Tope -&gt; Tope
+</span><a href="RSTT.Interpret.html#convertTope"><span class="hs-identifier hs-var">convertTope</span></a></span><span> </span><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070317"><span class="hs-identifier hs-var">y</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-180"></span><span class="annot"><a href="RSTT.Interpret.html#convertTope"><span class="hs-identifier hs-var">convertTope</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#TopeAnd"><span class="hs-identifier hs-type">TopeAnd</span></a></span><span> </span><span id="local-6989586621679070316"><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070316"><span class="hs-identifier hs-var">x</span></a></span></span><span> </span><span id="local-6989586621679070315"><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070315"><span class="hs-identifier hs-var">y</span></a></span></span><span class="hs-special">)</span><span>     </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Tope -&gt; Tope -&gt; Tope
+</span><a href="RSTT.Tope.html#TopeAnd"><span class="hs-identifier hs-var">RSTT.TopeAnd</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Tope -&gt; Tope
+</span><a href="RSTT.Interpret.html#convertTope"><span class="hs-identifier hs-var">convertTope</span></a></span><span> </span><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070316"><span class="hs-identifier hs-var">x</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Tope -&gt; Tope
+</span><a href="RSTT.Interpret.html#convertTope"><span class="hs-identifier hs-var">convertTope</span></a></span><span> </span><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679070315"><span class="hs-identifier hs-var">y</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-181"></span><span class="annot"><a href="RSTT.Interpret.html#convertTope"><span class="hs-identifier hs-var">convertTope</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#TopeEQ"><span class="hs-identifier hs-type">TopeEQ</span></a></span><span> </span><span id="local-6989586621679070314"><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070314"><span class="hs-identifier hs-var">t</span></a></span></span><span> </span><span id="local-6989586621679070313"><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070313"><span class="hs-identifier hs-var">s</span></a></span></span><span class="hs-special">)</span><span>      </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Point -&gt; Point -&gt; Tope
+</span><a href="RSTT.Tope.html#TopeEQ"><span class="hs-identifier hs-var">RSTT.TopeEQ</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Point -&gt; Point
+</span><a href="RSTT.Interpret.html#convertPoint"><span class="hs-identifier hs-var">convertPoint</span></a></span><span> </span><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070314"><span class="hs-identifier hs-var">t</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Point -&gt; Point
+</span><a href="RSTT.Interpret.html#convertPoint"><span class="hs-identifier hs-var">convertPoint</span></a></span><span> </span><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679070313"><span class="hs-identifier hs-var">s</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-182"></span><span class="annot"><a href="RSTT.Interpret.html#convertTope"><span class="hs-identifier hs-var">convertTope</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#TopeCon"><span class="hs-identifier hs-type">TopeCon</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#Label"><span class="hs-identifier hs-type">Label</span></a></span><span> </span><span id="local-6989586621679070312"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679070312"><span class="hs-identifier hs-var">con</span></a></span></span><span class="hs-special">)</span><span> </span><span id="local-6989586621679070311"><span class="annot"><span class="annottext">[Point]
+</span><a href="#local-6989586621679070311"><span class="hs-identifier hs-var">points</span></a></span></span><span class="hs-special">)</span><span>
+</span><span id="line-183"></span><span>  </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Label -&gt; [Point] -&gt; Tope
+</span><a href="RSTT.Tope.html#TopeCon"><span class="hs-identifier hs-var">RSTT.TopeCon</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Label
+</span><a href="RSTT.Cube.html#Label"><span class="hs-identifier hs-var">RSTT.Label</span></a></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679070312"><span class="hs-identifier hs-var">con</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(Point -&gt; Point) -&gt; [Point] -&gt; [Point]
+forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
+</span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="annot"><span class="annottext">Point -&gt; Point
+</span><a href="RSTT.Interpret.html#convertPoint"><span class="hs-identifier hs-var">convertPoint</span></a></span><span> </span><span class="annot"><span class="annottext">[Point]
+</span><a href="#local-6989586621679070311"><span class="hs-identifier hs-var">points</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-184"></span><span class="annot"><a href="RSTT.Interpret.html#convertTope"><span class="hs-identifier hs-var">convertTope</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#TopeVar"><span class="hs-identifier hs-type">TopeVar</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#Var"><span class="hs-identifier hs-type">Var</span></a></span><span> </span><span id="local-6989586621679070310"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679070310"><span class="hs-identifier hs-var">phi</span></a></span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Var -&gt; Tope
+</span><a href="RSTT.Tope.html#TopeVar"><span class="hs-identifier hs-var">RSTT.TopeVar</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Var
+</span><a href="RSTT.Cube.html#Var"><span class="hs-identifier hs-var">RSTT.Var</span></a></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679070310"><span class="hs-identifier hs-var">phi</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-185"></span><span>
+</span><span id="line-186"></span><span class="annot"><a href="RSTT.Interpret.html#convertTopeContext"><span class="hs-identifier hs-type">convertTopeContext</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="RSTT.Syntax.Abs.html#TopeContext"><span class="hs-identifier hs-type">TopeContext</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="RSTT.Tope.html#TopeContext"><span class="hs-identifier hs-type">RSTT.TopeContext</span></a></span><span>
+</span><span id="line-187"></span><span id="convertTopeContext"><span class="annot"><span class="annottext">convertTopeContext :: TopeContext -&gt; TopeContext
+</span><a href="RSTT.Interpret.html#convertTopeContext"><span class="hs-identifier hs-var hs-var">convertTopeContext</span></a></span></span><span> </span><span class="annot"><span class="annottext">TopeContext
+</span><a href="RSTT.Syntax.Abs.html#TopeContextEmpty"><span class="hs-identifier hs-var">TopeContextEmpty</span></a></span><span>            </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span>
+</span><span id="line-188"></span><span class="annot"><a href="RSTT.Interpret.html#convertTopeContext"><span class="hs-identifier hs-var">convertTopeContext</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Syntax.Abs.html#TopeContextNonEmpty"><span class="hs-identifier hs-type">TopeContextNonEmpty</span></a></span><span> </span><span id="local-6989586621679070308"><span class="annot"><span class="annottext">[Tope]
+</span><a href="#local-6989586621679070308"><span class="hs-identifier hs-var">topes</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Tope -&gt; Tope) -&gt; [Tope] -&gt; TopeContext
+forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
+</span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="annot"><span class="annottext">Tope -&gt; Tope
+</span><a href="RSTT.Interpret.html#convertTope"><span class="hs-identifier hs-var">convertTope</span></a></span><span> </span><span class="annot"><span class="annottext">[Tope]
+</span><a href="#local-6989586621679070308"><span class="hs-identifier hs-var">topes</span></a></span><span>
+</span><span id="line-189"></span><span>
+</span><span id="line-190"></span></pre></body></html>
