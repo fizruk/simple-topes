@@ -1,2 +1,4 @@
 .stack-work/
 *~
+src/RSTT/Makefile
+*.bak
