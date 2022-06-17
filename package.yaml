@@ -26,6 +26,7 @@ custom-setup:
     - cabal-doctest >=1.0.2 && <1.1
 
 dependencies:
+- array
 - base >= 4.7 && < 5
 - logict
 - mtl
@@ -35,6 +36,10 @@ ghc-options:
 
 library:
   source-dirs: src
+  when:
+  - condition: false
+    other-modules:
+    - RSTT.Syntax.Test
 
 executables:
   simple-topes-exe:
