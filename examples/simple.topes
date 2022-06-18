@@ -52,3 +52,26 @@ prove
   t : TWO, s : TWO, u : TWO |
     (LEQ(t, s) ∨ LEQ(s, u)) ∧ LEQ(t, u)
     ⊢ LEQ(t, u) ∨ LEQ(s, t) ∨ LEQ(u, s)
+
+prove
+  t : TWO, s : TWO | t ≡ Zero, One ≡ t ⊢ One ≡ Zero
+
+prove
+  t : TWO, s : TWO | LEQ(s, t), LEQ(t, u) ⊢ LEQ(s, u)
+
+prove
+  t : TWO, s : TWO | LEQ(One, t), LEQ(t, Zero) ⊢ LEQ(One, Zero)
+
+prove
+  t : TWO, s : TWO | LEQ(t, Zero), LEQ(One, t) ⊢ LEQ(One, Zero)
+
+prove
+  t : TWO, s : TWO | LEQ(t, Zero), LEQ(One, t) ⊢ LEQ(One, Zero)
+
+-- FIXME: this sequent is currently not provable
+prove
+  t : TWO, s : TWO | LEQ(t, Zero), LEQ(One, t) ⊢ ⊥
+
+-- FIXME: this sequent is currently not provable
+prove
+  t : TWO, s : TWO | LEQ(t, Zero), LEQ(One, t) ⊢ t ≡ s
