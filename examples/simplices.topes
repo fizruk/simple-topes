@@ -37,18 +37,6 @@ tope LEQ(TWO, TWO) with
     ———————————————————————
     t : TWO | Zero ≡ One ⊢ ⊥
 
--- | A version of this proof is required
--- for typechecking Theorem 4.2 of RS17 paper.
-prove
-  ⋅ | phi ∧ psi ∨ zeta ∧ chi ⊢ (phi ∨ zeta) ∧ (psi ∨ chi)
-
-prove
-  x : cube_I, y : cube_I, z : cube_I | x ≡ y ∧ y ≡ z ⊢ z ≡ x
-
-prove
-  t : cube_I, s : cube_I, u : cube_I | (t ≡ s ∨ t ≡ u) ∧ s ≡ u ⊢ t ≡ s
-
-prove
-  t : TWO, s : TWO, u : TWO |
-    (LEQ(t, s) ∨ LEQ(s, u)) ∧ LEQ(t, u)
-    ⊢ LEQ(t, u) ∨ LEQ(s, t) ∨ LEQ(u, s)
+shape simplex0 := { t : 𝟙 | ⊤ }
+shape simplex1 := { t : TWO | ⊤ }
+shape simplex2 := { ⟨t1, t2⟩ : TWO × TWO | LEQ(t2, t1) }
