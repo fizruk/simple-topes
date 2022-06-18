@@ -5,6 +5,11 @@
 
 Simple theorem prover for the tope layer of Riehl and Shulman type theory with shapes (RSTT) [1].
 
+```haskell
+prove
+  ⋅ | φ ∧ ψ ∨ ζ ∧ χ ⊢ (φ ∨ ζ) ∧ (ψ ∨ χ)
+```
+
 ```
 [∧R]  ⋅ | φ ∧ ψ ∨ ζ ∧ χ ⊢ (φ ∨ ζ) ∧ (ψ ∨ χ)
 ├─ [∨L]  ⋅ | φ ∧ ψ ∨ ζ ∧ χ ⊢ φ ∨ ζ
