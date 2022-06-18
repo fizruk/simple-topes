@@ -1,7 +1,7 @@
 .stack-work/
 *~
-src/RSTT/Makefile
+simple-topes/src/RSTT/Makefile
 *.bak
 *.o
 *.hi
-src/RSTT/Syntax/Test
+simple-topes/src/RSTT/Syntax/Test
