@@ -49,6 +49,37 @@
           }
       }
 
+      CodeMirror.defineSimpleMode("simple-topes", {
+        // The start state contains the rules that are initially used
+        start: [
+          {regex: /"(?:[^\\]|\\.)*?(?:"|$)/, token: "string"},
+          {regex: /(?:cube|point|tope|rule|prove|with|where|shape)\b/, token: "keyword"},
+          {regex: /𝟙|⟨|⟩|×|⊤|⊥|⋆|π₁|π₂/, token: "builtin"},
+          {regex: /⇒|∨|∧|≡/, token: "attribute"},
+          {regex: /([≤≥𝟘𝟙𝟚𝟛𝟜𝟝𝟞𝟟𝟠𝟡𝟬𝟭𝟮𝟯𝟰𝟱𝟲𝟳𝟴𝟵]|[A-Z])([_≤≥𝟘𝟙𝟚𝟛𝟜𝟝𝟞𝟟𝟠𝟡𝟬𝟭𝟮𝟯𝟰𝟱𝟲𝟳𝟴𝟵]|\d|[a-zA-Z])*/,
+           token: "variable-3"},
+          {regex: /([ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩαβγδεζηθικλμνξοπρςστυφχψω∂]|[a-z])([_²³¹ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩαβγδεζηθικλμνξοπρςστυφχψω⁰⁴⁵⁶⁷⁸⁹₀₁₂₃₄₅₆₇₈₉∂]|\d|[a-zA-Z])*/,
+           token: "variable"},
+          // A next property will cause the mode to move to a different state
+          // {regex: /\/\*/, token: "comment", next: "comment"},
+          // {regex: /[-+\/*=<>!]+/, token: "operator"},
+          // indent and dedent properties guide autoindentation
+          {regex: /where|with/, indent: true},
+          {regex: /[\}\]\)]/, dedent: true},
+          {regex: /([\w][^\s]*)(\s+:)/, token: ["variable-2", null]},
+          {regex: /[\w][^\s]*/, token: "variable"},
+          {regex: /--.*/, token: "comment"}
+        ],
+        // The meta property contains global information about the mode. It
+        // can contain properties like lineComment, which are supported by
+        // all modes, and also directives like dontIndentStates, which are
+        // specific to simple modes.
+        meta: {
+          dontIndentStates: ["comment"],
+          lineComment: "--"
+        }
+      });
+
       /* extract query parameters from the URL */
       const params = new URLSearchParams(window.location.search);
 
@@ -56,8 +87,8 @@
       var frame = document.getElementById("__codemirror__");
       var myCodeMirror = CodeMirror(frame, {
         lineNumbers: true,
-        value: "function myScript(){return 100;}\n",
-        // mode:  "simple-topes",
+        value: "Loading...",
+        mode:  "simple-topes",
         viewportMargin: Infinity,
         indentUnit: 2,
         smartIndent: true,
@@ -65,7 +96,7 @@
         theme: "gruvbox-dark"
       });
 
-      snippet = "";
+      snippet = "-- | The strict interval cube (see RS17 Section 3.1).\ncube 𝟚 with\n  point 𝟬 -- ^ 𝟬 point (left point).\n  point 𝟭 -- ^ 𝟭 point (right point).\n\n-- | Inequality tope for the strict interval cube.\n-- Here axioms are formulated in sequent calculus form.\n-- TODO: verify whether rules have to be adjusted to allow cut-free proofs.\ntope ≤(𝟚, 𝟚) with\n  rule \"(≤) reflexivity\" where\n    ———————————————————————\n    t : 𝟚 | ⋅ ⊢ ≤(t, t)\n\n  rule \"(≤) transitivity\" where\n    t : 𝟚, s : 𝟚, u : 𝟚 | ≤(t, s), ≤(s, u), ≤(t, u) ⊢ φ\n    ——————————————————————————————————————————————————————————————————\n    t : 𝟚, s : 𝟚, u : 𝟚 | ≤(t, s), ≤(s, u) ⊢ φ\n\n  rule \"(≤) antisymmetry\" where\n    t : 𝟚, s : 𝟚 | ≤(t, s), ≤(s, t), s ≡ t ⊢ φ\n    ————————————————————————————————————————————————————\n    t : 𝟚, s : 𝟚 | ≤(t, s), ≤(s, t) ⊢ φ\n\n  rule \"(≤) excluded middle\" where\n    ————————————————————————————————————————————\n    t : 𝟚, s : 𝟚 | ⋅ ⊢ ≤(t, s) ∨ ≤(s, t)\n\n  rule \"(≤) one\" where\n    ———————————————————————\n    t : 𝟚 | ⋅ ⊢ ≤(t, 𝟭)\n\n  rule \"(≤) zero\" where\n    ———————————————————————\n    t : 𝟚 | ⋅ ⊢ ≤(𝟬, t)\n\n  rule \"(≤) distinct\" where\n    ———————————————————————\n    t : 𝟚 | 𝟬 ≡ 𝟭 ⊢ ⊥\n\n-- | A version of this proof is required\n-- for typechecking Theorem 4.2 of RS17 paper.\nprove\n  ⋅ | φ ∧ ψ ∨ ζ ∧ χ ⊢ (φ ∨ ζ) ∧ (ψ ∨ χ)\n\nprove\n  x : cube_I, y : cube_I, z : cube_I | x ≡ y ∧ y ≡ z ⊢ z ≡ x\n\nprove\n  t : cube_I, s : cube_I, u : cube_I | (t ≡ s ∨ t ≡ u) ∧ s ≡ u ⊢ t ≡ s\n\nprove\n  t : 𝟚, s : 𝟚, u : 𝟚 |\n    (≤(t, s) ∨ ≤(s, u)) ∧ ≤(t, u)\n    ⊢ ≤(t, u) ∨ ≤(s, t) ∨ ≤(u, s)\n\nprove\n  t : 𝟚, s : 𝟚 | t ≡ 𝟬, 𝟭 ≡ t ⊢ 𝟭 ≡ 𝟬\n\nprove\n  t : 𝟚, s : 𝟚 | ≤(s, t), ≤(t, u) ⊢ ≤(s, u)\n\nprove\n  t : 𝟚, s : 𝟚 | ≤(𝟭, t), ≤(t, 𝟬) ⊢ ≤(𝟭, 𝟬)\n\nprove\n  t : 𝟚, s : 𝟚 | ≤(t, 𝟬), ≤(𝟭, t) ⊢ ≤(𝟭, 𝟬)\n\nprove\n  t : 𝟚, s : 𝟚 | ≤(t, 𝟬), ≤(𝟭, t) ⊢ ≤(𝟭, 𝟬)\n\n-- FIXME: this sequent is currently not provable\nprove\n  t : 𝟚, s : 𝟚 | ≤(t, 𝟬), ≤(𝟭, t) ⊢ ⊥\n\n-- FIXME: this sequent is currently not provable\nprove\n  t : 𝟚, s : 𝟚 | ≤(t, 𝟬), ≤(𝟭, t) ⊢ t ≡ s\n      ";
 
       /* use default snippet if one is not set in the query parameters */
       if (params.has("snippet")) {
@@ -84,9 +115,7 @@
         });
       }
 
-      if (!snippet) {
-          myCodeMirror.setValue(snippet);
-      }
+      myCodeMirror.setValue(snippet);
     </script>
   </body>
 </html>
