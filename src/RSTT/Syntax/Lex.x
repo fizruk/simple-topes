@@ -34,9 +34,9 @@ $u = [. \n]          -- universal: any character
 $white+ ;
 @rsyms
     { tok (\p s -> PT p (eitherResIdent TV s)) }
-$c (\_ | ($d | $l)) *
+([\≤ \≥ 𝟘 𝟙 𝟚 𝟛 𝟜 𝟝 𝟞 𝟟 𝟠 𝟡 𝟬 𝟭 𝟮 𝟯 𝟰 𝟱 𝟲 𝟳 𝟴 𝟵]| $c)([\_ \≤ \≥ 𝟘 𝟙 𝟚 𝟛 𝟜 𝟝 𝟞 𝟟 𝟠 𝟡 𝟬 𝟭 𝟮 𝟯 𝟰 𝟱 𝟲 𝟳 𝟴 𝟵]| ($d | $l)) *
     { tok (\p s -> PT p (eitherResIdent T_Label s)) }
-$s (\_ | ($d | $l)) *
+$s ([\_ α β γ δ ε ζ η θ ι κ λ μ ν ξ ο π ρ ς σ τ υ φ χ ψ ω]| ($d | $l)) *
     { tok (\p s -> PT p (eitherResIdent T_Var s)) }
 [\- \—][\- \—][\- \—][\- \—]*
     { tok (\p s -> PT p (eitherResIdent T_Line s)) }

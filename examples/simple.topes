@@ -1,41 +1,41 @@
 -- | The strict interval cube (see RS17 Section 3.1).
-cube TWO with
-  point Zero    -- ^ Zero point (left point).
-  point One     -- ^ One point (right point).
+cube 𝟚 with
+  point 𝟬 -- ^ 𝟬 point (left point).
+  point 𝟭 -- ^ 𝟭 point (right point).
 
 -- | Inequality tope for the strict interval cube.
 -- Here axioms are formulated in sequent calculus form.
 -- TODO: verify whether rules have to be adjusted to allow cut-free proofs.
-tope LEQ(TWO, TWO) with
+tope ≤(𝟚, 𝟚) with
   rule "(≤) reflexivity" where
     ———————————————————————
-    t : TWO | ⋅ ⊢ LEQ(t, t)
+    t : 𝟚 | ⋅ ⊢ ≤(t, t)
 
   rule "(≤) transitivity" where
-    t : TWO, s : TWO, u : TWO | LEQ(t, s), LEQ(s, u), LEQ (t, u) ⊢ phi
+    t : 𝟚, s : 𝟚, u : 𝟚 | ≤(t, s), ≤(s, u), ≤ (t, u) ⊢ phi
     ——————————————————————————————————————————————————————————————————
-    t : TWO, s : TWO, u : TWO | LEQ(t, s), LEQ(s, u) ⊢ phi
+    t : 𝟚, s : 𝟚, u : 𝟚 | ≤(t, s), ≤(s, u) ⊢ phi
 
   rule "(≤) antisymmetry" where
-    t : TWO, s : TWO | LEQ(t, s), LEQ(s, t), s ≡ t ⊢ phi
+    t : 𝟚, s : 𝟚 | ≤(t, s), ≤(s, t), s ≡ t ⊢ phi
     ————————————————————————————————————————————————————
-    t : TWO, s : TWO | LEQ(t, s), LEQ(s, t) ⊢ phi
+    t : 𝟚, s : 𝟚 | ≤(t, s), ≤(s, t) ⊢ phi
 
   rule "(≤) excluded middle" where
     ————————————————————————————————————————————
-    t : TWO, s : TWO | ⋅ ⊢ LEQ(t, s) ∨ LEQ(s, t)
+    t : 𝟚, s : 𝟚 | ⋅ ⊢ ≤(t, s) ∨ ≤(s, t)
 
   rule "(≤) one" where
     ———————————————————————
-    t : TWO | ⋅ ⊢ LEQ(t, One)
+    t : 𝟚 | ⋅ ⊢ ≤(t, 𝟭)
 
   rule "(≤) zero" where
     ———————————————————————
-    t : TWO | ⋅ ⊢ LEQ(Zero, t)
+    t : 𝟚 | ⋅ ⊢ ≤(𝟬, t)
 
   rule "(≤) distinct" where
     ———————————————————————
-    t : TWO | Zero ≡ One ⊢ ⊥
+    t : 𝟚 | 𝟬 ≡ 𝟭 ⊢ ⊥
 
 -- | A version of this proof is required
 -- for typechecking Theorem 4.2 of RS17 paper.
@@ -49,29 +49,29 @@ prove
   t : cube_I, s : cube_I, u : cube_I | (t ≡ s ∨ t ≡ u) ∧ s ≡ u ⊢ t ≡ s
 
 prove
-  t : TWO, s : TWO, u : TWO |
-    (LEQ(t, s) ∨ LEQ(s, u)) ∧ LEQ(t, u)
-    ⊢ LEQ(t, u) ∨ LEQ(s, t) ∨ LEQ(u, s)
+  t : 𝟚, s : 𝟚, u : 𝟚 |
+    (≤(t, s) ∨ ≤(s, u)) ∧ ≤(t, u)
+    ⊢ ≤(t, u) ∨ ≤(s, t) ∨ ≤(u, s)
 
 prove
-  t : TWO, s : TWO | t ≡ Zero, One ≡ t ⊢ One ≡ Zero
+  t : 𝟚, s : 𝟚 | t ≡ 𝟬, 𝟭 ≡ t ⊢ 𝟭 ≡ 𝟬
 
 prove
-  t : TWO, s : TWO | LEQ(s, t), LEQ(t, u) ⊢ LEQ(s, u)
+  t : 𝟚, s : 𝟚 | ≤(s, t), ≤(t, u) ⊢ ≤(s, u)
 
 prove
-  t : TWO, s : TWO | LEQ(One, t), LEQ(t, Zero) ⊢ LEQ(One, Zero)
+  t : 𝟚, s : 𝟚 | ≤(𝟭, t), ≤(t, 𝟬) ⊢ ≤(𝟭, 𝟬)
 
 prove
-  t : TWO, s : TWO | LEQ(t, Zero), LEQ(One, t) ⊢ LEQ(One, Zero)
+  t : 𝟚, s : 𝟚 | ≤(t, 𝟬), ≤(𝟭, t) ⊢ ≤(𝟭, 𝟬)
 
 prove
-  t : TWO, s : TWO | LEQ(t, Zero), LEQ(One, t) ⊢ LEQ(One, Zero)
-
--- FIXME: this sequent is currently not provable
-prove
-  t : TWO, s : TWO | LEQ(t, Zero), LEQ(One, t) ⊢ ⊥
+  t : 𝟚, s : 𝟚 | ≤(t, 𝟬), ≤(𝟭, t) ⊢ ≤(𝟭, 𝟬)
 
 -- FIXME: this sequent is currently not provable
 prove
-  t : TWO, s : TWO | LEQ(t, Zero), LEQ(One, t) ⊢ t ≡ s
+  t : 𝟚, s : 𝟚 | ≤(t, 𝟬), ≤(𝟭, t) ⊢ ⊥
+
+-- FIXME: this sequent is currently not provable
+prove
+  t : 𝟚, s : 𝟚 | ≤(t, 𝟬), ≤(𝟭, t) ⊢ t ≡ s

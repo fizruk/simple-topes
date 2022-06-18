@@ -1,42 +1,42 @@
 -- | The strict interval cube (see RS17 Section 3.1).
-cube TWO with
-  point Zero    -- ^ Zero point (left point).
-  point One     -- ^ One point (right point).
+cube 𝟚 with
+  point 𝟬    -- ^ Zero point (left point).
+  point 𝟭    -- ^ One point (right point).
 
 -- | Inequality tope for the strict interval cube.
 -- Here axioms are formulated in sequent calculus form.
 -- TODO: verify whether rules have to be adjusted to allow cut-free proofs.
-tope LEQ(TWO, TWO) with
+tope ≤(𝟚, 𝟚) with
   rule "(≤) reflexivity" where
     ———————————————————————
-    t : TWO | ⋅ ⊢ LEQ(t, t)
+    t : 𝟚 | ⋅ ⊢ ≤(t, t)
 
   rule "(≤) transitivity" where
-    t : TWO, s : TWO, u : TWO | LEQ(t, s), LEQ(s, u), LEQ (t, u) ⊢ phi
+    t : 𝟚, s : 𝟚, u : 𝟚 | ≤(t, s), ≤(s, u), ≤ (t, u) ⊢ phi
     ——————————————————————————————————————————————————————————————————
-    t : TWO, s : TWO, u : TWO | LEQ(t, s), LEQ(s, u) ⊢ phi
+    t : 𝟚, s : 𝟚, u : 𝟚 | ≤(t, s), ≤(s, u) ⊢ phi
 
   rule "(≤) antisymmetry" where
-    t : TWO, s : TWO | LEQ(t, s), LEQ(s, t), s ≡ t ⊢ phi
+    t : 𝟚, s : 𝟚 | ≤(t, s), ≤(s, t), s ≡ t ⊢ phi
     ————————————————————————————————————————————————————
-    t : TWO, s : TWO | LEQ(t, s), LEQ(s, t) ⊢ phi
+    t : 𝟚, s : 𝟚 | ≤(t, s), ≤(s, t) ⊢ phi
 
   rule "(≤) excluded middle" where
     ————————————————————————————————————————————
-    t : TWO, s : TWO | ⋅ ⊢ LEQ(t, s) ∨ LEQ(s, t)
+    t : 𝟚, s : 𝟚 | ⋅ ⊢ ≤(t, s) ∨ ≤(s, t)
 
   rule "(≤) one" where
     ———————————————————————
-    t : TWO | ⋅ ⊢ LEQ(t, One)
+    t : 𝟚 | ⋅ ⊢ ≤(t, 𝟭)
 
   rule "(≤) zero" where
     ———————————————————————
-    t : TWO | ⋅ ⊢ LEQ(Zero, t)
+    t : 𝟚 | ⋅ ⊢ ≤(𝟬, t)
 
   rule "(≤) distinct" where
     ———————————————————————
-    t : TWO | Zero ≡ One ⊢ ⊥
+    t : 𝟚 | 𝟬 ≡ 𝟭 ⊢ ⊥
 
 shape simplex0 := { t : 𝟙 | ⊤ }
-shape simplex1 := { t : TWO | ⊤ }
-shape simplex2 := { ⟨t1, t2⟩ : TWO × TWO | LEQ(t2, t1) }
+shape simplex1 := { t : 𝟚 | ⊤ }
+shape simplex2 := { ⟨t1, t2⟩ : 𝟚 × 𝟚 | ≤(t2, t1) }

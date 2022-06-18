@@ -22,10 +22,10 @@ except ``"`` unless preceded by ``\``.
 
 
 Label literals are recognized by the regular expression
-`````upper ('_' | digit | letter)*`````
+`````(["≤≥𝟘𝟙𝟚𝟛𝟜𝟝𝟞𝟟𝟠𝟡𝟬𝟭𝟮𝟯𝟰𝟱𝟲𝟳𝟴𝟵"] | upper) (["_≤≥𝟘𝟙𝟚𝟛𝟜𝟝𝟞𝟟𝟠𝟡𝟬𝟭𝟮𝟯𝟰𝟱𝟲𝟳𝟴𝟵"] | digit | letter)*`````
 
 Var literals are recognized by the regular expression
-`````lower ('_' | digit | letter)*`````
+`````lower (["_αβγδεζηθικλμνξοπρςστυφχψω"] | digit | letter)*`````
 
 Line literals are recognized by the regular expression
 `````["-—"] ["-—"] ["-—"] ["-—"]*`````
