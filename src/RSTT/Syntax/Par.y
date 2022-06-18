@@ -7,6 +7,8 @@ module RSTT.Syntax.Par
   , pProgram
   , pDecl
   , pListDecl
+  , pShape
+  , pPointPattern
   , pPointConDecl
   , pListPointConDecl
   , pCube
@@ -40,6 +42,8 @@ import RSTT.Syntax.Lex
 %name pProgram Program
 %name pDecl Decl
 %name pListDecl ListDecl
+%name pShape Shape
+%name pPointPattern PointPattern
 %name pPointConDecl PointConDecl
 %name pListPointConDecl ListPointConDecl
 %name pCube Cube
@@ -69,32 +73,34 @@ import RSTT.Syntax.Lex
   ')' { PT _ (TS _ 2) }
   ',' { PT _ (TS _ 3) }
   ':' { PT _ (TS _ 4) }
-  ';' { PT _ (TS _ 5) }
-  'cube' { PT _ (TS _ 6) }
-  'point' { PT _ (TS _ 7) }
-  'prove' { PT _ (TS _ 8) }
-  'rule' { PT _ (TS _ 9) }
-  'tope' { PT _ (TS _ 10) }
-  'where' { PT _ (TS _ 11) }
-  'with' { PT _ (TS _ 12) }
-  '{' { PT _ (TS _ 13) }
-  '|' { PT _ (TS _ 14) }
-  '}' { PT _ (TS _ 15) }
-  '×' { PT _ (TS _ 16) }
-  '⇒' { PT _ (TS _ 17) }
-  '∧' { PT _ (TS _ 18) }
-  '∨' { PT _ (TS _ 19) }
-  '≡' { PT _ (TS _ 20) }
-  '⊢' { PT _ (TS _ 21) }
-  '⊤' { PT _ (TS _ 22) }
-  '⊥' { PT _ (TS _ 23) }
-  '⋅' { PT _ (TS _ 24) }
-  '⋆' { PT _ (TS _ 25) }
-  '⟨' { PT _ (TS _ 26) }
-  '⟩' { PT _ (TS _ 27) }
-  '𝜋₁' { PT _ (TS _ 28) }
-  '𝜋₂' { PT _ (TS _ 29) }
-  '𝟙' { PT _ (TS _ 30) }
+  ':=' { PT _ (TS _ 5) }
+  ';' { PT _ (TS _ 6) }
+  'cube' { PT _ (TS _ 7) }
+  'point' { PT _ (TS _ 8) }
+  'prove' { PT _ (TS _ 9) }
+  'rule' { PT _ (TS _ 10) }
+  'shape' { PT _ (TS _ 11) }
+  'tope' { PT _ (TS _ 12) }
+  'where' { PT _ (TS _ 13) }
+  'with' { PT _ (TS _ 14) }
+  '{' { PT _ (TS _ 15) }
+  '|' { PT _ (TS _ 16) }
+  '}' { PT _ (TS _ 17) }
+  '×' { PT _ (TS _ 18) }
+  '⇒' { PT _ (TS _ 19) }
+  '∧' { PT _ (TS _ 20) }
+  '∨' { PT _ (TS _ 21) }
+  '≡' { PT _ (TS _ 22) }
+  '⊢' { PT _ (TS _ 23) }
+  '⊤' { PT _ (TS _ 24) }
+  '⊥' { PT _ (TS _ 25) }
+  '⋅' { PT _ (TS _ 26) }
+  '⋆' { PT _ (TS _ 27) }
+  '⟨' { PT _ (TS _ 28) }
+  '⟩' { PT _ (TS _ 29) }
+  '𝜋₁' { PT _ (TS _ 30) }
+  '𝜋₂' { PT _ (TS _ 31) }
+  '𝟙' { PT _ (TS _ 32) }
   L_quoted { PT _ (TL $$) }
   L_Label { PT _ (T_Label $$) }
   L_Var { PT _ (T_Var $$) }
@@ -120,12 +126,20 @@ Program : ListDecl { RSTT.Syntax.Abs.Program $1 }
 Decl :: { RSTT.Syntax.Abs.Decl }
 Decl : 'cube' Label 'with' '{' ListPointConDecl '}' { RSTT.Syntax.Abs.DeclCube $2 $5 }
      | 'tope' Label '(' ListCube ')' 'with' '{' ListTopeRule '}' { RSTT.Syntax.Abs.DeclTopePrefix $2 $4 $8 }
+     | 'shape' Var ':=' Shape { RSTT.Syntax.Abs.DeclShape $2 $4 }
      | 'prove' '{' Sequent '}' { RSTT.Syntax.Abs.DeclCommandProve $3 }
 
 ListDecl :: { [RSTT.Syntax.Abs.Decl] }
 ListDecl : {- empty -} { [] }
          | Decl { (:[]) $1 }
          | Decl ';' ListDecl { (:) $1 $3 }
+
+Shape :: { RSTT.Syntax.Abs.Shape }
+Shape : '{' PointPattern ':' Cube '|' Tope '}' { RSTT.Syntax.Abs.Shape $2 $4 $6 }
+
+PointPattern :: { RSTT.Syntax.Abs.PointPattern }
+PointPattern : Var { RSTT.Syntax.Abs.PointPatternVar $1 }
+             | '⟨' PointPattern ',' PointPattern '⟩' { RSTT.Syntax.Abs.PointPatternPair $2 $4 }
 
 PointConDecl :: { RSTT.Syntax.Abs.PointConDecl }
 PointConDecl : 'point' Label { RSTT.Syntax.Abs.NullaryPointConDecl $2 }

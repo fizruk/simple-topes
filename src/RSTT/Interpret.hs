@@ -24,12 +24,15 @@ interpretDecl = \case
     forM_ rules $ \rule@(TopeRule (RuleName name) _ _ _) -> do
       lift $ putStrLn ("INFO: Adding new rule for tope " <> con <> ": " <> name)
       modify (<> convertRule rule)
+  DeclShape (Var shapeName) _shape -> lift $
+    putStrLn ("WARNING: shape definition is ignored for shape " <> show shapeName)
   DeclCommandProve sequent -> do
     let maxDepth = 10
     rules <- get
     lift $ do
       putStrLn ("INFO: running BFS prover with max depth = " <> show maxDepth)
       Prover.proveAndPrintBFS maxDepth rules (convertSequent sequent)
+      putStrLn ""
 
 -- ** Compiling rules
 

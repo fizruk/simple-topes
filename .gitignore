@@ -2,3 +2,6 @@
 *~
 src/RSTT/Makefile
 *.bak
+.o
+.hi
+src/RSTT/Syntax/Test

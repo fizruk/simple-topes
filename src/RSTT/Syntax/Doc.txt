@@ -36,16 +36,16 @@ The set of reserved words is the set of terminals appearing in the grammar. Thos
 
 The reserved words used in Syntax are the following:
   | ``cube`` | ``point`` | ``prove`` | ``rule``
-  | ``tope`` | ``where`` | ``with`` | ``𝜋₁``
-  | ``𝜋₂`` |  |  |
+  | ``shape`` | ``tope`` | ``where`` | ``with``
+  | ``𝜋₁`` | ``𝜋₂`` |  |
 
 The symbols used in Syntax are the following:
   | { | } | ( | )
-  | ; | × | 𝟙 | ,
-  | | | ⊢ | ⋅ | :
-  | ⊤ | ⊥ | ⇒ | ∨
-  | ∧ | ≡ | ⋆ | ⟨
-  | ⟩ |  |  |
+  | := | ; | : | |
+  | ⟨ | , | ⟩ | ×
+  | 𝟙 | ⊢ | ⋅ | ⊤
+  | ⊥ | ⇒ | ∨ | ∧
+  | ≡ | ⋆ |  |
 
 ===Comments===
 Single-line comments begin with --.Multiple-line comments are  enclosed with {- and -}.
@@ -59,10 +59,14 @@ All other symbols are terminals.
   | //Program// | -> | //[Decl]//
   | //Decl// | -> | ``cube`` //Label// ``with`` ``{`` //[PointConDecl]// ``}``
   |  |  **|**  | ``tope`` //Label// ``(`` //[Cube]// ``)`` ``with`` ``{`` //[TopeRule]// ``}``
+  |  |  **|**  | ``shape`` //Var// ``:=`` //Shape//
   |  |  **|**  | ``prove`` ``{`` //Sequent// ``}``
   | //[Decl]// | -> | **eps**
   |  |  **|**  | //Decl//
   |  |  **|**  | //Decl// ``;`` //[Decl]//
+  | //Shape// | -> | ``{`` //PointPattern// ``:`` //Cube// ``|`` //Tope// ``}``
+  | //PointPattern// | -> | //Var//
+  |  |  **|**  | ``⟨`` //PointPattern// ``,`` //PointPattern// ``⟩``
   | //PointConDecl// | -> | ``point`` //Label//
   |  |  **|**  | ``point`` //Label// ``(`` //[Cube]// ``)``
   | //[PointConDecl]// | -> | **eps**

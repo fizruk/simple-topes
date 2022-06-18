@@ -12,8 +12,14 @@ Program.  Program ::= [Decl] ;
 
 DeclCube.         Decl ::= "cube" Label "with" "{" [PointConDecl] "}" ;
 DeclTopePrefix.   Decl ::= "tope" Label "(" [Cube] ")" "with" "{" [TopeRule] "}" ;
+DeclShape.        Decl ::= "shape" Var ":=" Shape ;
 DeclCommandProve. Decl ::= "prove" "{" Sequent "}" ;
 separator Decl ";" ;
+
+Shape.  Shape ::= "{" PointPattern ":" Cube "|" Tope "}" ;
+
+PointPatternVar.  PointPattern ::= Var ;
+PointPatternPair. PointPattern ::= "⟨" PointPattern "," PointPattern "⟩" ;
 
 NullaryPointConDecl.  PointConDecl ::= "point" Label ;
 PrefixPointConDecl.   PointConDecl ::= "point" Label "(" [Cube] ")" ;

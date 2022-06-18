@@ -17,7 +17,15 @@ data Program = Program [Decl]
 data Decl
     = DeclCube Label [PointConDecl]
     | DeclTopePrefix Label [Cube] [TopeRule]
+    | DeclShape Var Shape
     | DeclCommandProve Sequent
+  deriving (C.Eq, C.Ord, C.Show, C.Read)
+
+data Shape = Shape PointPattern Cube Tope
+  deriving (C.Eq, C.Ord, C.Show, C.Read)
+
+data PointPattern
+    = PointPatternVar Var | PointPatternPair PointPattern PointPattern
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data PointConDecl

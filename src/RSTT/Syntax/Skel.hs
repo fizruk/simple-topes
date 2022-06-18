@@ -33,7 +33,17 @@ transDecl :: RSTT.Syntax.Abs.Decl -> Result
 transDecl x = case x of
   RSTT.Syntax.Abs.DeclCube label pointcondecls -> failure x
   RSTT.Syntax.Abs.DeclTopePrefix label cubes toperules -> failure x
+  RSTT.Syntax.Abs.DeclShape var shape -> failure x
   RSTT.Syntax.Abs.DeclCommandProve sequent -> failure x
+
+transShape :: RSTT.Syntax.Abs.Shape -> Result
+transShape x = case x of
+  RSTT.Syntax.Abs.Shape pointpattern cube tope -> failure x
+
+transPointPattern :: RSTT.Syntax.Abs.PointPattern -> Result
+transPointPattern x = case x of
+  RSTT.Syntax.Abs.PointPatternVar var -> failure x
+  RSTT.Syntax.Abs.PointPatternPair pointpattern1 pointpattern2 -> failure x
 
 transPointConDecl :: RSTT.Syntax.Abs.PointConDecl -> Result
 transPointConDecl x = case x of

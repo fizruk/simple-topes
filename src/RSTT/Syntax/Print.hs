@@ -124,6 +124,7 @@ instance Print RSTT.Syntax.Abs.Decl where
   prt i = \case
     RSTT.Syntax.Abs.DeclCube label pointcondecls -> prPrec i 0 (concatD [doc (showString "cube"), prt 0 label, doc (showString "with"), doc (showString "{"), prt 0 pointcondecls, doc (showString "}")])
     RSTT.Syntax.Abs.DeclTopePrefix label cubes toperules -> prPrec i 0 (concatD [doc (showString "tope"), prt 0 label, doc (showString "("), prt 0 cubes, doc (showString ")"), doc (showString "with"), doc (showString "{"), prt 0 toperules, doc (showString "}")])
+    RSTT.Syntax.Abs.DeclShape var shape -> prPrec i 0 (concatD [doc (showString "shape"), prt 0 var, doc (showString ":="), prt 0 shape])
     RSTT.Syntax.Abs.DeclCommandProve sequent -> prPrec i 0 (concatD [doc (showString "prove"), doc (showString "{"), prt 0 sequent, doc (showString "}")])
   prtList _ [] = concatD []
   prtList _ [x] = concatD [prt 0 x]
@@ -131,6 +132,15 @@ instance Print RSTT.Syntax.Abs.Decl where
 
 instance Print [RSTT.Syntax.Abs.Decl] where
   prt = prtList
+
+instance Print RSTT.Syntax.Abs.Shape where
+  prt i = \case
+    RSTT.Syntax.Abs.Shape pointpattern cube tope -> prPrec i 0 (concatD [doc (showString "{"), prt 0 pointpattern, doc (showString ":"), prt 0 cube, doc (showString "|"), prt 0 tope, doc (showString "}")])
+
+instance Print RSTT.Syntax.Abs.PointPattern where
+  prt i = \case
+    RSTT.Syntax.Abs.PointPatternVar var -> prPrec i 0 (concatD [prt 0 var])
+    RSTT.Syntax.Abs.PointPatternPair pointpattern1 pointpattern2 -> prPrec i 0 (concatD [doc (showString "\10216"), prt 0 pointpattern1, doc (showString ","), prt 0 pointpattern2, doc (showString "\10217")])
 
 instance Print RSTT.Syntax.Abs.PointConDecl where
   prt i = \case
