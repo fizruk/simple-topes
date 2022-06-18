@@ -1,3 +1,4 @@
+{-# LANGUAGE DerivingStrategies         #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE LambdaCase                 #-}
 {-# LANGUAGE OverloadedStrings          #-}
@@ -8,11 +9,11 @@ import           Data.String (IsString (..))
 
 -- | A label (constructor symbol).
 newtype Label = Label { getLabel :: String }
-  deriving (Eq, Show, IsString)
+  deriving newtype (Eq, Show, IsString)
 
 -- | A variable.
 newtype Var = Var { getVar :: String }
-  deriving (Eq, Show, IsString)
+  deriving newtype (Eq, Show, IsString)
 
 -- | A cube expression.
 data Cube
