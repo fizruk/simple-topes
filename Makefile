@@ -4,9 +4,9 @@ clean:
 	make --makefile=src/RSTT/Makefile clean
 
 src/RSTT/Syntax/Test: src/RSTT/Syntax.cf
-	pushd src \
+	cd src/ \
 		&& bnfc -d RSTT/Syntax.cf -p RSTT --makefile=RSTT/Makefile \
 		&& make --makefile=RSTT/Makefile ; \
-		popd
+		cd ../
 
 .PHONY: syntax clean
