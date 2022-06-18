@@ -1,7 +1,7 @@
 syntax: src/RSTT/Syntax/Test
 
 clean:
-	make --makefile=src/RSTT/Makefile clean
+	cd src && (make --makefile=RSTT/Makefile clean; cd ../)
 
 src/RSTT/Syntax/Test: src/RSTT/Syntax.cf
 	cd src/ \
