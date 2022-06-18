@@ -228,8 +228,8 @@ instance Print RSTT.Syntax.Abs.Point where
   prt i = \case
     RSTT.Syntax.Abs.PointUnit -> prPrec i 0 (concatD [doc (showString "\8902")])
     RSTT.Syntax.Abs.PointPair point1 point2 -> prPrec i 0 (concatD [doc (showString "\10216"), prt 0 point1, doc (showString ","), prt 0 point2, doc (showString "\10217")])
-    RSTT.Syntax.Abs.PointFirst point -> prPrec i 0 (concatD [doc (showString "\120587\8321"), doc (showString "("), prt 0 point, doc (showString ")")])
-    RSTT.Syntax.Abs.PointSecond point -> prPrec i 0 (concatD [doc (showString "\120587\8322"), doc (showString "("), prt 0 point, doc (showString ")")])
+    RSTT.Syntax.Abs.PointFirst point -> prPrec i 0 (concatD [doc (showString "\960\8321"), doc (showString "("), prt 0 point, doc (showString ")")])
+    RSTT.Syntax.Abs.PointSecond point -> prPrec i 0 (concatD [doc (showString "\960\8322"), doc (showString "("), prt 0 point, doc (showString ")")])
     RSTT.Syntax.Abs.PointCon label points -> prPrec i 0 (concatD [prt 0 label, doc (showString "("), prt 0 points, doc (showString ")")])
     RSTT.Syntax.Abs.PointVar var -> prPrec i 0 (concatD [prt 0 var])
   prtList _ [x] = concatD [prt 0 x]

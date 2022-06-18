@@ -92,8 +92,8 @@ Grammar
 	ListTope -> Tope ',' ListTope                      (83)
 	Point -> '⋆'                                       (84)
 	Point -> '⟨' Point ',' Point '⟩'                   (85)
-	Point -> '𝜋₁' '(' Point ')'                        (86)
-	Point -> '𝜋₂' '(' Point ')'                        (87)
+	Point -> 'π₁' '(' Point ')'                        (86)
+	Point -> 'π₂' '(' Point ')'                        (87)
 	Point -> Label '(' ListPoint ')'                   (88)
 	Point -> Label                                     (89)
 	Point -> Var                                       (90)
@@ -121,19 +121,19 @@ Terminals
 	'|'            { PT _ (TS _ 16) }
 	'}'            { PT _ (TS _ 17) }
 	'×'            { PT _ (TS _ 18) }
-	'⇒'            { PT _ (TS _ 19) }
-	'∧'            { PT _ (TS _ 20) }
-	'∨'            { PT _ (TS _ 21) }
-	'≡'            { PT _ (TS _ 22) }
-	'⊢'            { PT _ (TS _ 23) }
-	'⊤'            { PT _ (TS _ 24) }
-	'⊥'            { PT _ (TS _ 25) }
-	'⋅'            { PT _ (TS _ 26) }
-	'⋆'            { PT _ (TS _ 27) }
-	'⟨'            { PT _ (TS _ 28) }
-	'⟩'            { PT _ (TS _ 29) }
-	'𝜋₁'           { PT _ (TS _ 30) }
-	'𝜋₂'           { PT _ (TS _ 31) }
+	'π₁'           { PT _ (TS _ 19) }
+	'π₂'           { PT _ (TS _ 20) }
+	'⇒'            { PT _ (TS _ 21) }
+	'∧'            { PT _ (TS _ 22) }
+	'∨'            { PT _ (TS _ 23) }
+	'≡'            { PT _ (TS _ 24) }
+	'⊢'            { PT _ (TS _ 25) }
+	'⊤'            { PT _ (TS _ 26) }
+	'⊥'            { PT _ (TS _ 27) }
+	'⋅'            { PT _ (TS _ 28) }
+	'⋆'            { PT _ (TS _ 29) }
+	'⟨'            { PT _ (TS _ 30) }
+	'⟩'            { PT _ (TS _ 31) }
 	'𝟙'            { PT _ (TS _ 32) }
 	L_quoted       { PT _ (TL $$) }
 	L_Label        { PT _ (T_Label $$) }
@@ -410,13 +410,13 @@ State 18
 	%start_pTopeContext -> . TopeContext                (rule 18)
 
 	'('            shift, and enter state 47
+	'π₁'           shift, and enter state 32
+	'π₂'           shift, and enter state 33
 	'⊤'            shift, and enter state 48
 	'⊥'            shift, and enter state 49
 	'⋅'            shift, and enter state 56
-	'⋆'            shift, and enter state 32
-	'⟨'            shift, and enter state 33
-	'𝜋₁'           shift, and enter state 34
-	'𝜋₂'           shift, and enter state 35
+	'⋆'            shift, and enter state 34
+	'⟨'            shift, and enter state 35
 	L_Label        shift, and enter state 36
 	L_Var          shift, and enter state 37
 
@@ -435,12 +435,12 @@ State 19
 	%start_pTope -> . Tope                              (rule 19)
 
 	'('            shift, and enter state 47
+	'π₁'           shift, and enter state 32
+	'π₂'           shift, and enter state 33
 	'⊤'            shift, and enter state 48
 	'⊥'            shift, and enter state 49
-	'⋆'            shift, and enter state 32
-	'⟨'            shift, and enter state 33
-	'𝜋₁'           shift, and enter state 34
-	'𝜋₂'           shift, and enter state 35
+	'⋆'            shift, and enter state 34
+	'⟨'            shift, and enter state 35
 	L_Label        shift, and enter state 36
 	L_Var          shift, and enter state 37
 
@@ -457,10 +457,10 @@ State 20
 	%start_pTope1 -> . Tope1                            (rule 20)
 
 	'('            shift, and enter state 47
-	'⋆'            shift, and enter state 32
-	'⟨'            shift, and enter state 33
-	'𝜋₁'           shift, and enter state 34
-	'𝜋₂'           shift, and enter state 35
+	'π₁'           shift, and enter state 32
+	'π₂'           shift, and enter state 33
+	'⋆'            shift, and enter state 34
+	'⟨'            shift, and enter state 35
 	L_Label        shift, and enter state 36
 	L_Var          shift, and enter state 37
 
@@ -476,10 +476,10 @@ State 21
 	%start_pTope2 -> . Tope2                            (rule 21)
 
 	'('            shift, and enter state 47
-	'⋆'            shift, and enter state 32
-	'⟨'            shift, and enter state 33
-	'𝜋₁'           shift, and enter state 34
-	'𝜋₂'           shift, and enter state 35
+	'π₁'           shift, and enter state 32
+	'π₂'           shift, and enter state 33
+	'⋆'            shift, and enter state 34
+	'⟨'            shift, and enter state 35
 	L_Label        shift, and enter state 36
 	L_Var          shift, and enter state 37
 
@@ -494,10 +494,10 @@ State 22
 	%start_pTope3 -> . Tope3                            (rule 22)
 
 	'('            shift, and enter state 47
-	'⋆'            shift, and enter state 32
-	'⟨'            shift, and enter state 33
-	'𝜋₁'           shift, and enter state 34
-	'𝜋₂'           shift, and enter state 35
+	'π₁'           shift, and enter state 32
+	'π₂'           shift, and enter state 33
+	'⋆'            shift, and enter state 34
+	'⟨'            shift, and enter state 35
 	L_Label        shift, and enter state 36
 	L_Var          shift, and enter state 37
 
@@ -511,12 +511,12 @@ State 23
 	%start_pListTope -> . ListTope                      (rule 23)
 
 	'('            shift, and enter state 47
+	'π₁'           shift, and enter state 32
+	'π₂'           shift, and enter state 33
 	'⊤'            shift, and enter state 48
 	'⊥'            shift, and enter state 49
-	'⋆'            shift, and enter state 32
-	'⟨'            shift, and enter state 33
-	'𝜋₁'           shift, and enter state 34
-	'𝜋₂'           shift, and enter state 35
+	'⋆'            shift, and enter state 34
+	'⟨'            shift, and enter state 35
 	L_Label        shift, and enter state 36
 	L_Var          shift, and enter state 37
 
@@ -533,10 +533,10 @@ State 24
 
 	%start_pPoint -> . Point                            (rule 24)
 
-	'⋆'            shift, and enter state 32
-	'⟨'            shift, and enter state 33
-	'𝜋₁'           shift, and enter state 34
-	'𝜋₂'           shift, and enter state 35
+	'π₁'           shift, and enter state 32
+	'π₂'           shift, and enter state 33
+	'⋆'            shift, and enter state 34
+	'⟨'            shift, and enter state 35
 	L_Label        shift, and enter state 36
 	L_Var          shift, and enter state 37
 
@@ -548,10 +548,10 @@ State 25
 
 	%start_pListPoint -> . ListPoint                    (rule 25)
 
-	'⋆'            shift, and enter state 32
-	'⟨'            shift, and enter state 33
-	'𝜋₁'           shift, and enter state 34
-	'𝜋₂'           shift, and enter state 35
+	'π₁'           shift, and enter state 32
+	'π₂'           shift, and enter state 33
+	'⋆'            shift, and enter state 34
+	'⟨'            shift, and enter state 35
 	L_Label        shift, and enter state 36
 	L_Var          shift, and enter state 37
 
@@ -630,6 +630,20 @@ State 31
 
 State 32
 
+	Point -> 'π₁' . '(' Point ')'                       (rule 86)
+
+	'('            shift, and enter state 128
+
+
+State 33
+
+	Point -> 'π₂' . '(' Point ')'                       (rule 87)
+
+	'('            shift, and enter state 127
+
+
+State 34
+
 	Point -> '⋆' .                                      (rule 84)
 
 	')'            reduce using rule 84
@@ -646,34 +660,20 @@ State 32
 	%eof           reduce using rule 84
 
 
-State 33
+State 35
 
 	Point -> '⟨' . Point ',' Point '⟩'                  (rule 85)
 
-	'⋆'            shift, and enter state 32
-	'⟨'            shift, and enter state 33
-	'𝜋₁'           shift, and enter state 34
-	'𝜋₂'           shift, and enter state 35
+	'π₁'           shift, and enter state 32
+	'π₂'           shift, and enter state 33
+	'⋆'            shift, and enter state 34
+	'⟨'            shift, and enter state 35
 	L_Label        shift, and enter state 36
 	L_Var          shift, and enter state 37
 
 	Label          goto state 28
 	Var            goto state 29
-	Point          goto state 128
-
-State 34
-
-	Point -> '𝜋₁' . '(' Point ')'                       (rule 86)
-
-	'('            shift, and enter state 127
-
-
-State 35
-
-	Point -> '𝜋₂' . '(' Point ')'                       (rule 87)
-
-	'('            shift, and enter state 126
-
+	Point          goto state 126
 
 State 36
 
@@ -834,12 +834,12 @@ State 47
 	Tope3 -> '(' . Tope ')'                             (rule 81)
 
 	'('            shift, and enter state 47
+	'π₁'           shift, and enter state 32
+	'π₂'           shift, and enter state 33
 	'⊤'            shift, and enter state 48
 	'⊥'            shift, and enter state 49
-	'⋆'            shift, and enter state 32
-	'⟨'            shift, and enter state 33
-	'𝜋₁'           shift, and enter state 34
-	'𝜋₂'           shift, and enter state 35
+	'⋆'            shift, and enter state 34
+	'⟨'            shift, and enter state 35
 	L_Label        shift, and enter state 36
 	L_Var          shift, and enter state 37
 
@@ -1450,13 +1450,13 @@ State 115
 	Sequent -> CubeContext '|' . TopeContext '⊢' Tope    (rule 59)
 
 	'('            shift, and enter state 47
+	'π₁'           shift, and enter state 32
+	'π₂'           shift, and enter state 33
 	'⊤'            shift, and enter state 48
 	'⊥'            shift, and enter state 49
 	'⋅'            shift, and enter state 56
-	'⋆'            shift, and enter state 32
-	'⟨'            shift, and enter state 33
-	'𝜋₁'           shift, and enter state 34
-	'𝜋₂'           shift, and enter state 35
+	'⋆'            shift, and enter state 34
+	'⟨'            shift, and enter state 35
 	L_Label        shift, and enter state 36
 	L_Var          shift, and enter state 37
 
@@ -1515,10 +1515,10 @@ State 119
 	Tope -> Tope '⇒' . Tope1                            (rule 72)
 
 	'('            shift, and enter state 47
-	'⋆'            shift, and enter state 32
-	'⟨'            shift, and enter state 33
-	'𝜋₁'           shift, and enter state 34
-	'𝜋₂'           shift, and enter state 35
+	'π₁'           shift, and enter state 32
+	'π₂'           shift, and enter state 33
+	'⋆'            shift, and enter state 34
+	'⟨'            shift, and enter state 35
 	L_Label        shift, and enter state 36
 	L_Var          shift, and enter state 37
 
@@ -1534,10 +1534,10 @@ State 120
 	Tope1 -> Tope1 '∨' . Tope2                          (rule 74)
 
 	'('            shift, and enter state 47
-	'⋆'            shift, and enter state 32
-	'⟨'            shift, and enter state 33
-	'𝜋₁'           shift, and enter state 34
-	'𝜋₂'           shift, and enter state 35
+	'π₁'           shift, and enter state 32
+	'π₂'           shift, and enter state 33
+	'⋆'            shift, and enter state 34
+	'⟨'            shift, and enter state 35
 	L_Label        shift, and enter state 36
 	L_Var          shift, and enter state 37
 
@@ -1552,10 +1552,10 @@ State 121
 	Tope2 -> Tope2 '∧' . Tope3                          (rule 76)
 
 	'('            shift, and enter state 47
-	'⋆'            shift, and enter state 32
-	'⟨'            shift, and enter state 33
-	'𝜋₁'           shift, and enter state 34
-	'𝜋₂'           shift, and enter state 35
+	'π₁'           shift, and enter state 32
+	'π₂'           shift, and enter state 33
+	'⋆'            shift, and enter state 34
+	'⟨'            shift, and enter state 35
 	L_Label        shift, and enter state 36
 	L_Var          shift, and enter state 37
 
@@ -1577,10 +1577,10 @@ State 123
 
 	Tope3 -> Point '≡' . Point                          (rule 78)
 
-	'⋆'            shift, and enter state 32
-	'⟨'            shift, and enter state 33
-	'𝜋₁'           shift, and enter state 34
-	'𝜋₂'           shift, and enter state 35
+	'π₁'           shift, and enter state 32
+	'π₂'           shift, and enter state 33
+	'⋆'            shift, and enter state 34
+	'⟨'            shift, and enter state 35
 	L_Label        shift, and enter state 36
 	L_Var          shift, and enter state 37
 
@@ -1593,12 +1593,12 @@ State 124
 	ListTope -> Tope ',' . ListTope                     (rule 83)
 
 	'('            shift, and enter state 47
+	'π₁'           shift, and enter state 32
+	'π₂'           shift, and enter state 33
 	'⊤'            shift, and enter state 48
 	'⊥'            shift, and enter state 49
-	'⋆'            shift, and enter state 32
-	'⟨'            shift, and enter state 33
-	'𝜋₁'           shift, and enter state 34
-	'𝜋₂'           shift, and enter state 35
+	'⋆'            shift, and enter state 34
+	'⟨'            shift, and enter state 35
 	L_Label        shift, and enter state 36
 	L_Var          shift, and enter state 37
 
@@ -1616,10 +1616,10 @@ State 125
 	Tope3 -> Label '(' . ListPoint ')'                  (rule 79)
 	Point -> Label '(' . ListPoint ')'                  (rule 88)
 
-	'⋆'            shift, and enter state 32
-	'⟨'            shift, and enter state 33
-	'𝜋₁'           shift, and enter state 34
-	'𝜋₂'           shift, and enter state 35
+	'π₁'           shift, and enter state 32
+	'π₂'           shift, and enter state 33
+	'⋆'            shift, and enter state 34
+	'⟨'            shift, and enter state 35
 	L_Label        shift, and enter state 36
 	L_Var          shift, and enter state 37
 
@@ -1630,27 +1630,19 @@ State 125
 
 State 126
 
-	Point -> '𝜋₂' '(' . Point ')'                       (rule 87)
+	Point -> '⟨' Point . ',' Point '⟩'                  (rule 85)
 
-	'⋆'            shift, and enter state 32
-	'⟨'            shift, and enter state 33
-	'𝜋₁'           shift, and enter state 34
-	'𝜋₂'           shift, and enter state 35
-	L_Label        shift, and enter state 36
-	L_Var          shift, and enter state 37
+	','            shift, and enter state 135
 
-	Label          goto state 28
-	Var            goto state 29
-	Point          goto state 135
 
 State 127
 
-	Point -> '𝜋₁' '(' . Point ')'                       (rule 86)
+	Point -> 'π₂' '(' . Point ')'                       (rule 87)
 
-	'⋆'            shift, and enter state 32
-	'⟨'            shift, and enter state 33
-	'𝜋₁'           shift, and enter state 34
-	'𝜋₂'           shift, and enter state 35
+	'π₁'           shift, and enter state 32
+	'π₂'           shift, and enter state 33
+	'⋆'            shift, and enter state 34
+	'⟨'            shift, and enter state 35
 	L_Label        shift, and enter state 36
 	L_Var          shift, and enter state 37
 
@@ -1660,19 +1652,27 @@ State 127
 
 State 128
 
-	Point -> '⟨' Point . ',' Point '⟩'                  (rule 85)
+	Point -> 'π₁' '(' . Point ')'                       (rule 86)
 
-	','            shift, and enter state 133
+	'π₁'           shift, and enter state 32
+	'π₂'           shift, and enter state 33
+	'⋆'            shift, and enter state 34
+	'⟨'            shift, and enter state 35
+	L_Label        shift, and enter state 36
+	L_Var          shift, and enter state 37
 
+	Label          goto state 28
+	Var            goto state 29
+	Point          goto state 133
 
 State 129
 
 	ListPoint -> Point ',' . ListPoint                  (rule 92)
 
-	'⋆'            shift, and enter state 32
-	'⟨'            shift, and enter state 33
-	'𝜋₁'           shift, and enter state 34
-	'𝜋₂'           shift, and enter state 35
+	'π₁'           shift, and enter state 32
+	'π₂'           shift, and enter state 33
+	'⋆'            shift, and enter state 34
+	'⟨'            shift, and enter state 35
 	L_Label        shift, and enter state 36
 	L_Var          shift, and enter state 37
 
@@ -1685,10 +1685,10 @@ State 130
 
 	Point -> Label '(' . ListPoint ')'                  (rule 88)
 
-	'⋆'            shift, and enter state 32
-	'⟨'            shift, and enter state 33
-	'𝜋₁'           shift, and enter state 34
-	'𝜋₂'           shift, and enter state 35
+	'π₁'           shift, and enter state 32
+	'π₂'           shift, and enter state 33
+	'⋆'            shift, and enter state 34
+	'⟨'            shift, and enter state 35
 	L_Label        shift, and enter state 36
 	L_Var          shift, and enter state 37
 
@@ -1714,32 +1714,32 @@ State 132
 
 State 133
 
-	Point -> '⟨' Point ',' . Point '⟩'                  (rule 85)
+	Point -> 'π₁' '(' Point . ')'                       (rule 86)
 
-	'⋆'            shift, and enter state 32
-	'⟨'            shift, and enter state 33
-	'𝜋₁'           shift, and enter state 34
-	'𝜋₂'           shift, and enter state 35
-	L_Label        shift, and enter state 36
-	L_Var          shift, and enter state 37
+	')'            shift, and enter state 173
 
-	Label          goto state 28
-	Var            goto state 29
-	Point          goto state 173
 
 State 134
 
-	Point -> '𝜋₁' '(' Point . ')'                       (rule 86)
+	Point -> 'π₂' '(' Point . ')'                       (rule 87)
 
 	')'            shift, and enter state 172
 
 
 State 135
 
-	Point -> '𝜋₂' '(' Point . ')'                       (rule 87)
+	Point -> '⟨' Point ',' . Point '⟩'                  (rule 85)
 
-	')'            shift, and enter state 171
+	'π₁'           shift, and enter state 32
+	'π₂'           shift, and enter state 33
+	'⋆'            shift, and enter state 34
+	'⟨'            shift, and enter state 35
+	L_Label        shift, and enter state 36
+	L_Var          shift, and enter state 37
 
+	Label          goto state 28
+	Var            goto state 29
+	Point          goto state 171
 
 State 136
 
@@ -2084,12 +2084,12 @@ State 169
 	Sequent -> CubeContext '|' TopeContext '⊢' . Tope    (rule 59)
 
 	'('            shift, and enter state 47
+	'π₁'           shift, and enter state 32
+	'π₂'           shift, and enter state 33
 	'⊤'            shift, and enter state 48
 	'⊥'            shift, and enter state 49
-	'⋆'            shift, and enter state 32
-	'⟨'            shift, and enter state 33
-	'𝜋₁'           shift, and enter state 34
-	'𝜋₂'           shift, and enter state 35
+	'⋆'            shift, and enter state 34
+	'⟨'            shift, and enter state 35
 	L_Label        shift, and enter state 36
 	L_Var          shift, and enter state 37
 
@@ -2121,7 +2121,14 @@ State 170
 
 State 171
 
-	Point -> '𝜋₂' '(' Point ')' .                       (rule 87)
+	Point -> '⟨' Point ',' Point . '⟩'                  (rule 85)
+
+	'⟩'            shift, and enter state 175
+
+
+State 172
+
+	Point -> 'π₂' '(' Point ')' .                       (rule 87)
 
 	')'            reduce using rule 87
 	','            reduce using rule 87
@@ -2137,9 +2144,9 @@ State 171
 	%eof           reduce using rule 87
 
 
-State 172
+State 173
 
-	Point -> '𝜋₁' '(' Point ')' .                       (rule 86)
+	Point -> 'π₁' '(' Point ')' .                       (rule 86)
 
 	')'            reduce using rule 86
 	','            reduce using rule 86
@@ -2153,13 +2160,6 @@ State 172
 	'⟩'            reduce using rule 86
 	L_Line         reduce using rule 86
 	%eof           reduce using rule 86
-
-
-State 173
-
-	Point -> '⟨' Point ',' Point . '⟩'                  (rule 85)
-
-	'⟩'            shift, and enter state 175
 
 
 State 174
@@ -2241,12 +2241,12 @@ State 180
 	Shape -> '{' PointPattern ':' Cube '|' . Tope '}'    (rule 38)
 
 	'('            shift, and enter state 47
+	'π₁'           shift, and enter state 32
+	'π₂'           shift, and enter state 33
 	'⊤'            shift, and enter state 48
 	'⊥'            shift, and enter state 49
-	'⋆'            shift, and enter state 32
-	'⟨'            shift, and enter state 33
-	'𝜋₁'           shift, and enter state 34
-	'𝜋₂'           shift, and enter state 35
+	'⋆'            shift, and enter state 34
+	'⟨'            shift, and enter state 35
 	L_Label        shift, and enter state 36
 	L_Var          shift, and enter state 37
 

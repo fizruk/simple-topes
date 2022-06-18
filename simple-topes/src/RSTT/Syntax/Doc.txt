@@ -37,7 +37,7 @@ The set of reserved words is the set of terminals appearing in the grammar. Thos
 The reserved words used in Syntax are the following:
   | ``cube`` | ``point`` | ``prove`` | ``rule``
   | ``shape`` | ``tope`` | ``where`` | ``with``
-  | ``𝜋₁`` | ``𝜋₂`` |  |
+  | ``π₁`` | ``π₂`` |  |
 
 The symbols used in Syntax are the following:
   | { | } | ( | )
@@ -112,8 +112,8 @@ All other symbols are terminals.
   |  |  **|**  | //Tope// ``,`` //[Tope]//
   | //Point// | -> | ``⋆``
   |  |  **|**  | ``⟨`` //Point// ``,`` //Point// ``⟩``
-  |  |  **|**  | ``𝜋₁`` ``(`` //Point// ``)``
-  |  |  **|**  | ``𝜋₂`` ``(`` //Point// ``)``
+  |  |  **|**  | ``π₁`` ``(`` //Point// ``)``
+  |  |  **|**  | ``π₂`` ``(`` //Point// ``)``
   |  |  **|**  | //Label// ``(`` //[Point]// ``)``
   |  |  **|**  | //Label//
   |  |  **|**  | //Var//

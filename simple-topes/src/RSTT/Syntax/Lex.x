@@ -21,7 +21,7 @@ $i = [$l $d _ ']     -- identifier character
 $u = [. \n]          -- universal: any character
 
 @rsyms =    -- symbols and non-identifier-like reserved words
-   \𝜋 \₁ | \𝜋 \₂ | \{ | \} | \( | \) | \: \= | \; | \: | \| | \⟨ | \, | \⟩ | \× | \𝟙 | \⊢ | \⋅ | \⊤ | \⊥ | \⇒ | \∨ | \∧ | \≡ | \⋆
+   \π \₁ | \π \₂ | \{ | \} | \( | \) | \: \= | \; | \: | \| | \⟨ | \, | \⟩ | \× | \𝟙 | \⊢ | \⋅ | \⊤ | \⊥ | \⇒ | \∨ | \∧ | \≡ | \⋆
 
 :-
 
@@ -119,7 +119,7 @@ eitherResIdent tv s = treeFind resWords
                               | s == a = t
 
 resWords :: BTree
-resWords = b "}" 17 (b "prove" 9 (b ":=" 5 (b "," 3 (b ")" 2 (b "(" 1 N N) N) (b ":" 4 N N)) (b "cube" 7 (b ";" 6 N N) (b "point" 8 N N))) (b "where" 13 (b "shape" 11 (b "rule" 10 N N) (b "tope" 12 N N)) (b "{" 15 (b "with" 14 N N) (b "|" 16 N N)))) (b "\8869" 25 (b "\8744" 21 (b "\8658" 19 (b "\215" 18 N N) (b "\8743" 20 N N)) (b "\8866" 23 (b "\8801" 22 N N) (b "\8868" 24 N N))) (b "\10217" 29 (b "\8902" 27 (b "\8901" 26 N N) (b "\10216" 28 N N)) (b "\120587\8322" 31 (b "\120587\8321" 30 N N) (b "\120793" 32 N N))))
+resWords = b "}" 17 (b "prove" 9 (b ":=" 5 (b "," 3 (b ")" 2 (b "(" 1 N N) N) (b ":" 4 N N)) (b "cube" 7 (b ";" 6 N N) (b "point" 8 N N))) (b "where" 13 (b "shape" 11 (b "rule" 10 N N) (b "tope" 12 N N)) (b "{" 15 (b "with" 14 N N) (b "|" 16 N N)))) (b "\8866" 25 (b "\8658" 21 (b "\960\8321" 19 (b "\215" 18 N N) (b "\960\8322" 20 N N)) (b "\8744" 23 (b "\8743" 22 N N) (b "\8801" 24 N N))) (b "\8902" 29 (b "\8869" 27 (b "\8868" 26 N N) (b "\8901" 28 N N)) (b "\10217" 31 (b "\10216" 30 N N) (b "\120793" 32 N N))))
    where b s n = let bs = s
                  in  B bs (TS bs n)
 

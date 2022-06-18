@@ -62,8 +62,8 @@ separator nonempty Tope "," ;
 
 PointUnit.    Point ::= "⋆" ;
 PointPair.    Point ::= "⟨" Point "," Point "⟩" ;
-PointFirst.   Point ::= "𝜋₁" "(" Point ")" ;
-PointSecond.  Point ::= "𝜋₂" "(" Point ")" ;
+PointFirst.   Point ::= "π₁" "(" Point ")" ;
+PointSecond.  Point ::= "π₂" "(" Point ")" ;
 PointCon.     Point ::= Label "(" [Point] ")" ;
 nullaryPoint. Point ::= Label ;
 PointVar.     Point ::= Var ;

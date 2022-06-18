@@ -87,19 +87,19 @@ import RSTT.Syntax.Lex
   '|' { PT _ (TS _ 16) }
   '}' { PT _ (TS _ 17) }
   '×' { PT _ (TS _ 18) }
-  '⇒' { PT _ (TS _ 19) }
-  '∧' { PT _ (TS _ 20) }
-  '∨' { PT _ (TS _ 21) }
-  '≡' { PT _ (TS _ 22) }
-  '⊢' { PT _ (TS _ 23) }
-  '⊤' { PT _ (TS _ 24) }
-  '⊥' { PT _ (TS _ 25) }
-  '⋅' { PT _ (TS _ 26) }
-  '⋆' { PT _ (TS _ 27) }
-  '⟨' { PT _ (TS _ 28) }
-  '⟩' { PT _ (TS _ 29) }
-  '𝜋₁' { PT _ (TS _ 30) }
-  '𝜋₂' { PT _ (TS _ 31) }
+  'π₁' { PT _ (TS _ 19) }
+  'π₂' { PT _ (TS _ 20) }
+  '⇒' { PT _ (TS _ 21) }
+  '∧' { PT _ (TS _ 22) }
+  '∨' { PT _ (TS _ 23) }
+  '≡' { PT _ (TS _ 24) }
+  '⊢' { PT _ (TS _ 25) }
+  '⊤' { PT _ (TS _ 26) }
+  '⊥' { PT _ (TS _ 27) }
+  '⋅' { PT _ (TS _ 28) }
+  '⋆' { PT _ (TS _ 29) }
+  '⟨' { PT _ (TS _ 30) }
+  '⟩' { PT _ (TS _ 31) }
   '𝟙' { PT _ (TS _ 32) }
   L_quoted { PT _ (TL $$) }
   L_Label { PT _ (T_Label $$) }
@@ -223,8 +223,8 @@ ListTope : Tope { (:[]) $1 } | Tope ',' ListTope { (:) $1 $3 }
 Point :: { RSTT.Syntax.Abs.Point }
 Point : '⋆' { RSTT.Syntax.Abs.PointUnit }
       | '⟨' Point ',' Point '⟩' { RSTT.Syntax.Abs.PointPair $2 $4 }
-      | '𝜋₁' '(' Point ')' { RSTT.Syntax.Abs.PointFirst $3 }
-      | '𝜋₂' '(' Point ')' { RSTT.Syntax.Abs.PointSecond $3 }
+      | 'π₁' '(' Point ')' { RSTT.Syntax.Abs.PointFirst $3 }
+      | 'π₂' '(' Point ')' { RSTT.Syntax.Abs.PointSecond $3 }
       | Label '(' ListPoint ')' { RSTT.Syntax.Abs.PointCon $1 $3 }
       | Label { RSTT.Syntax.Abs.nullaryPoint $1 }
       | Var { RSTT.Syntax.Abs.PointVar $1 }
