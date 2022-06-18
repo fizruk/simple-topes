@@ -981,8 +981,11 @@ instance GHC.Base.Semigroup (RSTT.Tope.Proof.RulesM a)
 instance GHC.Base.Monoid (RSTT.Tope.Proof.RulesM a)
 
 module RSTT.Interpret
-interpret :: Program -> IO ()
-interpretDecl :: Decl -> StateT Rules IO ()
+interpretIO :: String -> IO ()
+interpretProgramIO :: Program -> IO ()
+interpret :: String -> Either String [String]
+interpretProgram :: Program -> [String]
+interpretDecl :: Decl -> StateT Rules (Writer [String]) ()
 convertRule :: TopeRule -> Rules
 data Substs
 Substs :: [(Var, Cube)] -> [(Var, Point)] -> [(Var, Tope)] -> Substs
