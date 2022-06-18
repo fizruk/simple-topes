@@ -10,8 +10,8 @@ integer-gmp:             2732
 logict-0.6.0.3-FFz1HOIPvRtKFfQKkTep5Q:39320
 main:                    38111
 miso-1.6.0.0-BIKrBXAalCmHCL9FedlhiP:42008
-scientific-0.3.6.2-GYzjCtWA1vQ45VE9CYiZoV:9174
-simple-topes-0.1.0.0-5SiGviQndk4HMiud5lUInD:202580
+scientific-0.3.6.2-GYzjCtWA1vQ45VE9CYiZoV:9508
+simple-topes-0.1.0.0-5SiGviQndk4HMiud5lUInD:202229
 text-1.2.3.1-2mMWCa8HNEL4R4p8nnvwO2:1164
 unordered-containers-0.2.9.0-FFYvp66GotsBzKKo1KOI6a:702
 vector-0.12.0.3-Ljxp3Ug7QBk3GWhyQE0Ewc:13622
@@ -122,7 +122,7 @@ miso-1.6.0.0-BIKrBXAalCmHCL9FedlhiP
     Miso.String:                        2377
 
 scientific-0.3.6.2-GYzjCtWA1vQ45VE9CYiZoV
-    Data.Scientific:                    9174
+    Data.Scientific:                    9508
 
 simple-topes-0.1.0.0-5SiGviQndk4HMiud5lUInD
     RSTT.Cube:                          39263
@@ -130,8 +130,8 @@ simple-topes-0.1.0.0-5SiGviQndk4HMiud5lUInD
     RSTT.Syntax.Abs:                    48909
     RSTT.Syntax.Layout:                 26514
     RSTT.Syntax.Lex:                    40160
-    RSTT.Syntax.Par:                    6077
-    RSTT.Tope:                          41486
+    RSTT.Syntax.Par:                    6017
+    RSTT.Tope:                          41195
     RSTT.Tope.Proof:                    170
 
 text-1.2.3.1-2mMWCa8HNEL4R4p8nnvwO2
@@ -148,5 +148,5 @@ vector-0.12.0.3-Ljxp3Ug7QBk3GWhyQE0Ewc
 
 
 
-packed metadata: 339063
+packed metadata: 339319
 
