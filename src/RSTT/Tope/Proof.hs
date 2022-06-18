@@ -80,6 +80,7 @@ rulesLJ = mconcat
   , leftAnd, rightAnd
   , leftOr, rightOrL, rightOrR
   , leftImplies, rightImplies
+  , ruleTop, ruleBottom
   ]
 
 -- | Rules for tope equality:
@@ -118,6 +119,17 @@ rulesLEQ = mconcat
   ]
 
 -- ** Intuitionistic logic rules (LJ)
+
+ruleTop :: Rules
+ruleTop = do
+  TopeTop <- asks sequentTope
+  return ("⊤R", [])
+
+ruleBottom :: Rules
+ruleBottom = do
+  Sequent{..} <- ask
+  (TopeBottom, _) <- selectOne sequentTopeContext
+  return ("⊥L", [])
 
 leftAnd :: Rules
 leftAnd = do
@@ -449,14 +461,14 @@ proveAndPrintBFSviaDFS :: Int -> Int -> Rules -> Sequent -> IO ()
 proveAndPrintBFSviaDFS maxDepth k rules sequent = do
   case proveWithBFSviaDFS' maxDepth k rules sequent of
     Just p  -> putStrLn (ppProof p)
-    Nothing -> putStrLn "The sequent is not provable"
+    Nothing -> putStrLn ("The sequent is not provable: " <> ppSequent sequent)
 
 -- | Search for a proof using DFS and print proof tree (see 'ppProof').
 proveAndPrintDFS :: Int -> Rules -> Sequent -> IO ()
 proveAndPrintDFS maxDepth rules sequent = do
   case proveWithDFS' maxDepth rules sequent of
     Just p  -> putStrLn (ppProof p)
-    Nothing -> putStrLn "The sequent is not provable"
+    Nothing -> putStrLn ("The sequent is not provable: " <> ppSequent sequent)
 
 -- * Examples
 
