@@ -5,6 +5,7 @@ module RSTT.Interpret where
 import           Control.Applicative
 import           Control.Monad.Reader
 import           Control.Monad.State
+import           Data.Maybe           (fromMaybe)
 
 import           RSTT.Syntax.Abs
 
@@ -116,7 +117,9 @@ mergeSubsts (Substs cubes points topes) (Substs cubes' points' topes') = Substs
 mergeManySubsts :: MonadPlus f => [Substs] -> f Substs
 mergeManySubsts = foldM mergeSubsts (Substs [] [] [])
 
-merge :: (MonadPlus f, Eq k, Eq v) => [(k, v)] -> [(k, v)] -> f [(k, v)]
+merge
+  :: (MonadPlus f, Eq k, Eq v, Show k, Show v)
+  => [(k, v)] -> [(k, v)] -> f [(k, v)]
 merge xs ys
   | conflicts = empty
   | otherwise = return (xs ++ ys)
@@ -141,10 +144,41 @@ substInCubeContext :: [(RSTT.Var, RSTT.Cube)] -> CubeContext -> RSTT.CubeContext
 substInCubeContext _ = convertCubeContext -- FIXME
 
 substInTopeContext :: [(RSTT.Var, RSTT.Point)] -> [(RSTT.Var, RSTT.Tope)] -> TopeContext -> RSTT.TopeContext
-substInTopeContext _ _ = convertTopeContext -- FIXME
+substInTopeContext points topes = \case
+  TopeContextEmpty       -> []
+  TopeContextNonEmpty ts -> map (substInTope points topes) ts
 
 substInTope :: [(RSTT.Var, RSTT.Point)] -> [(RSTT.Var, RSTT.Tope)] -> Tope -> RSTT.Tope
-substInTope _ _ = convertTope -- FIXME
+substInTope points topes = go
+  where
+    go = \case
+      TopeTop         -> RSTT.TopeTop
+      TopeBottom      -> RSTT.TopeBottom
+      TopeVar (Var x) -> lookupTope x
+      TopeCon (Label con) args -> RSTT.TopeCon (RSTT.Label con) $
+        map (substInPoint points) args
+      TopeImplies x y -> RSTT.TopeImplies (go x) (go y)
+      TopeOr x y      -> RSTT.TopeOr (go x) (go y)
+      TopeAnd x y     -> RSTT.TopeAnd (go x) (go y)
+      TopeEQ x y     -> RSTT.TopeEQ (substInPoint points x) (substInPoint points y)
+
+    lookupTope x = fromMaybe (RSTT.TopeVar (RSTT.Var x)) $
+      lookup (RSTT.Var x) topes
+
+substInPoint :: [(RSTT.Var, RSTT.Point)] -> Point -> RSTT.Point
+substInPoint points = go
+  where
+    go = \case
+      PointUnit        -> RSTT.PointUnit
+      PointVar (Var x) -> lookupPoint x
+      PointCon (Label con) args -> RSTT.PointCon (RSTT.Label con) $
+        map go args
+      PointPair x y    -> RSTT.PointPair (go x) (go y)
+      PointFirst x     -> RSTT.PointFirst (go x)
+      PointSecond x    -> RSTT.PointSecond (go x)
+
+    lookupPoint x = fromMaybe (RSTT.PointVar (RSTT.Var x)) $
+      lookup (RSTT.Var x) points
 
 -- ** Converting syntax
 
