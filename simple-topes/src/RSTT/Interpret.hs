@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP             #-}
 {-# LANGUAGE LambdaCase      #-}
 {-# LANGUAGE RecordWildCards #-}
 module RSTT.Interpret where
@@ -6,6 +7,9 @@ import           Control.Applicative
 import           Control.Monad.Reader
 import           Control.Monad.State
 import           Control.Monad.Writer
+#if __GLASGOW_HASKELL__ < 808
+import           Control.Monad.Fail   (MonadFail)
+#endif
 import           Data.Maybe           (fromMaybe)
 
 import           RSTT.Syntax.Abs

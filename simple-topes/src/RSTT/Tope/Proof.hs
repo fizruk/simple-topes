@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP                        #-}
 {-# LANGUAGE DeriveFoldable             #-}
 {-# LANGUAGE DeriveFunctor              #-}
 {-# LANGUAGE DeriveTraversable          #-}
@@ -10,6 +11,9 @@
 module RSTT.Tope.Proof where
 
 import           Control.Applicative  (Alternative (..))
+#if __GLASGOW_HASKELL__ < 808
+import           Control.Monad.Fail   (MonadFail)
+#endif
 import           Control.Monad.Logic
 import           Control.Monad.Reader
 import           Data.List            (inits, intercalate, tails)
