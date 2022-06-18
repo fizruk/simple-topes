@@ -95,7 +95,13 @@ Program :: [Decl] -> Program
 data Decl
 DeclCube :: Label -> [PointConDecl] -> Decl
 DeclTopePrefix :: Label -> [Cube] -> [TopeRule] -> Decl
+DeclShape :: Var -> Shape -> Decl
 DeclCommandProve :: Sequent -> Decl
+data Shape
+Shape :: PointPattern -> Cube -> Tope -> Shape
+data PointPattern
+PointPatternVar :: Var -> PointPattern
+PointPatternPair :: PointPattern -> PointPattern -> PointPattern
 data PointConDecl
 NullaryPointConDecl :: Label -> PointConDecl
 PrefixPointConDecl :: Label -> [Cube] -> PointConDecl
@@ -187,6 +193,14 @@ instance GHC.Read.Read RSTT.Syntax.Abs.PointConDecl
 instance GHC.Show.Show RSTT.Syntax.Abs.PointConDecl
 instance GHC.Classes.Ord RSTT.Syntax.Abs.PointConDecl
 instance GHC.Classes.Eq RSTT.Syntax.Abs.PointConDecl
+instance GHC.Read.Read RSTT.Syntax.Abs.PointPattern
+instance GHC.Show.Show RSTT.Syntax.Abs.PointPattern
+instance GHC.Classes.Ord RSTT.Syntax.Abs.PointPattern
+instance GHC.Classes.Eq RSTT.Syntax.Abs.PointPattern
+instance GHC.Read.Read RSTT.Syntax.Abs.Shape
+instance GHC.Show.Show RSTT.Syntax.Abs.Shape
+instance GHC.Classes.Ord RSTT.Syntax.Abs.Shape
+instance GHC.Classes.Eq RSTT.Syntax.Abs.Shape
 instance Data.String.IsString RSTT.Syntax.Abs.Line
 instance GHC.Read.Read RSTT.Syntax.Abs.Line
 instance GHC.Show.Show RSTT.Syntax.Abs.Line
@@ -252,33 +266,94 @@ data AlexAcc user
 AlexAccNone :: AlexAcc user
 AlexAcc :: Int -> AlexAcc user
 AlexAccSkip :: AlexAcc user
-tok :: (Posn -> String -> Token) -> Posn -> String -> Token
+
+-- | Create a token with position.
+tok :: (String -> Tok) -> Posn -> String -> Token
+
+-- | Token without position.
 data Tok
-TS :: !String -> !Int -> Tok
+
+-- | Reserved word or symbol.
+TK :: {-# UNPACK #-} !TokSymbol -> Tok
+
+-- | String literal.
 TL :: !String -> Tok
+
+-- | Integer literal.
 TI :: !String -> Tok
+
+-- | Identifier.
 TV :: !String -> Tok
+
+-- | Float literal.
 TD :: !String -> Tok
+
+-- | Character literal.
 TC :: !String -> Tok
 T_Label :: !String -> Tok
 T_Var :: !String -> Tok
 T_Line :: !String -> Tok
+
+-- | Smart constructor for <a>Tok</a> for the sake of backwards
+--   compatibility.
+pattern TS :: String -> Int -> Tok
+
+-- | Keyword or symbol tokens have a unique ID.
+data TokSymbol
+TokSymbol :: String -> !Int -> TokSymbol
+
+-- | Keyword or symbol text.
+[tsText] :: TokSymbol -> String
+
+-- | Unique ID.
+[tsID] :: TokSymbol -> !Int
+
+-- | Token with position.
 data Token
 PT :: Posn -> Tok -> Token
 Err :: Posn -> Token
+
+-- | Pretty print a position.
 printPosn :: Posn -> String
+
+-- | Pretty print the position of the first token in the list.
 tokenPos :: [Token] -> String
+
+-- | Get the position of a token.
 tokenPosn :: Token -> Posn
+
+-- | Get line and column of a token.
 tokenLineCol :: Token -> (Int, Int)
+
+-- | Get line and column of a position.
 posLineCol :: Posn -> (Int, Int)
+
+-- | Convert a token into "position token" form.
 mkPosToken :: Token -> ((Int, Int), String)
+
+-- | Convert a token to its text.
 tokenText :: Token -> String
+
+-- | Convert a token to a string.
 prToken :: Token -> String
+
+-- | Finite map from text to token organized as binary search tree.
 data BTree
+
+-- | Nil (leaf).
 N :: BTree
+
+-- | Binary node.
 B :: String -> Tok -> BTree -> BTree -> BTree
+
+-- | Convert potential keyword into token or use fallback conversion.
 eitherResIdent :: (String -> Tok) -> String -> Tok
+
+-- | The keywords and symbols of the language organized as binary search
+--   tree.
 resWords :: BTree
+
+-- | Unquote string literal.
 unescapeInitTail :: String -> String
 data Posn
 Pn :: !Int -> !Int -> !Int -> Posn
@@ -298,6 +373,7 @@ alex_action_5 :: Posn -> String -> Token
 alex_action_6 :: Posn -> String -> Token
 alex_action_7 :: Posn -> String -> Token
 alex_action_8 :: Posn -> String -> Token
+instance GHC.Show.Show RSTT.Syntax.Lex.TokSymbol
 instance GHC.Classes.Ord RSTT.Syntax.Lex.Tok
 instance GHC.Show.Show RSTT.Syntax.Lex.Tok
 instance GHC.Classes.Eq RSTT.Syntax.Lex.Tok
@@ -308,35 +384,61 @@ instance GHC.Classes.Eq RSTT.Syntax.Lex.Posn
 instance GHC.Classes.Ord RSTT.Syntax.Lex.Token
 instance GHC.Show.Show RSTT.Syntax.Lex.Token
 instance GHC.Classes.Eq RSTT.Syntax.Lex.Token
+instance GHC.Classes.Eq RSTT.Syntax.Lex.TokSymbol
+instance GHC.Classes.Ord RSTT.Syntax.Lex.TokSymbol
 
 module RSTT.Syntax.Layout
-topLayout :: Bool
-layoutWords :: [String]
-layoutStopWords :: [String]
-layoutOpen :: String
-layoutClose :: String
-layoutSep :: String
+data LayoutDelimiters
+LayoutDelimiters :: TokSymbol -> Maybe TokSymbol -> Maybe TokSymbol -> LayoutDelimiters
+[delimSep] :: LayoutDelimiters -> TokSymbol
+
+-- | Nothing for toplevel layout.
+[delimOpen] :: LayoutDelimiters -> Maybe TokSymbol
+
+-- | Nothing for toplevel layout.
+[delimClose] :: LayoutDelimiters -> Maybe TokSymbol
+layoutWords :: [(TokSymbol, LayoutDelimiters)]
+layoutStopWords :: [TokSymbol]
+layoutOpen :: [TokSymbol]
+layoutClose :: [TokSymbol]
+layoutSep :: [TokSymbol]
+parenOpen :: [TokSymbol]
+parenClose :: [TokSymbol]
+
+-- | Report an error during layout resolution.
+layoutError :: [Token] -> String -> a
 
 -- | Replace layout syntax with explicit layout tokens.
 resolveLayout :: Bool -> [Token] -> [Token]
+type Position = Posn
+type Line = Int
+type Column = Int
+
+-- | Entry of the layout stack.
 data Block
 
 -- | An implicit layout block with its start column.
-Implicit :: Int -> Block
+Implicit :: LayoutDelimiters -> Status -> Column -> Block
 Explicit :: Block
 
 -- | Get current indentation. 0 if we are in an explicit block.
-indentation :: [Block] -> Int
+indentation :: Block -> Column
 
 -- | Check if s block is implicit.
 isImplicit :: Block -> Bool
-type Position = Posn
+data Status
 
--- | Insert a number of tokens at the begninning of a list of tokens.
-addTokens :: Position -> [String] -> [Token] -> [Token]
+-- | A layout column that has not been confirmed by a line break
+Tentative :: Status
 
--- | Insert a new symbol token at the begninning of a list of tokens.
-addToken :: Position -> String -> [Token] -> [Token]
+-- | A layout column that has been confirmed by a line break.
+Definitive :: Status
+
+-- | Add a new implicit layout block.
+addImplicit :: LayoutDelimiters -> Position -> Position -> [Block] -> [Block]
+
+-- | Confirm tentative blocks that are not more indented than <tt>col</tt>.
+confirm :: Column -> [Block] -> [Block]
 
 -- | Get the position immediately to the right of the given token. If no
 --   token is given, gets the first position in the file.
@@ -345,28 +447,26 @@ afterPrev :: Maybe Token -> Position
 -- | Get the position immediately to the right of the given token.
 nextPos :: Token -> Position
 
--- | Add to the global and column positions of a token. The column position
---   is only changed if the token is on the same line as the given
---   position.
-incrGlobal :: Position -> Int -> Token -> Token
+-- | Get the number of characters in the token.
+tokenLength :: Token -> Int
 
--- | Create a symbol token.
-sToken :: Position -> String -> Token
-
--- | Get the position of a token.
-position :: Token -> Position
+-- | Create a position symbol token.
+sToken :: Position -> TokSymbol -> Token
 
 -- | Get the line number of a token.
-line :: Token -> Int
+line :: Token -> Line
 
 -- | Get the column number of a token.
-column :: Token -> Int
+column :: Token -> Column
 
--- | Check if a token is one of the given symbols.
-isTokenIn :: [String] -> Token -> Bool
+-- | Is the following token on a new line?
+newLine :: Maybe Token -> Token -> Bool
 
 -- | Check if a word is a layout start token.
-isLayout :: Token -> Bool
+isLayout :: Token -> Maybe LayoutDelimiters
+
+-- | Check if a token is one of the given symbols.
+isTokenIn :: [TokSymbol] -> Token -> Bool
 
 -- | Check if a token is a layout stop token.
 isStop :: Token -> Bool
@@ -374,12 +474,17 @@ isStop :: Token -> Bool
 -- | Check if a token is the layout open token.
 isLayoutOpen :: Token -> Bool
 
+-- | Check if a token is the layout separator token.
+isLayoutSep :: Token -> Bool
+
 -- | Check if a token is the layout close token.
 isLayoutClose :: Token -> Bool
 
--- | Get the number of characters in the token.
-tokenLength :: Token -> Int
-instance GHC.Show.Show RSTT.Syntax.Layout.Block
+-- | Check if a token is an opening parenthesis.
+isParenOpen :: Token -> Bool
+
+-- | Check if a token is a closing parenthesis.
+isParenClose :: Token -> Bool
 
 module RSTT.Syntax.Par
 happyError :: [Token] -> Err a
@@ -387,6 +492,8 @@ myLexer :: String -> [Token]
 pProgram :: [Token] -> Err Program
 pDecl :: [Token] -> Err Decl
 pListDecl :: [Token] -> Err [Decl]
+pShape :: [Token] -> Err Shape
+pPointPattern :: [Token] -> Err PointPattern
 pPointConDecl :: [Token] -> Err PointConDecl
 pListPointConDecl :: [Token] -> Err [PointConDecl]
 pCube :: [Token] -> Err Cube
@@ -410,7 +517,7 @@ pPoint :: [Token] -> Err Point
 pListPoint :: [Token] -> Err [Point]
 
 
--- | Pretty-printer for RSTT. Generated by the BNF converter.
+-- | Pretty-printer for RSTT.
 module RSTT.Syntax.Print
 
 -- | The top-level printing method.
@@ -426,11 +533,12 @@ replicateS :: Int -> ShowS -> ShowS
 -- | The printer class does the job.
 class Print a
 prt :: Print a => Int -> a -> Doc
-prtList :: Print a => Int -> [a] -> Doc
+printString :: String -> Doc
 mkEsc :: Char -> Char -> ShowS
 prPrec :: Int -> Int -> Doc -> Doc
 instance RSTT.Syntax.Print.Print a => RSTT.Syntax.Print.Print [a]
 instance RSTT.Syntax.Print.Print GHC.Types.Char
+instance RSTT.Syntax.Print.Print GHC.Base.String
 instance RSTT.Syntax.Print.Print GHC.Num.Integer.Integer
 instance RSTT.Syntax.Print.Print GHC.Types.Double
 instance RSTT.Syntax.Print.Print RSTT.Syntax.Abs.Label
@@ -439,6 +547,8 @@ instance RSTT.Syntax.Print.Print RSTT.Syntax.Abs.Line
 instance RSTT.Syntax.Print.Print RSTT.Syntax.Abs.Program
 instance RSTT.Syntax.Print.Print RSTT.Syntax.Abs.Decl
 instance RSTT.Syntax.Print.Print [RSTT.Syntax.Abs.Decl]
+instance RSTT.Syntax.Print.Print RSTT.Syntax.Abs.Shape
+instance RSTT.Syntax.Print.Print RSTT.Syntax.Abs.PointPattern
 instance RSTT.Syntax.Print.Print RSTT.Syntax.Abs.PointConDecl
 instance RSTT.Syntax.Print.Print [RSTT.Syntax.Abs.PointConDecl]
 instance RSTT.Syntax.Print.Print RSTT.Syntax.Abs.Cube
@@ -466,6 +576,8 @@ transVar :: Var -> Result
 transLine :: Line -> Result
 transProgram :: Program -> Result
 transDecl :: Decl -> Result
+transShape :: Shape -> Result
+transPointPattern :: PointPattern -> Result
 transPointConDecl :: PointConDecl -> Result
 transCube :: Cube -> Result
 transTopeRule :: TopeRule -> Result
@@ -617,6 +729,8 @@ rulesLJE :: Rules
 --   <li>distinctness of 0 and 1 (<a>distinctLEQ</a>)</li>
 --   </ul>
 rulesLEQ :: Rules
+ruleTop :: Rules
+ruleBottom :: Rules
 leftAnd :: Rules
 leftOr :: Rules
 leftImplies :: Rules
@@ -881,12 +995,13 @@ matchPoint :: MonadPlus f => Point -> Point -> f Substs
 matchTopes :: (MonadPlus f, MonadFail f) => Substs -> [Tope] -> [Tope] -> f Substs
 mergeSubsts :: MonadPlus f => Substs -> Substs -> f Substs
 mergeManySubsts :: MonadPlus f => [Substs] -> f Substs
-merge :: (MonadPlus f, Eq k, Eq v) => [(k, v)] -> [(k, v)] -> f [(k, v)]
+merge :: (MonadPlus f, Eq k, Eq v, Show k, Show v) => [(k, v)] -> [(k, v)] -> f [(k, v)]
 normalizeSequent :: Sequent -> Sequent
 applySubsts :: Substs -> Sequent -> Sequent
 substInCubeContext :: [(Var, Cube)] -> CubeContext -> CubeContext
 substInTopeContext :: [(Var, Point)] -> [(Var, Tope)] -> TopeContext -> TopeContext
 substInTope :: [(Var, Point)] -> [(Var, Tope)] -> Tope -> Tope
+substInPoint :: [(Var, Point)] -> Point -> Point
 convertSequent :: Sequent -> Sequent
 convertCubeContext :: CubeContext -> CubeContext
 convertCube :: Cube -> Cube
