@@ -1,0 +1,92 @@
+<html>
+  <head>
+    <title>RSTT topes layer theorem prover!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/addon/mode/simple.min.js"></script>
+
+    <!-- Load local GHCJS application if possible -->
+    <script src="result/bin/try-simple-topes.jsexe/all.js"></script>
+    <!-- Otherwise load the one hosted on GitHub Pages -->
+    <script>window.h$mainLoop || document.write('<script src="https://fizruk.github.io/simple-topes/result/bin/try-simple-topes.jsexe/all.js"><\/script>')</script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/theme/solarized.min.css">
+    <link rel="stylesheet" href="https://codemirror.net/5/theme/gruvbox-dark.css">
+    <style>
+      section { width: 100%; }
+      body { margin: 0; background-color: #282828; }
+      .row { display: flex; justify-content:space-evenly; margin: 0; padding: 0; width: 100%; }
+      .column { margin-top: 0; margin-bottom: 0; height: 100vh; width: 49%;  }
+      .CodeMirror { height: auto; }
+      #__response__ { background-color: #202028; color: #eee8d5; font-family: monospace; }
+    </style>
+  </head>
+  <body class="cm-c-gruvbox-dark">
+    <div class="row">
+      <div class="column" id="__codemirror__">
+      </div>
+      <div class="column" id="__response__">
+        <div id="__app__"></div>
+      </div>
+    </div>
+
+    <script>
+      // adapted from https://stackoverflow.com/a/28828681/442535
+      function getText(url){
+          // read text from URL location
+          var request = new XMLHttpRequest();
+          request.open('GET', url, true);
+          request.send(null);
+          request.onreadystatechange = function () {
+              if (request.readyState === 4 && request.status === 200) {
+                  var type = request.getResponseHeader('Content-Type');
+                  if (type.indexOf("text") !== 1) {
+                      return request.responseText;
+                  }
+              }
+          }
+      }
+
+      /* extract query parameters from the URL */
+      const params = new URLSearchParams(window.location.search);
+
+      /* set up CodeMirror in the __textarea__ div */
+      var frame = document.getElementById("__codemirror__");
+      var myCodeMirror = CodeMirror(frame, {
+        lineNumbers: true,
+        value: "function myScript(){return 100;}\n",
+        // mode:  "simple-topes",
+        viewportMargin: Infinity,
+        indentUnit: 2,
+        smartIndent: true,
+        tabSize: 2,
+        theme: "gruvbox-dark"
+      });
+
+      snippet = "";
+
+      /* use default snippet if one is not set in the query parameters */
+      if (params.has("snippet")) {
+        snippet = decodeURIComponent(params.get("snippet"));
+      } else if (params.has("snippet_url")) {
+        snippet_url = decodeURIComponent(params.get("snippet_url"));
+        fetch(snippet_url).then(function (response) {
+          // The API call was successful!
+          response.text().then(function(txt) {
+            snippet = txt;
+            myCodeMirror.setValue(snippet);
+          });
+        }).catch(function (err) {
+          // There was an error
+          console.warn('Something went wrong.', err);
+        });
+      }
+
+      if (!snippet) {
+          myCodeMirror.setValue(snippet);
+      }
+    </script>
+  </body>
+</html>
