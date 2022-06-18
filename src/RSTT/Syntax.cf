@@ -5,7 +5,7 @@ layout toplevel ;
 layout "with", "where", "prove" ;
 
 token Label ((upper | ["≤≥𝟘𝟙𝟚𝟛𝟜𝟝𝟞𝟟𝟠𝟡𝟬𝟭𝟮𝟯𝟰𝟱𝟲𝟳𝟴𝟵"]) (letter | digit | ["_≤≥𝟘𝟙𝟚𝟛𝟜𝟝𝟞𝟟𝟠𝟡𝟬𝟭𝟮𝟯𝟰𝟱𝟲𝟳𝟴𝟵"])*) ;
-token Var (lower (letter | digit | ["_αβγδεζηθικλμνξοπρςστυφχψω"])*) ;
+token Var ((lower | ["αβγδεζηθικλμνξοπρςστυφχψωΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ∂"]) (letter | digit | ["_αβγδεζηθικλμνξοπρςστυφχψωΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ∂₀₁₂₃₄₅₆₇₈₉⁰¹²³⁴⁵⁶⁷⁸⁹"])*) ;
 token Line (["-—"] ["-—"] ["-—"] (["-—"])*) ;
 
 Program.  Program ::= [Decl] ;
