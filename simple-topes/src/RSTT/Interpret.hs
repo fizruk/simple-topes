@@ -71,10 +71,13 @@ interpretDecl = \case
 convertRule :: TopeRule -> Prover.Rules
 convertRule (TopeRule (RuleName name) premises _line conclusion) = do
   currentGoal <- ask
-  substs <- matchSequent conclusion currentGoal
-  let goals = map (normalizeSequent . applySubsts substs) premises
+  (substs, leftoverTopes) <- matchSequent conclusion currentGoal
+  let goals = map (normalizeSequent . addTopes leftoverTopes . applySubsts substs) premises
   guard (all (/= currentGoal) goals)
   return (name, goals)
+  where
+    addTopes topes Prover.Sequent{..} =
+      Prover.Sequent{ sequentTopeContext = topes <> sequentTopeContext, ..}
 
 data Substs = Substs
   { substCubeVars  :: [(RSTT.Var, RSTT.Cube)]
@@ -82,11 +85,13 @@ data Substs = Substs
   , substTopeVars  :: [(RSTT.Var, RSTT.Tope)]
   }
 
-matchSequent :: (MonadPlus f, MonadFail f) => Sequent -> Prover.Sequent -> f Substs
+matchSequent
+  :: (MonadPlus f, MonadFail f)
+  => Sequent -> Prover.Sequent -> f (Substs, [RSTT.Tope])
 matchSequent (Sequent _points topes rhs) (Prover.Sequent _points' topes' rhs') = do
   subst <- matchTope rhs rhs'
   case topes of
-    TopeContextEmpty -> return subst
+    TopeContextEmpty -> return (subst, topes')
     TopeContextNonEmpty topesList -> do
       matchTopes subst topesList topes'
 
@@ -131,8 +136,10 @@ matchPoint (PointFirst x) (RSTT.PointFirst x') = matchPoint x x'
 matchPoint (PointSecond x) (RSTT.PointSecond x') = matchPoint x x'
 matchPoint _ _ = empty
 
-matchTopes :: (MonadPlus f, MonadFail f) => Substs -> [Tope] -> [RSTT.Tope] -> f Substs
-matchTopes substs [] _ = pure substs
+matchTopes
+  :: (MonadPlus f, MonadFail f)
+  => Substs -> [Tope] -> [RSTT.Tope] -> f (Substs, [RSTT.Tope])
+matchTopes substs [] leftover = pure (substs, leftover)
 matchTopes substs (tope:topes) topes' = do
   (tope'', topes'') <- Prover.selectOne topes'
   substs' <- matchTope tope tope''
