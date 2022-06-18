@@ -1,17 +1,17 @@
 code size summary per package:
 
 aeson-1.4.2.0-6oFZmLVQz2fGtrfaZYcFm5:42371
-base:                    307499
-containers-0.6.0.1-BAqcfV1UBBeCIRjPbUYeSG:23729
-ghc-prim:                63201
+base:                    307505
+containers-0.6.0.1-BAqcfV1UBBeCIRjPbUYeSG:23728
+ghc-prim:                65494
 ghcjs-base-0.2.0.0-JozYZ7GHc7JEfhDrWZm3NT:32099
 ghcjs-prim-0.1.1.0-EXzjGVHQlAS2XAXcu0iCbS:4278
 integer-gmp:             2732
 logict-0.6.0.3-FFz1HOIPvRtKFfQKkTep5Q:39320
 main:                    38111
 miso-1.6.0.0-BIKrBXAalCmHCL9FedlhiP:42008
-scientific-0.3.6.2-GYzjCtWA1vQ45VE9CYiZoV:9172
-simple-topes-0.1.0.0-5SiGviQndk4HMiud5lUInD:202559
+scientific-0.3.6.2-GYzjCtWA1vQ45VE9CYiZoV:9174
+simple-topes-0.1.0.0-5SiGviQndk4HMiud5lUInD:202766
 text-1.2.3.1-2mMWCa8HNEL4R4p8nnvwO2:1164
 unordered-containers-0.2.9.0-FFYvp66GotsBzKKo1KOI6a:702
 vector-0.12.0.3-Ljxp3Ug7QBk3GWhyQE0Ewc:13622
@@ -20,8 +20,8 @@ vector-0.12.0.3-Ljxp3Ug7QBk3GWhyQE0Ewc:13622
 code size per module:
 
 aeson-1.4.2.0-6oFZmLVQz2fGtrfaZYcFm5
-    Data.Aeson.Types.FromJSON:          7416
-    Data.Aeson.Types.Internal:          34955
+    Data.Aeson.Types.FromJSON:          7417
+    Data.Aeson.Types.Internal:          34954
 
 base
     Control.Exception.Base:             1
@@ -29,11 +29,11 @@ base
     Data.Functor.Identity:              608
     Data.Maybe:                         5065
     Data.OldList:                       1
-    Data.Tuple:                         43761
+    Data.Tuple:                         43762
     Data.Typeable.Internal:             9850
     Foreign.C.Error:                    873
     Foreign.Marshal.Alloc:              2644
-    Foreign.Storable:                   2509
+    Foreign.Storable:                   2510
     GHC.Arr:                            3882
     GHC.Base:                           6139
     GHC.Conc.Sync:                      144
@@ -53,14 +53,14 @@ base
     GHC.IO.Encoding:                    592
     GHC.IO.Encoding.Failure:            1
     GHC.IO.Encoding.Types:              58059
-    GHC.IO.Encoding.UTF8:               10741
+    GHC.IO.Encoding.UTF8:               10742
     GHC.IO.Exception:                   25411
     GHC.IO.FD:                          274
     GHC.IO.Handle:                      4931
     GHC.IO.Handle.FD:                   23727
     GHC.IO.Handle.Internals:            1906
     GHC.IO.Handle.Types:                373
-    GHC.Int:                            7137
+    GHC.Int:                            7139
     GHC.List:                           1
     GHC.MVar:                           113
     GHC.Maybe:                          105
@@ -70,21 +70,21 @@ base
     GHC.STRef:                          11564
     GHC.Show:                           4001
     GHC.Stack.CCS:                      488
-    GHC.Stack.Types:                    9892
+    GHC.Stack.Types:                    9893
     GHC.TopHandler:                     1
     GHC.Word:                           13426
     System.Posix.Internals:             3611
 
 containers-0.6.0.1-BAqcfV1UBBeCIRjPbUYeSG
     Data.Map.Internal:                  21797
-    Data.Sequence.Internal:             1932
+    Data.Sequence.Internal:             1931
 
 ghc-prim
     GHC.CString:                        2531
     GHC.Classes:                        139
     GHC.IntWord64:                      1747
     GHC.Tuple:                          292
-    GHC.Types:                          58492
+    GHC.Types:                          60785
 
 ghcjs-base-0.2.0.0-JozYZ7GHc7JEfhDrWZm3NT
     Data.JSString:                      1
@@ -122,16 +122,16 @@ miso-1.6.0.0-BIKrBXAalCmHCL9FedlhiP
     Miso.String:                        2377
 
 scientific-0.3.6.2-GYzjCtWA1vQ45VE9CYiZoV
-    Data.Scientific:                    9172
+    Data.Scientific:                    9174
 
 simple-topes-0.1.0.0-5SiGviQndk4HMiud5lUInD
     RSTT.Cube:                          39449
     RSTT.Interpret:                     1
     RSTT.Syntax.Abs:                    48909
-    RSTT.Syntax.Layout:                 26309
-    RSTT.Syntax.Lex:                    40159
-    RSTT.Syntax.Par:                    6078
-    RSTT.Tope:                          41484
+    RSTT.Syntax.Layout:                 26514
+    RSTT.Syntax.Lex:                    40160
+    RSTT.Syntax.Par:                    6077
+    RSTT.Tope:                          41486
     RSTT.Tope.Proof:                    170
 
 text-1.2.3.1-2mMWCa8HNEL4R4p8nnvwO2
@@ -148,5 +148,5 @@ vector-0.12.0.3-Ljxp3Ug7QBk3GWhyQE0Ewc
 
 
 
-packed metadata: 338609
+packed metadata: 339090
 

@@ -32,41 +32,41 @@
 </span><span id="line-32"></span><span>
 </span><span id="line-33"></span><span class="hs-keyword">pattern</span><span> </span><span id="%24bBad"><span id="%24mBad"><span id="Bad"><span class="annot"><span class="annottext">$bBad :: forall {a} {b}. a -&gt; Either a b
 $mBad :: forall {r} {a} {b}. Either a b -&gt; (a -&gt; r) -&gt; (Void# -&gt; r) -&gt; r
-</span><a href="RSTT.Syntax.ErrM.html#%24bBad"><span class="hs-identifier hs-var hs-var hs-var">Bad</span></a></span></span></span></span><span> </span><span class="annot"><a href="#local-6989586621679069103"><span class="hs-identifier hs-type">msg</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Left</span></span><span> </span><span id="local-6989586621679069103"><span class="annot"><a href="#local-6989586621679069103"><span class="hs-identifier hs-var">msg</span></a></span></span><span>
+</span><a href="RSTT.Syntax.ErrM.html#%24bBad"><span class="hs-identifier hs-var hs-var hs-var">Bad</span></a></span></span></span></span><span> </span><span class="annot"><a href="#local-6989586621679069114"><span class="hs-identifier hs-type">msg</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Left</span></span><span> </span><span id="local-6989586621679069114"><span class="annot"><a href="#local-6989586621679069114"><span class="hs-identifier hs-var">msg</span></a></span></span><span>
 </span><span id="line-34"></span><span class="hs-keyword">pattern</span><span> </span><span id="%24bOk"><span id="%24mOk"><span id="Ok"><span class="annot"><span class="annottext">$bOk :: forall {a} {b}. b -&gt; Either a b
 $mOk :: forall {r} {a} {b}. Either a b -&gt; (b -&gt; r) -&gt; (Void# -&gt; r) -&gt; r
-</span><a href="RSTT.Syntax.ErrM.html#%24bOk"><span class="hs-identifier hs-var hs-var hs-var">Ok</span></a></span></span></span></span><span>  </span><span class="annot"><a href="#local-6989586621679069099"><span class="hs-identifier hs-type">a</span></a></span><span>   </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Right</span></span><span> </span><span id="local-6989586621679069099"><span class="annot"><a href="#local-6989586621679069099"><span class="hs-identifier hs-var">a</span></a></span></span><span class="hs-cpp">
+</span><a href="RSTT.Syntax.ErrM.html#%24bOk"><span class="hs-identifier hs-var hs-var hs-var">Ok</span></a></span></span></span></span><span>  </span><span class="annot"><a href="#local-6989586621679069110"><span class="hs-identifier hs-type">a</span></a></span><span>   </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Right</span></span><span> </span><span id="local-6989586621679069110"><span class="annot"><a href="#local-6989586621679069110"><span class="hs-identifier hs-var">a</span></a></span></span><span class="hs-cpp">
 
 #if __GLASGOW_HASKELL__ &gt;= 808
 </span><span class="hs-keyword">instance</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadFail</span></span><span> </span><span class="annot"><a href="RSTT.Syntax.ErrM.html#Err"><span class="hs-identifier hs-type">Err</span></a></span><span> </span><span class="hs-keyword">where</span><span>
-</span><span id="line-38"></span><span>  </span><span id="local-6989586621679069092"><span class="annot"><span class="annottext">fail :: forall a. String -&gt; Err a
+</span><span id="line-38"></span><span>  </span><span id="local-6989586621679069103"><span class="annot"><span class="annottext">fail :: forall a. String -&gt; Err a
 </span><span class="hs-identifier hs-var hs-var hs-var hs-var">fail</span></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String -&gt; Either String a
 forall {a} {b}. a -&gt; Either a b
 </span><a href="RSTT.Syntax.ErrM.html#Bad"><span class="hs-identifier hs-var">Bad</span></a></span><span class="hs-cpp">
 #endif
 </span><span>
-</span><span id="line-41"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679069083"><span id="local-6989586621679069085"><span class="annot"><span class="hs-identifier hs-type">Alternative</span></span><span> </span><span class="annot"><a href="RSTT.Syntax.ErrM.html#Err"><span class="hs-identifier hs-type">Err</span></a></span></span></span><span> </span><span class="hs-keyword">where</span><span>
-</span><span id="line-42"></span><span>  </span><span id="local-6989586621679069081"><span class="annot"><span class="annottext">empty :: forall a. Err a
+</span><span id="line-41"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679069094"><span id="local-6989586621679069096"><span class="annot"><span class="hs-identifier hs-type">Alternative</span></span><span> </span><span class="annot"><a href="RSTT.Syntax.ErrM.html#Err"><span class="hs-identifier hs-type">Err</span></a></span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-42"></span><span>  </span><span id="local-6989586621679069092"><span class="annot"><span class="annottext">empty :: forall a. Err a
 </span><span class="hs-identifier hs-var hs-var hs-var hs-var">empty</span></span></span><span>           </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String -&gt; Either String a
 forall {a} {b}. a -&gt; Either a b
 </span><span class="hs-identifier hs-var">Left</span></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;Err.empty&quot;</span></span><span>
-</span><span id="line-43"></span><span>  </span><span id="local-6989586621679069079"><span class="annot"><span class="annottext">&lt;|&gt; :: forall a. Err a -&gt; Err a -&gt; Err a
+</span><span id="line-43"></span><span>  </span><span id="local-6989586621679069090"><span class="annot"><span class="annottext">&lt;|&gt; :: forall a. Err a -&gt; Err a -&gt; Err a
 </span><span class="hs-operator hs-var hs-var hs-var hs-var">(&lt;|&gt;)</span></span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Left</span></span><span class="hs-special">{</span><span class="hs-special">}</span><span>    </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Either String a -&gt; Either String a
 forall a. a -&gt; a
 </span><span class="hs-identifier hs-var">id</span></span><span>
-</span><span id="line-44"></span><span>  </span><span class="annot"><span class="hs-operator hs-var">(&lt;|&gt;)</span></span><span> </span><span id="local-6989586621679069077"><span class="annot"><span class="annottext">x :: Either String a
-</span><a href="#local-6989586621679069077"><span class="hs-identifier hs-var">x</span></a></span></span><span class="hs-glyph">@</span><span class="annot"><span class="hs-identifier hs-type">Right</span></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Either String a -&gt; Either String a -&gt; Either String a
+</span><span id="line-44"></span><span>  </span><span class="annot"><span class="hs-operator hs-var">(&lt;|&gt;)</span></span><span> </span><span id="local-6989586621679069088"><span class="annot"><span class="annottext">x :: Either String a
+</span><a href="#local-6989586621679069088"><span class="hs-identifier hs-var">x</span></a></span></span><span class="hs-glyph">@</span><span class="annot"><span class="hs-identifier hs-type">Right</span></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Either String a -&gt; Either String a -&gt; Either String a
 forall a b. a -&gt; b -&gt; a
 </span><span class="hs-identifier hs-var">const</span></span><span> </span><span class="annot"><span class="annottext">Either String a
-</span><a href="#local-6989586621679069077"><span class="hs-identifier hs-var">x</span></a></span><span>
+</span><a href="#local-6989586621679069088"><span class="hs-identifier hs-var">x</span></a></span><span>
 </span><span id="line-45"></span><span>
 </span><span id="line-46"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><span class="hs-identifier hs-type">MonadPlus</span></span><span> </span><span class="annot"><a href="RSTT.Syntax.ErrM.html#Err"><span class="hs-identifier hs-type">Err</span></a></span><span> </span><span class="hs-keyword">where</span><span>
-</span><span id="line-47"></span><span>  </span><span id="local-6989586621679069067"><span class="annot"><span class="annottext">mzero :: forall a. Err a
+</span><span id="line-47"></span><span>  </span><span id="local-6989586621679069078"><span class="annot"><span class="annottext">mzero :: forall a. Err a
 </span><span class="hs-identifier hs-var hs-var hs-var hs-var">mzero</span></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Either String a
 forall (f :: * -&gt; *) a. Alternative f =&gt; f a
 </span><span class="hs-identifier hs-var">empty</span></span><span>
-</span><span id="line-48"></span><span>  </span><span id="local-6989586621679069064"><span class="annot"><span class="annottext">mplus :: forall a. Err a -&gt; Err a -&gt; Err a
+</span><span id="line-48"></span><span>  </span><span id="local-6989586621679069075"><span class="annot"><span class="annottext">mplus :: forall a. Err a -&gt; Err a -&gt; Err a
 </span><span class="hs-identifier hs-var hs-var hs-var hs-var">mplus</span></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Either String a -&gt; Either String a -&gt; Either String a
 forall (f :: * -&gt; *) a. Alternative f =&gt; f a -&gt; f a -&gt; f a
 </span><span class="hs-operator hs-var">(&lt;|&gt;)</span></span><span class="hs-cpp">
