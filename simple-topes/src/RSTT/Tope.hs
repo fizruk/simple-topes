@@ -62,6 +62,7 @@ ppTopePrec prec = \case
   TopeOr      l r -> binOp ppTopePrec   2 l "∨" r
   TopeAnd     l r -> binOp ppTopePrec   3 l "∧" r
   TopeEQ      l r -> binOp ppPointPrec  4 l "≡" r
+  TopeCon (Label l) [] -> l
   TopeCon (Label l) args -> l <> "(" <> intercalate ", " (map (ppPointPrec 0) args) <> ")"
   where
     parens s = "(" <> s <> ")"

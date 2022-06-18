@@ -77,5 +77,6 @@ ppPointPrec prec = \case
   PointPair l r -> "⟨" <> ppPointPrec prec l <> ", " <> ppPointPrec prec r <> "⟩"
   PointFirst p  -> "𝜋₁(" <> ppPointPrec 0 p <> ")"
   PointSecond p -> "𝜋₂(" <> ppPointPrec 0 p <> ")"
+  PointCon (Label l) []  -> l
   PointCon (Label l) args  -> l <> "(" <> intercalate ", " (map (ppPointPrec prec) args) <> ")"
 
