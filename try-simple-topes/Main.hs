@@ -52,7 +52,7 @@ updateModel (Run input) m = noEff m
     responseStr = ms $
       case RSTT.interpret (fromMisoString input) of
         Left err      -> err
-        Right outputs -> unlines outputs
+        Right outputs -> Prelude.unlines outputs
 
 -- | Constructs a virtual DOM from a model
 viewModel :: Model -> View Action
