@@ -46,13 +46,13 @@ interpretProgram (Program decls) =
 interpretDecl :: Decl -> StateT Prover.Rules (Writer [String]) ()
 interpretDecl = \case
   DeclCube (Label con) _points -> lift $
-    tell [ "WARNING: cube declaration is ignored for cube " <> show con ]
+    tell [ "WARNING: cube declaration is ignored for cube " <> con ]
   DeclTopePrefix (Label con) _cubes rules -> do
     forM_ rules $ \rule@(TopeRule (RuleName name) _ _ _) -> do
       tell [ "INFO: Adding new rule for tope " <> con <> ": " <> name ]
       modify (<> convertRule rule)
   DeclShape (Var shapeName) _shape -> lift $
-    tell [ "WARNING: shape definition is ignored for shape " <> show shapeName ]
+    tell [ "WARNING: shape definition is ignored for shape " <> shapeName ]
   DeclCommandProve sequent -> do
     let maxDepth = 10
     rules <- get
