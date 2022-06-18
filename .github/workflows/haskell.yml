@@ -68,6 +68,7 @@ jobs:
 
       - name: 🔨 Build GHCJS version with Nix
         run: |
+          rm -f simple-topes/simple-topes.cabal
           nix-build try-simple-topes/
           mkdir -p dist/result/bin
           cp -r ./result/bin/try-simple-topes.jsexe/ dist/result/bin/.
