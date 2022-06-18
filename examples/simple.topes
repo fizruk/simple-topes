@@ -68,11 +68,15 @@ prove
 prove
   t : 𝟚, s : 𝟚 | ≤(t, 𝟬), ≤(𝟭, t) ⊢ ≤(𝟭, 𝟬)
 
--- FIXME: this sequent is currently not provable
+-- FIXME: this sequent is currently not provable, because cut-rule is required
+prove
+  t : 𝟚, s : 𝟚 | ≤(t, 𝟬), ≤(𝟭, t) ⊢ 𝟭 ≡ 𝟬
+
+-- FIXME: this sequent is currently not provable, because cut-rule is required
 prove
   t : 𝟚, s : 𝟚 | ≤(t, 𝟬), ≤(𝟭, t) ⊢ ⊥
 
--- FIXME: this sequent is currently not provable
+-- FIXME: this sequent is currently not provable, because cut-rule is required
 prove
   t : 𝟚, s : 𝟚 | ≤(t, 𝟬), ≤(𝟭, t) ⊢ t ≡ s
 
