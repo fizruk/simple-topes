@@ -54,7 +54,7 @@ jobs:
 
       - name: 🔨 Generate Syntax files using BNFC
         run: |
-          cd simple-topes/ && (make syntax; cd ../)
+          cd simple-topes/ && (make syntax && make clean; cd ../)
 
       - name: 🔨 Build and test (with Stack)
         run: |
