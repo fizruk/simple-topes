@@ -5,35 +5,62 @@ module RSTT.Interpret where
 import           Control.Applicative
 import           Control.Monad.Reader
 import           Control.Monad.State
+import           Control.Monad.Writer
 import           Data.Maybe           (fromMaybe)
 
 import           RSTT.Syntax.Abs
+import qualified RSTT.Syntax.Layout   as RSTT
+import qualified RSTT.Syntax.Par      as RSTT
 
 import qualified RSTT.Cube            as RSTT
 import qualified RSTT.Tope            as RSTT
 import qualified RSTT.Tope.Proof      as Prover
 
-interpret :: Program -> IO ()
-interpret (Program decls) =
-  evalStateT (mapM_ interpretDecl decls) Prover.rulesLJE
+interpretIO :: String -> IO ()
+interpretIO input = do
+  case interpret input of
+    Left err -> do
+      putStrLn "ERROR: Syntax error:"
+      putStrLn err
+    Right outputs -> mapM_ putStrLn outputs
 
-interpretDecl :: Decl -> StateT Prover.Rules IO ()
+interpretProgramIO :: Program -> IO ()
+interpretProgramIO (Program decls) = mapM_ putStrLn $
+  execWriter $
+    evalStateT (mapM_ interpretDecl decls) Prover.rulesLJE
+
+interpret :: String -> Either String [String]
+interpret input = do
+  let tokens = RSTT.resolveLayout True (RSTT.myLexer input)
+  interpretProgram <$> RSTT.pProgram tokens
+
+interpretProgram :: Program -> [String]
+interpretProgram (Program decls) =
+  execWriter $
+    evalStateT (mapM_ interpretDecl decls) Prover.rulesLJE
+
+interpretDecl :: Decl -> StateT Prover.Rules (Writer [String]) ()
 interpretDecl = \case
   DeclCube (Label con) _points -> lift $
-    putStrLn ("WARNING: cube declaration is ignored for cube " <> show con)
+    tell [ "WARNING: cube declaration is ignored for cube " <> show con ]
   DeclTopePrefix (Label con) _cubes rules -> do
     forM_ rules $ \rule@(TopeRule (RuleName name) _ _ _) -> do
-      lift $ putStrLn ("INFO: Adding new rule for tope " <> con <> ": " <> name)
+      tell [ "INFO: Adding new rule for tope " <> con <> ": " <> name ]
       modify (<> convertRule rule)
   DeclShape (Var shapeName) _shape -> lift $
-    putStrLn ("WARNING: shape definition is ignored for shape " <> show shapeName)
+    tell [ "WARNING: shape definition is ignored for shape " <> show shapeName ]
   DeclCommandProve sequent -> do
     let maxDepth = 10
     rules <- get
     lift $ do
-      putStrLn ("INFO: running BFS prover with max depth = " <> show maxDepth)
-      Prover.proveAndPrintBFS maxDepth rules (convertSequent sequent)
-      putStrLn ""
+      tell [ "INFO: running BFS prover with max depth = " <> show maxDepth ]
+      let s = convertSequent sequent
+      case Prover.proveWithBFSviaDFS' maxDepth 1 rules s of
+        Nothing -> do
+          tell [ "The sequent is not provable: " <> Prover.ppSequent s ]
+        Just proof -> do
+          tell [ Prover.ppProof proof ]
+      tell [ "" ]
 
 -- ** Compiling rules
 
