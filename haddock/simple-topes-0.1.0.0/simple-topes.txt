@@ -992,10 +992,10 @@ Substs :: [(Var, Cube)] -> [(Var, Point)] -> [(Var, Tope)] -> Substs
 [substCubeVars] :: Substs -> [(Var, Cube)]
 [substPointVars] :: Substs -> [(Var, Point)]
 [substTopeVars] :: Substs -> [(Var, Tope)]
-matchSequent :: (MonadPlus f, MonadFail f) => Sequent -> Sequent -> f Substs
+matchSequent :: (MonadPlus f, MonadFail f) => Sequent -> Sequent -> f (Substs, [Tope])
 matchTope :: MonadPlus f => Tope -> Tope -> f Substs
 matchPoint :: MonadPlus f => Point -> Point -> f Substs
-matchTopes :: (MonadPlus f, MonadFail f) => Substs -> [Tope] -> [Tope] -> f Substs
+matchTopes :: (MonadPlus f, MonadFail f) => Substs -> [Tope] -> [Tope] -> f (Substs, [Tope])
 mergeSubsts :: MonadPlus f => Substs -> Substs -> f Substs
 mergeManySubsts :: MonadPlus f => [Substs] -> f Substs
 merge :: (MonadPlus f, Eq k, Eq v, Show k, Show v) => [(k, v)] -> [(k, v)] -> f [(k, v)]
