@@ -24,7 +24,7 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: 📥 Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: 🧰 Setup Stack
         uses: haskell/actions/setup@v1
@@ -42,10 +42,10 @@ jobs:
           name: miso-haskell
 
       - name: 💾 Cache .stack/
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
-            .stack
+            ~/.stack
           key: ${{ runner.os }}-${{ hashFiles('stack.yaml.lock', 'simple-topes.cabal') }}-stack
 
       - name: 🔨 Install BNFC, alex and happy (with Stack)
