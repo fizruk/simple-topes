@@ -11,6 +11,7 @@
 module RSTT.Tope.Proof where
 
 import           Control.Applicative  (Alternative (..))
+import           Data.Bifunctor
 #if __GLASGOW_HASKELL__ < 808
 import           Control.Monad.Fail   (MonadFail)
 #endif
@@ -70,6 +71,27 @@ instance Semigroup (RulesM a) where
 instance Monoid (RulesM a) where
   mempty = RulesM empty
 
+-- | Rules, collected by type.
+data DefinedRules = DefinedRules
+  { invertibleRules    :: Rules   -- ^ Invertible rules that simplify sequents.
+  , tableauxRules      :: Rules   -- ^ Non-invertible tableaux rules.
+  , invertibleCutRules :: Rules   -- ^ Invertible rules that add more topes in context.
+  , tableauxCutRules   :: Rules   -- ^ Non-invertible tableaux rules that add more topes in context.
+  }
+
+instance Semigroup DefinedRules where
+  DefinedRules r1 r2 r3 r4 <> DefinedRules r1' r2' r3' r4'
+    = DefinedRules (r1 <> r1') (r2 <> r2') (r3 <> r3') (r4 <> r4')
+
+instance Monoid DefinedRules where
+  mempty = DefinedRules mempty mempty mempty mempty
+
+fromDefinedRules :: DefinedRules -> Rules
+fromDefinedRules DefinedRules{..}
+  = once invertibleRules `orElse`
+      (tableauxRules <>
+        (once invertibleCutRules `orElse` tableauxCutRules))
+
 -- ** Sets of rules
 
 -- | Rules for intuitionistic tope logic:
@@ -78,29 +100,43 @@ instance Monoid (RulesM a) where
 -- * \(\land\)-rules ('leftAnd' and 'rightAnd')
 -- * \(\lor\)-rules ('leftOr', 'rightOrL', and 'rightOrR')
 -- * \(\Rightarrow\)-rules ('leftImplies', 'rightImplies')
-rulesLJ :: Rules
-rulesLJ = mconcat
-  [ axiom
-  , leftAnd, rightAnd
-  , leftOr, rightOrL, rightOrR
-  , leftImplies, rightImplies
-  , ruleTop, ruleBottom
-  ]
+rulesLJ :: DefinedRules
+rulesLJ = DefinedRules
+  { invertibleRules = mconcat
+      [ axiom
+      , leftAnd, rightAnd
+      , leftOr
+      , ruleTop
+      , ruleBottom
+      , rightImplies
+      ]
+  , invertibleCutRules = mempty
+  , tableauxRules = mconcat
+      [ rightOrL, rightOrR
+      , leftImplies
+      ]
+  , tableauxCutRules = mempty
+  }
 
 -- | Rules for tope equality:
 --
 -- * reflexivity ('reflEQ')
 -- * symmetry ('symEQ')
 -- * transitivity ('transEQ')
-rulesEQ :: Rules
-rulesEQ = mconcat [ reflEQ, transEQ, symEQ ]
+rulesEQ :: DefinedRules
+rulesEQ = DefinedRules
+  { invertibleRules     = mconcat [ reflEQ, transEQ, symEQ ]
+  , invertibleCutRules  = mempty
+  , tableauxRules       = mempty
+  , tableauxCutRules    = mempty
+  }
 
 -- | Rules for intuitionistic tope logic with equality:
 --
 -- * intuitionistic rules 'rulesLJ'
 -- * equality tope rules 'rulesEQ'
-rulesLJE :: Rules
-rulesLJE = rulesLJ <> rulesEQ
+rulesLJE :: DefinedRules
+rulesLJE = rulesEQ <> rulesLJ
 
 -- | Rules for inequality tope (not built-in).
 --
@@ -281,6 +317,12 @@ distinctLEQ = do
 
 -- ** Helpers
 
+orElse :: MonadLogic m => m a -> m a -> m a
+orElse mx my =
+  msplit mx >>= \case
+    Nothing      -> my
+    Just (x, xs) -> pure x <|> xs
+
 -- | Nondeterministically select exactly \(N\) elements from a given list,
 -- also returning the remaining part of the list.
 selectN :: Alternative f => Int -> [a] -> f ([a], [a])
@@ -416,15 +458,33 @@ proveWithBFSviaDFS
   -> Sequent      -- ^ A starting sequent (one to prove).
   -> Logic Proof
 proveWithBFSviaDFS maxDepth k rules sequent =
-  go maxDepth (pure (Leaf sequent))
+  go (1 + maxDepth) (pure (Leaf sequent))
   where
     go n t
       | n <= 0 = empty
       | otherwise = do
-          msplit (t >>= close) >>= \case
-            Nothing -> go (n - 1) $ do
-              join <$> (t >>= traverse (proveWithDFS k rules))
-            Just (x, next) -> pure x <|> next
+          tryClose t >>= \case
+            Right proof -> pure proof
+            Left [] -> empty
+            Left incompletes -> {- trace (unlines $
+              [ "Trying at level " <> show (maxDepth - n + 1) <> " (with k=" <> show k <> "), having " <> show (length incompletes) <> " partial proofs:"
+              , unlines (map (ppProof . markIncomplete) $ take 10 incompletes)
+              ]) $ -}
+              go (n - 1) $ do
+                join <$> (choose incompletes >>= traverse (proveWithDFS k rules))
+
+markIncomplete :: ProofTree Sequent -> Proof
+markIncomplete = \case
+  Leaf x         -> Node x "incomplete" []
+  Node x name ts -> Node x name (markIncomplete <$> ts)
+
+tryClose :: Logic (ProofTree a) -> Logic (Either [ProofTree a] Proof)
+tryClose m =
+  msplit m >>= \case
+    Nothing      -> pure (Left [])
+    Just (x, xs) ->
+          fmap Right (close x)
+      <|> fmap (first (x:)) (tryClose xs)
 
 -- | Search for a proof using simple DFS algorithm (see 'proveWithDFS').
 proveWithDFS'

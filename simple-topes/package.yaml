@@ -28,6 +28,7 @@ custom-setup:
 dependencies:
 - array
 - base >= 4.7 && < 5
+- containers
 - logict
 - mtl
 

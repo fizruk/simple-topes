@@ -9,11 +9,11 @@ import           Data.String (IsString (..))
 
 -- | A label (constructor symbol).
 newtype Label = Label { getLabel :: String }
-  deriving newtype (Eq, Show, IsString)
+  deriving newtype (Eq, Ord, Show, IsString)
 
 -- | A variable.
 newtype Var = Var { getVar :: String }
-  deriving newtype (Eq, Show, IsString)
+  deriving newtype (Eq, Ord, Show, IsString)
 
 -- | A cube expression.
 data Cube
@@ -21,7 +21,7 @@ data Cube
   | CubeProduct Cube Cube   -- ^ Product of cubes: \(I \times J\).
   | CubeCon Label           -- ^ A user-defined cube, e.g. \(\mathbb{2}, \mathbb{I}\).
   | CubeVar Var             -- ^ A cube variable: \(I, J\).
-  deriving (Eq, Show)
+  deriving (Eq, Ord, Show)
 
 instance IsString Cube where
   fromString = CubeVar . fromString
@@ -34,7 +34,7 @@ data Point
   | PointSecond Point       -- ^ Second projection: \(\pi_2\;t\).
   | PointCon Label [Point]  -- ^ A user-defined point constructor, e.g. \(0 : \mathbb{2}\) or \(t \land s : \mathbb{I}\).
   | PointVar Var            -- ^ A point variable: \(t, s\).
-  deriving (Eq, Show)
+  deriving (Eq, Ord, Show)
 
 instance IsString Point where
   fromString = PointVar . fromString

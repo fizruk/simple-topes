@@ -3,7 +3,11 @@
 {-# LANGUAGE RecordWildCards #-}
 module RSTT.Interpret where
 
+import           Data.Set             (Set)
+import qualified Data.Set             as Set
+
 import           Control.Applicative
+import           Control.Monad.Logic
 import           Control.Monad.Reader
 import           Control.Monad.State
 import           Control.Monad.Writer
@@ -29,9 +33,7 @@ interpretIO input = do
     Right outputs -> mapM_ putStrLn outputs
 
 interpretProgramIO :: Program -> IO ()
-interpretProgramIO (Program decls) = mapM_ putStrLn $
-  execWriter $
-    evalStateT (mapM_ interpretDecl decls) Prover.rulesLJE
+interpretProgramIO = mapM_ putStrLn . interpretProgram
 
 interpret :: String -> Either String [String]
 interpret input = do
@@ -43,7 +45,7 @@ interpretProgram (Program decls) =
   execWriter $
     evalStateT (mapM_ interpretDecl decls) Prover.rulesLJE
 
-interpretDecl :: Decl -> StateT Prover.Rules (Writer [String]) ()
+interpretDecl :: Decl -> StateT Prover.DefinedRules (Writer [String]) ()
 interpretDecl = \case
   DeclCube (Label con) _points -> lift $
     tell [ "WARNING: cube declaration is ignored for cube " <> con ]
@@ -54,12 +56,20 @@ interpretDecl = \case
   DeclShape (Var shapeName) _shape -> lift $
     tell [ "WARNING: shape definition is ignored for shape " <> shapeName ]
   DeclCommandProve sequent -> do
-    let maxDepth = 10
-    rules <- get
+    let maxDepth = 20
+        k = 1
+    rules <- gets Prover.fromDefinedRules
     lift $ do
-      tell [ "INFO: running BFS prover with max depth = " <> show maxDepth ]
+      case (maxDepth, k) of
+        (_, 1) -> tell
+          [ "INFO: running BFS proofsearch up to depth " <> show (maxDepth * k) ]
+        (1, _) -> tell
+          [ "INFO: running DFS proofsearch up to depth " <> show (maxDepth * k) ]
+        _ -> tell
+          [ "INFO: running k-depth proofsearch up to depth " <> show (maxDepth * k) <>
+            " (" <> show maxDepth <> " iterations, k = " <> show k <> ")" ]
       let s = convertSequent sequent
-      case Prover.proveWithBFSviaDFS' maxDepth 1 rules s of
+      case Prover.proveWithBFSviaDFS' maxDepth k rules s of
         Nothing -> do
           tell [ "The sequent is not provable: " <> Prover.ppSequent s ]
         Just proof -> do
@@ -68,16 +78,96 @@ interpretDecl = \case
 
 -- ** Compiling rules
 
-convertRule :: TopeRule -> Prover.Rules
-convertRule (TopeRule (RuleName name) premises _line conclusion) = do
+convertRule :: TopeRule -> Prover.DefinedRules
+convertRule rule = Prover.DefinedRules
+  { invertibleRules    = tableauRule rule
+  , invertibleCutRules = tableauCutRule rule
+  , tableauxRules      = mempty -- tableauRule rule
+  , tableauxCutRules   = mempty -- tableauCutRule rule
+  }
+
+tableauRule :: TopeRule -> Prover.Rules
+tableauRule rule@(TopeRule (RuleName name) premises _line conclusion) = do
   currentGoal <- ask
-  (substs, leftoverTopes) <- matchSequent conclusion currentGoal
+  let metavars = foldMap collectPointVars (collectRulePoints rule)
+  (substs, leftoverTopes) <- matchSequent metavars conclusion currentGoal
   let goals = map (normalizeSequent . addTopes leftoverTopes . applySubsts substs) premises
   guard (all (/= currentGoal) goals)
+  -- trace (Prover.ppSequent currentGoal) $
   return (name, goals)
   where
     addTopes topes Prover.Sequent{..} =
       Prover.Sequent{ sequentTopeContext = topes <> sequentTopeContext, ..}
+
+tableauCutRule :: TopeRule -> Prover.Rules
+tableauCutRule rule@(TopeRule (RuleName name) premises _line conclusion) = do
+  -- [Heuristic] affects completeness
+  -- guard (null premises)
+
+  currentGoal@Prover.Sequent{..} <- ask
+  let metavars = foldMap collectPointVars (collectRulePoints rule)
+  let Sequent _ ctx tope = conclusion
+
+  -- [Heuristic] TODO: check if affects completeness
+  -- do not consider rules where RHS is a variable
+  guard (not (isVar tope))
+
+  (substs@(Substs _ substPoints substTopes), leftoverTopes) <- matchTopeContext (Substs [] [] []) ctx sequentTopeContext
+  subst''@(Substs _ substPoints' _) <- matchVars (metavars `Set.difference` Set.fromList (fst <$> substPoints))
+              (foldMap collectTopePoints (sequentTope : sequentTopeContext))
+  let substs' = substs <> subst''
+      newTope = substInTope (substPoints <> substPoints') substTopes tope
+
+  -- [Heuristic] TODO: check if affects completeness
+  -- Make sure new goal is not a trivial consequence of existing premises via LJE
+  -- (otherwise this is not useful)
+  -- This should work good for rules such as excluded middle for (≤).
+  lnot (Prover.RulesM (lift (Prover.proveWithDFS 1 (Prover.fromDefinedRules Prover.rulesLJE) Prover.Sequent{sequentTope = newTope, ..})))
+
+  let goals = map (normalizeSequent . addTopes leftoverTopes . applySubsts substs') premises
+      goalR = normalizeSequent $ addTopes [substInTope (substPoints <> substPoints') substTopes tope] currentGoal
+      newGoals = goalR : goals
+
+  guard (all (/= currentGoal) newGoals)
+  return (name <> " (left)", newGoals)
+  where
+    addTopes topes Prover.Sequent{..} =
+      Prover.Sequent{ sequentTopeContext = topes <> sequentTopeContext, ..}
+
+    isVar (TopeVar _) = True
+    isVar _           = False
+
+collectRulePoints :: TopeRule -> Set RSTT.Point
+collectRulePoints (TopeRule _ premises _ conclusion) =
+  foldMap (collectSequentPoints . convertSequent) (conclusion : premises)
+
+collectSequentPoints :: Prover.Sequent -> Set RSTT.Point
+collectSequentPoints (Prover.Sequent _cubeCtx ctx rhs) =
+  foldMap collectTopePoints (rhs : ctx)
+
+collectTopePoints :: RSTT.Tope -> Set RSTT.Point
+collectTopePoints = go
+  where
+    go = \case
+      RSTT.TopeTop             -> mempty
+      RSTT.TopeBottom          -> mempty
+      RSTT.TopeVar{}           -> mempty
+      RSTT.TopeCon _con points -> Set.fromList points
+      RSTT.TopeImplies x y     -> go x <> go y
+      RSTT.TopeOr x y          -> go x <> go y
+      RSTT.TopeAnd x y         -> go x <> go y
+      RSTT.TopeEQ l r          -> Set.fromList [l, r]
+
+collectPointVars :: RSTT.Point -> Set RSTT.Var
+collectPointVars = go
+  where
+    go = \case
+      RSTT.PointVar x           -> Set.fromList [x]
+      RSTT.PointCon _con points -> Set.unions (go <$> points)
+      RSTT.PointUnit            -> mempty
+      RSTT.PointPair x y        -> go x <> go y
+      RSTT.PointFirst x         -> go x
+      RSTT.PointSecond x        -> go x
 
 data Substs = Substs
   { substCubeVars  :: [(RSTT.Var, RSTT.Cube)]
@@ -85,15 +175,33 @@ data Substs = Substs
   , substTopeVars  :: [(RSTT.Var, RSTT.Tope)]
   }
 
+instance Semigroup Substs where
+  Substs cs ps ts <> Substs cs' ps' ts' =
+    Substs (cs <> cs') (ps <> ps') (ts <> ts')
+
 matchSequent
   :: (MonadPlus f, MonadFail f)
-  => Sequent -> Prover.Sequent -> f (Substs, [RSTT.Tope])
-matchSequent (Sequent _points topes rhs) (Prover.Sequent _points' topes' rhs') = do
+  => Set RSTT.Var -> Sequent -> Prover.Sequent -> f (Substs, [RSTT.Tope])
+matchSequent metavars (Sequent _points topes rhs) (Prover.Sequent _points' topes' rhs') = do
   subst <- matchTope rhs rhs'
-  case topes of
-    TopeContextEmpty -> return (subst, topes')
-    TopeContextNonEmpty topesList -> do
-      matchTopes subst topesList topes'
+  (subst', leftover) <- matchTopeContext subst topes topes'
+  subst'' <- matchVars (metavars `Set.difference` Set.fromList (fst <$> (substPointVars subst')))
+              (foldMap collectTopePoints (rhs' : topes'))
+  return (subst' <> subst'', leftover)
+
+matchVars :: Alternative f => Set RSTT.Var -> Set RSTT.Point -> f Substs
+matchVars vars points = Substs []
+  <$> traverse (\var -> (,) var <$> Prover.choose (Set.toList points)) (Set.toList vars)
+  <*> pure []
+
+matchTopeContext
+  :: (MonadPlus f, MonadFail f)
+  => Substs -> TopeContext -> RSTT.TopeContext -> f (Substs, RSTT.TopeContext)
+matchTopeContext substs ctx ctx' =
+  case ctx of
+    TopeContextEmpty -> return (substs, ctx')
+    TopeContextNonEmpty topes -> do
+      matchTopes substs topes ctx'
 
 matchTope :: MonadPlus f => Tope -> RSTT.Tope -> f Substs
 matchTope (TopeVar (Var x)) tope = pure $ Substs [] [] [(RSTT.Var x, tope)]
@@ -169,7 +277,13 @@ merge xs ys
         Just v' -> v /= v'
 
 normalizeSequent :: Prover.Sequent -> Prover.Sequent
-normalizeSequent = id -- FIXME
+normalizeSequent Prover.Sequent{..} = Prover.Sequent
+  { sequentCubeContext = nubSort sequentCubeContext
+  , sequentTopeContext = nubSort sequentTopeContext
+  , .. }
+
+nubSort :: Ord a => [a] -> [a]
+nubSort = Set.toList . Set.fromList
 
 applySubsts :: Substs -> Sequent -> Prover.Sequent
 applySubsts (Substs cubes points topes) (Sequent cubeContext topeContext tope) =

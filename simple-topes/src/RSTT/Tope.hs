@@ -20,7 +20,7 @@ data Tope
   | TopeImplies Tope Tope -- ^ IMPLIES tope: \(\phi \Rightarrow \psi\).
                           -- NOTE: this tope is added to internalise known tope judgements and simplify proof search.
   | TopeCon Label [Point] -- ^ User-defined tope constructor (fully applied to some points).
-  deriving (Eq, Show)
+  deriving (Eq, Ord, Show)
 
 instance IsString Tope where
   fromString = TopeVar . fromString
