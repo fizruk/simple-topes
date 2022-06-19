@@ -136,7 +136,7 @@ rulesEQ = DefinedRules
 -- * intuitionistic rules 'rulesLJ'
 -- * equality tope rules 'rulesEQ'
 rulesLJE :: DefinedRules
-rulesLJE = rulesEQ <> rulesLJ
+rulesLJE = rulesLJ <> rulesEQ
 
 -- | Rules for inequality tope (not built-in).
 --
@@ -540,7 +540,7 @@ proveAndPrintDFS maxDepth rules sequent = do
 -- >>> putStrLn (ppSequent ex1)
 -- ⋅ | (φ ∨ ζ) ∧ (ψ ∨ χ) ⊢ φ ∧ ψ ∨ ζ ∧ ψ ∨ χ
 --
--- >>> proveAndPrintBFS 8 rulesLJ ex1
+-- >>> proveAndPrintBFS 8 (fromDefinedRules rulesLJ) ex1
 -- [∧L]  ⋅ | (φ ∨ ζ) ∧ (ψ ∨ χ) ⊢ φ ∧ ψ ∨ ζ ∧ ψ ∨ χ
 -- └─ [∨L]  ⋅ | φ ∨ ζ, ψ ∨ χ ⊢ φ ∧ ψ ∨ ζ ∧ ψ ∨ χ
 --    ├─ [∨L]  ⋅ | φ, ψ ∨ χ ⊢ φ ∧ ψ ∨ ζ ∧ ψ ∨ χ
@@ -569,7 +569,7 @@ ex1 = Sequent []
 -- >>> putStrLn (ppSequent ex2)
 -- ⋅ | φ ∧ ψ ∨ ζ ∧ χ ⊢ (φ ∨ ζ) ∧ (ψ ∨ χ)
 --
--- >>> proveAndPrintBFS 8 rulesLJ ex2
+-- >>> proveAndPrintBFS 8 (fromDefinedRules rulesLJ) ex2
 -- [∧R]  ⋅ | φ ∧ ψ ∨ ζ ∧ χ ⊢ (φ ∨ ζ) ∧ (ψ ∨ χ)
 -- ├─ [∨L]  ⋅ | φ ∧ ψ ∨ ζ ∧ χ ⊢ φ ∨ ζ
 -- │  ├─ [∧L]  ⋅ | φ ∧ ψ ⊢ φ ∨ ζ
@@ -594,7 +594,7 @@ ex2 = Sequent []
 -- >>> putStrLn (ppSequent ex3)
 -- ⋅ | x ≡ y ∧ y ≡ z ⊢ z ≡ x
 --
--- >>> proveAndPrintBFS 35 (rulesLJE <> rulesLEQ) ex3
+-- >>> proveAndPrintBFS 35 (fromDefinedRules rulesLJE) ex3
 -- [∧L]  ⋅ | x ≡ y ∧ y ≡ z ⊢ z ≡ x
 -- └─ [≡L(trans)]  ⋅ | x ≡ y, y ≡ z ⊢ z ≡ x
 --    └─ [≡L(sym)]  ⋅ | x ≡ z, x ≡ y, y ≡ z ⊢ z ≡ x
@@ -608,13 +608,14 @@ ex3 = Sequent []
 -- >>> putStrLn (ppSequent ex4)
 -- ⋅ | (t ≡ s ∨ t ≡ u) ∧ s ≡ u ⊢ t ≡ s
 --
--- >>> proveAndPrintBFS 8 rulesLJE ex4
+-- >>> proveAndPrintBFS 8 (fromDefinedRules rulesLJE) ex4
 -- [∧L]  ⋅ | (t ≡ s ∨ t ≡ u) ∧ s ≡ u ⊢ t ≡ s
 -- └─ [∨L]  ⋅ | t ≡ s ∨ t ≡ u, s ≡ u ⊢ t ≡ s
 --    ├─ [Ax]  ⋅ | t ≡ s, s ≡ u ⊢ t ≡ s
 --    └─ [≡L(sym)]  ⋅ | t ≡ u, s ≡ u ⊢ t ≡ s
---       └─ [≡L(trans)]  ⋅ | u ≡ s, t ≡ u, s ≡ u ⊢ t ≡ s
---          └─ [Ax]  ⋅ | t ≡ s, u ≡ s, t ≡ u, s ≡ u ⊢ t ≡ s
+--       └─ [≡L(trans)]  ⋅ | u ≡ t, t ≡ u, s ≡ u ⊢ t ≡ s
+--          └─ [≡L(sym)]  ⋅ | s ≡ t, u ≡ t, t ≡ u, s ≡ u ⊢ t ≡ s
+--             └─ [Ax]  ⋅ | t ≡ s, s ≡ t, u ≡ t, t ≡ u, s ≡ u ⊢ t ≡ s
 ex4 :: Sequent
 ex4 = Sequent []
   [ (TopeEQ "t" "s" `TopeOr` TopeEQ "t" "u") `TopeAnd` TopeEQ "s" "u" ]
@@ -624,11 +625,15 @@ ex4 = Sequent []
 -- >>> putStrLn (ppSequent ex5)
 -- ⋅ | (≤(t, s) ∨ ≤(s, u)) ∧ ≤(t, u) ⊢ ≤(t, u) ∨ ≤(s, t) ∨ ≤(u, s)
 --
--- >>> proveAndPrintBFS 5 (rulesLJE <> rulesLEQ) ex5
+-- >>> proveAndPrintBFS 5 (fromDefinedRules rulesLJE) ex5
 -- [∧L]  ⋅ | (≤(t, s) ∨ ≤(s, u)) ∧ ≤(t, u) ⊢ ≤(t, u) ∨ ≤(s, t) ∨ ≤(u, s)
--- └─ [∨R₁]  ⋅ | ≤(t, s) ∨ ≤(s, u), ≤(t, u) ⊢ ≤(t, u) ∨ ≤(s, t) ∨ ≤(u, s)
---    └─ [∨R₁]  ⋅ | ≤(t, s) ∨ ≤(s, u), ≤(t, u) ⊢ ≤(t, u) ∨ ≤(s, t)
---       └─ [Ax]  ⋅ | ≤(t, s) ∨ ≤(s, u), ≤(t, u) ⊢ ≤(t, u)
+-- └─ [∨L]  ⋅ | ≤(t, s) ∨ ≤(s, u), ≤(t, u) ⊢ ≤(t, u) ∨ ≤(s, t) ∨ ≤(u, s)
+--    ├─ [∨R₁]  ⋅ | ≤(t, s), ≤(t, u) ⊢ ≤(t, u) ∨ ≤(s, t) ∨ ≤(u, s)
+--    │  └─ [∨R₁]  ⋅ | ≤(t, s), ≤(t, u) ⊢ ≤(t, u) ∨ ≤(s, t)
+--    │     └─ [Ax]  ⋅ | ≤(t, s), ≤(t, u) ⊢ ≤(t, u)
+--    └─ [∨R₁]  ⋅ | ≤(s, u), ≤(t, u) ⊢ ≤(t, u) ∨ ≤(s, t) ∨ ≤(u, s)
+--       └─ [∨R₁]  ⋅ | ≤(s, u), ≤(t, u) ⊢ ≤(t, u) ∨ ≤(s, t)
+--          └─ [Ax]  ⋅ | ≤(s, u), ≤(t, u) ⊢ ≤(t, u)
 ex5 :: Sequent
 ex5 = Sequent []
   [ (TopeCon "≤" ["t", "s"] `TopeOr` TopeCon "≤" ["s", "u"]) `TopeAnd` TopeCon "≤" ["t", "u"] ]
