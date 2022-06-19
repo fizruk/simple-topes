@@ -34,12 +34,10 @@ library
       RSTT.Cube
       RSTT.Interpret
       RSTT.Syntax.Abs
-      RSTT.Syntax.ErrM
       RSTT.Syntax.Layout
       RSTT.Syntax.Lex
       RSTT.Syntax.Par
       RSTT.Syntax.Print
-      RSTT.Syntax.Skel
       RSTT.Tope
       RSTT.Tope.Proof
   other-modules:

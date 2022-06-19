@@ -6,3 +6,5 @@ simple-topes/src/RSTT/Makefile
 *.o
 *.hi
 simple-topes/src/RSTT/Syntax/Test
+simple-topes/src/RSTT/Syntax/ErrM.hs
+simple-topes/src/RSTT/Syntax/Skel.hs

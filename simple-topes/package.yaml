@@ -41,6 +41,8 @@ library:
   - condition: false
     other-modules:
     - RSTT.Syntax.Test
+    - RSTT.Syntax.ErrM
+    - RSTT.Syntax.Skel
 
 executables:
   simple-topes-exe:
