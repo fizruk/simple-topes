@@ -76,13 +76,17 @@ ppPoint :: Point -> String
 ppPointPrec :: Int -> Point -> String
 instance Data.String.IsString RSTT.Cube.Label
 instance GHC.Show.Show RSTT.Cube.Label
+instance GHC.Classes.Ord RSTT.Cube.Label
 instance GHC.Classes.Eq RSTT.Cube.Label
 instance Data.String.IsString RSTT.Cube.Var
 instance GHC.Show.Show RSTT.Cube.Var
+instance GHC.Classes.Ord RSTT.Cube.Var
 instance GHC.Classes.Eq RSTT.Cube.Var
 instance GHC.Show.Show RSTT.Cube.Cube
+instance GHC.Classes.Ord RSTT.Cube.Cube
 instance GHC.Classes.Eq RSTT.Cube.Cube
 instance GHC.Show.Show RSTT.Cube.Point
+instance GHC.Classes.Ord RSTT.Cube.Point
 instance GHC.Classes.Eq RSTT.Cube.Point
 instance Data.String.IsString RSTT.Cube.Point
 instance Data.String.IsString RSTT.Cube.Cube
@@ -218,24 +222,6 @@ instance GHC.Read.Read RSTT.Syntax.Abs.Program
 instance GHC.Show.Show RSTT.Syntax.Abs.Program
 instance GHC.Classes.Ord RSTT.Syntax.Abs.Program
 instance GHC.Classes.Eq RSTT.Syntax.Abs.Program
-
-
--- | BNF Converter: Error Monad.
---   
---   Module for backwards compatibility.
---   
---   The generated parser now uses <tt><a>Either</a> String</tt> as error
---   monad. This module defines a type synonym <a>Err</a> and pattern
---   synonyms <a>Bad</a> and <a>Ok</a> for <a>Left</a> and <a>Right</a>.
-module RSTT.Syntax.ErrM
-
--- | Error monad with <a>String</a> error messages.
-type Err = Either String
-pattern Bad :: a -> Either a b
-pattern Ok :: forall {a} {b}. b -> Either a b
-instance Control.Monad.Fail.MonadFail RSTT.Syntax.ErrM.Err
-instance GHC.Base.Alternative RSTT.Syntax.ErrM.Err
-instance GHC.Base.MonadPlus RSTT.Syntax.ErrM.Err
 
 module RSTT.Syntax.Lex
 alex_tab_size :: Int
@@ -567,28 +553,6 @@ instance RSTT.Syntax.Print.Print [RSTT.Syntax.Abs.Tope]
 instance RSTT.Syntax.Print.Print RSTT.Syntax.Abs.Point
 instance RSTT.Syntax.Print.Print [RSTT.Syntax.Abs.Point]
 
-module RSTT.Syntax.Skel
-type Err = Either String
-type Result = Err String
-failure :: Show a => a -> Result
-transLabel :: Label -> Result
-transVar :: Var -> Result
-transLine :: Line -> Result
-transProgram :: Program -> Result
-transDecl :: Decl -> Result
-transShape :: Shape -> Result
-transPointPattern :: PointPattern -> Result
-transPointConDecl :: PointConDecl -> Result
-transCube :: Cube -> Result
-transTopeRule :: TopeRule -> Result
-transRuleName :: RuleName -> Result
-transSequent :: Sequent -> Result
-transCubeContext :: CubeContext -> Result
-transPointDecl :: PointDecl -> Result
-transTopeContext :: TopeContext -> Result
-transTope :: Tope -> Result
-transPoint :: Point -> Result
-
 module RSTT.Tope
 
 -- | A tope expression.
@@ -642,6 +606,7 @@ ppTope :: Tope -> String
 --   environment.
 ppTopePrec :: Int -> Tope -> String
 instance GHC.Show.Show RSTT.Tope.Tope
+instance GHC.Classes.Ord RSTT.Tope.Tope
 instance GHC.Classes.Eq RSTT.Tope.Tope
 instance GHC.Show.Show RSTT.Tope.Shape
 instance GHC.Classes.Eq RSTT.Tope.Shape
@@ -689,6 +654,23 @@ newtype RulesM a
 RulesM :: ReaderT Sequent Logic a -> RulesM a
 [applyRulesM] :: RulesM a -> ReaderT Sequent Logic a
 
+-- | Rules, collected by type.
+data DefinedRules
+DefinedRules :: Rules -> Rules -> Rules -> Rules -> DefinedRules
+
+-- | Invertible rules that simplify sequents.
+[invertibleRules] :: DefinedRules -> Rules
+
+-- | Non-invertible tableaux rules.
+[tableauxRules] :: DefinedRules -> Rules
+
+-- | Invertible rules that add more topes in context.
+[invertibleCutRules] :: DefinedRules -> Rules
+
+-- | Non-invertible tableaux rules that add more topes in context.
+[tableauxCutRules] :: DefinedRules -> Rules
+fromDefinedRules :: DefinedRules -> Rules
+
 -- | Rules for intuitionistic tope logic:
 --   
 --   <ul>
@@ -698,7 +680,7 @@ RulesM :: ReaderT Sequent Logic a -> RulesM a
 --   <a>rightOrR</a>)</li>
 --   <li>&lt;math&gt;-rules (<a>leftImplies</a>, <a>rightImplies</a>)</li>
 --   </ul>
-rulesLJ :: Rules
+rulesLJ :: DefinedRules
 
 -- | Rules for tope equality:
 --   
@@ -707,7 +689,7 @@ rulesLJ :: Rules
 --   <li>symmetry (<a>symEQ</a>)</li>
 --   <li>transitivity (<a>transEQ</a>)</li>
 --   </ul>
-rulesEQ :: Rules
+rulesEQ :: DefinedRules
 
 -- | Rules for intuitionistic tope logic with equality:
 --   
@@ -715,7 +697,7 @@ rulesEQ :: Rules
 --   <li>intuitionistic rules <a>rulesLJ</a></li>
 --   <li>equality tope rules <a>rulesEQ</a></li>
 --   </ul>
-rulesLJE :: Rules
+rulesLJE :: DefinedRules
 
 -- | Rules for inequality tope (not built-in).
 --   
@@ -772,6 +754,7 @@ lemLEQ :: Rules
 zeroLEQ :: Rules
 oneLEQ :: Rules
 distinctLEQ :: Rules
+orElse :: MonadLogic m => m a -> m a -> m a
 
 -- | Nondeterministically select exactly &lt;math&gt; elements from a given
 --   list, also returning the remaining part of the list.
@@ -842,6 +825,8 @@ proveWithDFS :: Int -> Rules -> Sequent -> Logic (ProofTree Sequent)
 
 -- | A simple k-depth proof search algorithm for a given set of rules.
 proveWithBFSviaDFS :: Int -> Int -> Rules -> Sequent -> Logic Proof
+markIncomplete :: ProofTree Sequent -> Proof
+tryClose :: Logic (ProofTree a) -> Logic (Either [ProofTree a] Proof)
 
 -- | Search for a proof using simple DFS algorithm (see
 --   <a>proveWithDFS</a>).
@@ -869,7 +854,7 @@ proveAndPrintDFS :: Int -> Rules -> Sequent -> IO ()
 --   </pre>
 --   
 --   <pre>
---   &gt;&gt;&gt; proveAndPrintBFS 8 rulesLJ ex1
+--   &gt;&gt;&gt; proveAndPrintBFS 8 (fromDefinedRules rulesLJ) ex1
 --   [∧L]  ⋅ | (φ ∨ ζ) ∧ (ψ ∨ χ) ⊢ φ ∧ ψ ∨ ζ ∧ ψ ∨ χ
 --   └─ [∨L]  ⋅ | φ ∨ ζ, ψ ∨ χ ⊢ φ ∧ ψ ∨ ζ ∧ ψ ∨ χ
 --      ├─ [∨L]  ⋅ | φ, ψ ∨ χ ⊢ φ ∧ ψ ∨ ζ ∧ ψ ∨ χ
@@ -898,7 +883,7 @@ ex1 :: Sequent
 --   </pre>
 --   
 --   <pre>
---   &gt;&gt;&gt; proveAndPrintBFS 8 rulesLJ ex2
+--   &gt;&gt;&gt; proveAndPrintBFS 8 (fromDefinedRules rulesLJ) ex2
 --   [∧R]  ⋅ | φ ∧ ψ ∨ ζ ∧ χ ⊢ (φ ∨ ζ) ∧ (ψ ∨ χ)
 --   ├─ [∨L]  ⋅ | φ ∧ ψ ∨ ζ ∧ χ ⊢ φ ∨ ζ
 --   │  ├─ [∧L]  ⋅ | φ ∧ ψ ⊢ φ ∨ ζ
@@ -923,7 +908,7 @@ ex2 :: Sequent
 --   </pre>
 --   
 --   <pre>
---   &gt;&gt;&gt; proveAndPrintBFS 35 (rulesLJE &lt;&gt; rulesLEQ) ex3
+--   &gt;&gt;&gt; proveAndPrintBFS 35 (fromDefinedRules rulesLJE) ex3
 --   [∧L]  ⋅ | x ≡ y ∧ y ≡ z ⊢ z ≡ x
 --   └─ [≡L(trans)]  ⋅ | x ≡ y, y ≡ z ⊢ z ≡ x
 --      └─ [≡L(sym)]  ⋅ | x ≡ z, x ≡ y, y ≡ z ⊢ z ≡ x
@@ -937,13 +922,14 @@ ex3 :: Sequent
 --   </pre>
 --   
 --   <pre>
---   &gt;&gt;&gt; proveAndPrintBFS 8 rulesLJE ex4
+--   &gt;&gt;&gt; proveAndPrintBFS 8 (fromDefinedRules rulesLJE) ex4
 --   [∧L]  ⋅ | (t ≡ s ∨ t ≡ u) ∧ s ≡ u ⊢ t ≡ s
 --   └─ [∨L]  ⋅ | t ≡ s ∨ t ≡ u, s ≡ u ⊢ t ≡ s
 --      ├─ [Ax]  ⋅ | t ≡ s, s ≡ u ⊢ t ≡ s
 --      └─ [≡L(sym)]  ⋅ | t ≡ u, s ≡ u ⊢ t ≡ s
---         └─ [≡L(trans)]  ⋅ | u ≡ s, t ≡ u, s ≡ u ⊢ t ≡ s
---            └─ [Ax]  ⋅ | t ≡ s, u ≡ s, t ≡ u, s ≡ u ⊢ t ≡ s
+--         └─ [≡L(trans)]  ⋅ | u ≡ t, t ≡ u, s ≡ u ⊢ t ≡ s
+--            └─ [≡L(sym)]  ⋅ | s ≡ t, u ≡ t, t ≡ u, s ≡ u ⊢ t ≡ s
+--               └─ [Ax]  ⋅ | t ≡ s, s ≡ t, u ≡ t, t ≡ u, s ≡ u ⊢ t ≡ s
 --   </pre>
 ex4 :: Sequent
 
@@ -953,11 +939,15 @@ ex4 :: Sequent
 --   </pre>
 --   
 --   <pre>
---   &gt;&gt;&gt; proveAndPrintBFS 5 (rulesLJE &lt;&gt; rulesLEQ) ex5
+--   &gt;&gt;&gt; proveAndPrintBFS 5 (fromDefinedRules rulesLJE) ex5
 --   [∧L]  ⋅ | (≤(t, s) ∨ ≤(s, u)) ∧ ≤(t, u) ⊢ ≤(t, u) ∨ ≤(s, t) ∨ ≤(u, s)
---   └─ [∨R₁]  ⋅ | ≤(t, s) ∨ ≤(s, u), ≤(t, u) ⊢ ≤(t, u) ∨ ≤(s, t) ∨ ≤(u, s)
---      └─ [∨R₁]  ⋅ | ≤(t, s) ∨ ≤(s, u), ≤(t, u) ⊢ ≤(t, u) ∨ ≤(s, t)
---         └─ [Ax]  ⋅ | ≤(t, s) ∨ ≤(s, u), ≤(t, u) ⊢ ≤(t, u)
+--   └─ [∨L]  ⋅ | ≤(t, s) ∨ ≤(s, u), ≤(t, u) ⊢ ≤(t, u) ∨ ≤(s, t) ∨ ≤(u, s)
+--      ├─ [∨R₁]  ⋅ | ≤(t, s), ≤(t, u) ⊢ ≤(t, u) ∨ ≤(s, t) ∨ ≤(u, s)
+--      │  └─ [∨R₁]  ⋅ | ≤(t, s), ≤(t, u) ⊢ ≤(t, u) ∨ ≤(s, t)
+--      │     └─ [Ax]  ⋅ | ≤(t, s), ≤(t, u) ⊢ ≤(t, u)
+--      └─ [∨R₁]  ⋅ | ≤(s, u), ≤(t, u) ⊢ ≤(t, u) ∨ ≤(s, t) ∨ ≤(u, s)
+--         └─ [∨R₁]  ⋅ | ≤(s, u), ≤(t, u) ⊢ ≤(t, u) ∨ ≤(s, t)
+--            └─ [Ax]  ⋅ | ≤(s, u), ≤(t, u) ⊢ ≤(t, u)
 --   </pre>
 ex5 :: Sequent
 instance GHC.Show.Show RSTT.Tope.Proof.Sequent
@@ -977,6 +967,8 @@ instance GHC.Show.Show a => GHC.Show.Show (RSTT.Tope.Proof.ProofTree a)
 instance GHC.Classes.Eq a => GHC.Classes.Eq (RSTT.Tope.Proof.ProofTree a)
 instance GHC.Base.Applicative RSTT.Tope.Proof.ProofTree
 instance GHC.Base.Monad RSTT.Tope.Proof.ProofTree
+instance GHC.Base.Semigroup RSTT.Tope.Proof.DefinedRules
+instance GHC.Base.Monoid RSTT.Tope.Proof.DefinedRules
 instance GHC.Base.Semigroup (RSTT.Tope.Proof.RulesM a)
 instance GHC.Base.Monoid (RSTT.Tope.Proof.RulesM a)
 
@@ -985,14 +977,22 @@ interpretIO :: String -> IO ()
 interpretProgramIO :: Program -> IO ()
 interpret :: String -> Either String [String]
 interpretProgram :: Program -> [String]
-interpretDecl :: Decl -> StateT Rules (Writer [String]) ()
-convertRule :: TopeRule -> Rules
+interpretDecl :: Decl -> StateT DefinedRules (Writer [String]) ()
+convertRule :: TopeRule -> DefinedRules
+tableauRule :: TopeRule -> Rules
+tableauCutRule :: TopeRule -> Rules
+collectRulePoints :: TopeRule -> Set Point
+collectSequentPoints :: Sequent -> Set Point
+collectTopePoints :: Tope -> Set Point
+collectPointVars :: Point -> Set Var
 data Substs
 Substs :: [(Var, Cube)] -> [(Var, Point)] -> [(Var, Tope)] -> Substs
 [substCubeVars] :: Substs -> [(Var, Cube)]
 [substPointVars] :: Substs -> [(Var, Point)]
 [substTopeVars] :: Substs -> [(Var, Tope)]
-matchSequent :: (MonadPlus f, MonadFail f) => Sequent -> Sequent -> f (Substs, [Tope])
+matchSequent :: (MonadPlus f, MonadFail f) => Set Var -> Sequent -> Sequent -> f (Substs, [Tope])
+matchVars :: Alternative f => Set Var -> Set Point -> f Substs
+matchTopeContext :: (MonadPlus f, MonadFail f) => Substs -> TopeContext -> TopeContext -> f (Substs, TopeContext)
 matchTope :: MonadPlus f => Tope -> Tope -> f Substs
 matchPoint :: MonadPlus f => Point -> Point -> f Substs
 matchTopes :: (MonadPlus f, MonadFail f) => Substs -> [Tope] -> [Tope] -> f (Substs, [Tope])
@@ -1000,6 +1000,7 @@ mergeSubsts :: MonadPlus f => Substs -> Substs -> f Substs
 mergeManySubsts :: MonadPlus f => [Substs] -> f Substs
 merge :: (MonadPlus f, Eq k, Eq v, Show k, Show v) => [(k, v)] -> [(k, v)] -> f [(k, v)]
 normalizeSequent :: Sequent -> Sequent
+nubSort :: Ord a => [a] -> [a]
 applySubsts :: Substs -> Sequent -> Sequent
 substInCubeContext :: [(Var, Cube)] -> CubeContext -> CubeContext
 substInTopeContext :: [(Var, Point)] -> [(Var, Tope)] -> TopeContext -> TopeContext
@@ -1011,3 +1012,4 @@ convertCube :: Cube -> Cube
 convertPoint :: Point -> Point
 convertTope :: Tope -> Tope
 convertTopeContext :: TopeContext -> TopeContext
+instance GHC.Base.Semigroup RSTT.Interpret.Substs

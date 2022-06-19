@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-pragma">{-# LANGUAGE GeneralizedNewtypeDeriving #-}</span><span>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span id="local-6989586621679074677"></span><span class="hs-pragma">{-# LANGUAGE GeneralizedNewtypeDeriving #-}</span><span>
 </span><span id="line-2"></span><span class="hs-pragma">{-# LANGUAGE LambdaCase                 #-}</span><span>
 </span><span id="line-3"></span><span class="hs-pragma">{-# LANGUAGE OverloadedStrings          #-}</span><span>
 </span><span id="line-4"></span><span class="hs-pragma">{-# LANGUAGE RecordWildCards            #-}</span><span>
@@ -20,14 +20,51 @@
 </span><span id="line-20"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span id="TopeImplies"><span class="annot"><a href="RSTT.Tope.html#TopeImplies"><span class="hs-identifier hs-var">TopeImplies</span></a></span></span><span> </span><span class="annot"><a href="RSTT.Tope.html#Tope"><span class="hs-identifier hs-type">Tope</span></a></span><span> </span><span class="annot"><a href="RSTT.Tope.html#Tope"><span class="hs-identifier hs-type">Tope</span></a></span><span> </span><span class="hs-comment">-- ^ IMPLIES tope: \(\phi \Rightarrow \psi\).</span><span>
 </span><span id="line-21"></span><span>                          </span><span class="hs-comment">-- NOTE: this tope is added to internalise known tope judgements and simplify proof search.</span><span>
 </span><span id="line-22"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span id="TopeCon"><span class="annot"><a href="RSTT.Tope.html#TopeCon"><span class="hs-identifier hs-var">TopeCon</span></a></span></span><span> </span><span class="annot"><a href="RSTT.Cube.html#Label"><span class="hs-identifier hs-type">Label</span></a></span><span> </span><span class="hs-special">[</span><span class="annot"><a href="RSTT.Cube.html#Point"><span class="hs-identifier hs-type">Point</span></a></span><span class="hs-special">]</span><span> </span><span class="hs-comment">-- ^ User-defined tope constructor (fully applied to some points).</span><span>
-</span><span id="line-23"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679072170"><span id="local-6989586621679072187"><span class="annot"><span class="annottext">Tope -&gt; Tope -&gt; Bool
+</span><span id="line-23"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679074617"><span id="local-6989586621679074634"><span class="annot"><span class="annottext">Tope -&gt; Tope -&gt; Bool
 (Tope -&gt; Tope -&gt; Bool) -&gt; (Tope -&gt; Tope -&gt; Bool) -&gt; Eq Tope
 forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
 /= :: Tope -&gt; Tope -&gt; Bool
 $c/= :: Tope -&gt; Tope -&gt; Bool
 == :: Tope -&gt; Tope -&gt; Bool
 $c== :: Tope -&gt; Tope -&gt; Bool
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679072141"><span id="local-6989586621679072143"><span id="local-6989586621679072167"><span class="annot"><span class="annottext">Int -&gt; Tope -&gt; ShowS
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679074585"><span id="local-6989586621679074587"><span id="local-6989586621679074589"><span id="local-6989586621679074591"><span id="local-6989586621679074593"><span id="local-6989586621679074595"><span id="local-6989586621679074612"><span class="annot"><span class="annottext">Eq Tope
+Eq Tope
+-&gt; (Tope -&gt; Tope -&gt; Ordering)
+-&gt; (Tope -&gt; Tope -&gt; Bool)
+-&gt; (Tope -&gt; Tope -&gt; Bool)
+-&gt; (Tope -&gt; Tope -&gt; Bool)
+-&gt; (Tope -&gt; Tope -&gt; Bool)
+-&gt; (Tope -&gt; Tope -&gt; Tope)
+-&gt; (Tope -&gt; Tope -&gt; Tope)
+-&gt; Ord Tope
+Tope -&gt; Tope -&gt; Bool
+Tope -&gt; Tope -&gt; Ordering
+Tope -&gt; Tope -&gt; Tope
+forall a.
+Eq a
+-&gt; (a -&gt; a -&gt; Ordering)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; a)
+-&gt; (a -&gt; a -&gt; a)
+-&gt; Ord a
+min :: Tope -&gt; Tope -&gt; Tope
+$cmin :: Tope -&gt; Tope -&gt; Tope
+max :: Tope -&gt; Tope -&gt; Tope
+$cmax :: Tope -&gt; Tope -&gt; Tope
+&gt;= :: Tope -&gt; Tope -&gt; Bool
+$c&gt;= :: Tope -&gt; Tope -&gt; Bool
+&gt; :: Tope -&gt; Tope -&gt; Bool
+$c&gt; :: Tope -&gt; Tope -&gt; Bool
+&lt;= :: Tope -&gt; Tope -&gt; Bool
+$c&lt;= :: Tope -&gt; Tope -&gt; Bool
+&lt; :: Tope -&gt; Tope -&gt; Bool
+$c&lt; :: Tope -&gt; Tope -&gt; Bool
+compare :: Tope -&gt; Tope -&gt; Ordering
+$ccompare :: Tope -&gt; Tope -&gt; Ordering
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Ord</span></span></span></span></span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679074556"><span id="local-6989586621679074558"><span id="local-6989586621679074582"><span class="annot"><span class="annottext">Int -&gt; Tope -&gt; ShowS
 [Tope] -&gt; ShowS
 Tope -&gt; String
 (Int -&gt; Tope -&gt; ShowS)
@@ -43,7 +80,7 @@ $cshowsPrec :: Int -&gt; Tope -&gt; ShowS
 </span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">)</span><span>
 </span><span id="line-24"></span><span>
 </span><span id="line-25"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IsString</span></span><span> </span><span class="annot"><a href="RSTT.Tope.html#Tope"><span class="hs-identifier hs-type">Tope</span></a></span><span> </span><span class="hs-keyword">where</span><span>
-</span><span id="line-26"></span><span>  </span><span id="local-6989586621679072134"><span class="annot"><span class="annottext">fromString :: String -&gt; Tope
+</span><span id="line-26"></span><span>  </span><span id="local-6989586621679074549"><span class="annot"><span class="annottext">fromString :: String -&gt; Tope
 </span><span class="hs-identifier hs-var hs-var hs-var hs-var">fromString</span></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Var -&gt; Tope
 </span><a href="RSTT.Tope.html#TopeVar"><span class="hs-identifier hs-var">TopeVar</span></a></span><span> </span><span class="annot"><span class="annottext">(Var -&gt; Tope) -&gt; (String -&gt; Var) -&gt; String -&gt; Tope
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
@@ -58,14 +95,14 @@ forall a. IsString a =&gt; String -&gt; a
 </span><a href="RSTT.Tope.html#shapePoint"><span class="hs-identifier hs-var hs-var">shapePoint</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Cube.html#Var"><span class="hs-identifier hs-type">Var</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="RSTT.Cube.html#Cube"><span class="hs-identifier hs-type">Cube</span></a></span><span class="hs-special">)</span><span>
 </span><span id="line-32"></span><span>  </span><span class="hs-special">,</span><span> </span><span id="shapeTope"><span class="annot"><span class="annottext">Shape -&gt; Tope
 </span><a href="RSTT.Tope.html#shapeTope"><span class="hs-identifier hs-var hs-var">shapeTope</span></a></span></span><span>  </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="RSTT.Tope.html#Tope"><span class="hs-identifier hs-type">Tope</span></a></span><span>
-</span><span id="line-33"></span><span>  </span><span class="hs-special">}</span><span> </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679072121"><span id="local-6989586621679072128"><span class="annot"><span class="annottext">Shape -&gt; Shape -&gt; Bool
+</span><span id="line-33"></span><span>  </span><span class="hs-special">}</span><span> </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679074536"><span id="local-6989586621679074543"><span class="annot"><span class="annottext">Shape -&gt; Shape -&gt; Bool
 (Shape -&gt; Shape -&gt; Bool) -&gt; (Shape -&gt; Shape -&gt; Bool) -&gt; Eq Shape
 forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
 /= :: Shape -&gt; Shape -&gt; Bool
 $c/= :: Shape -&gt; Shape -&gt; Bool
 == :: Shape -&gt; Shape -&gt; Bool
 $c== :: Shape -&gt; Shape -&gt; Bool
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679072108"><span id="local-6989586621679072110"><span id="local-6989586621679072118"><span class="annot"><span class="annottext">Int -&gt; Shape -&gt; ShowS
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679074523"><span id="local-6989586621679074525"><span id="local-6989586621679074533"><span class="annot"><span class="annottext">Int -&gt; Shape -&gt; ShowS
 [Shape] -&gt; ShowS
 Shape -&gt; String
 (Int -&gt; Shape -&gt; ShowS)
@@ -90,52 +127,52 @@ $cshowsPrec :: Int -&gt; Shape -&gt; ShowS
 </span><span id="line-42"></span><span id="ppTopeContext"><span class="annot"><span class="annottext">ppTopeContext :: [Tope] -&gt; String
 </span><a href="RSTT.Tope.html#ppTopeContext"><span class="hs-identifier hs-var hs-var">ppTopeContext</span></a></span></span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;&#8901;&quot;</span></span><span>
-</span><span id="line-43"></span><span class="annot"><a href="RSTT.Tope.html#ppTopeContext"><span class="hs-identifier hs-var">ppTopeContext</span></a></span><span> </span><span id="local-6989586621679072104"><span class="annot"><span class="annottext">[Tope]
-</span><a href="#local-6989586621679072104"><span class="hs-identifier hs-var">xs</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String -&gt; [String] -&gt; String
+</span><span id="line-43"></span><span class="annot"><a href="RSTT.Tope.html#ppTopeContext"><span class="hs-identifier hs-var">ppTopeContext</span></a></span><span> </span><span id="local-6989586621679074519"><span class="annot"><span class="annottext">[Tope]
+</span><a href="#local-6989586621679074519"><span class="hs-identifier hs-var">xs</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String -&gt; [String] -&gt; String
 forall a. [a] -&gt; [[a]] -&gt; [a]
 </span><span class="hs-identifier hs-var">intercalate</span></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;, &quot;</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(Tope -&gt; String) -&gt; [Tope] -&gt; [String]
 forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
 </span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="annot"><span class="annottext">Tope -&gt; String
 </span><a href="RSTT.Tope.html#ppTope"><span class="hs-identifier hs-var">ppTope</span></a></span><span> </span><span class="annot"><span class="annottext">[Tope]
-</span><a href="#local-6989586621679072104"><span class="hs-identifier hs-var">xs</span></a></span><span class="hs-special">)</span><span>
+</span><a href="#local-6989586621679074519"><span class="hs-identifier hs-var">xs</span></a></span><span class="hs-special">)</span><span>
 </span><span id="line-44"></span><span>
 </span><span id="line-45"></span><span class="hs-comment">-- | Pretty-print a 'Shape'.</span><span>
 </span><span id="line-46"></span><span class="annot"><a href="RSTT.Tope.html#ppShape"><span class="hs-identifier hs-type">ppShape</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="RSTT.Tope.html#Shape"><span class="hs-identifier hs-type">Shape</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
 </span><span id="line-47"></span><span id="ppShape"><span class="annot"><span class="annottext">ppShape :: Shape -&gt; String
-</span><a href="RSTT.Tope.html#ppShape"><span class="hs-identifier hs-var hs-var">ppShape</span></a></span></span><span> </span><span class="annot"><a href="RSTT.Tope.html#Shape"><span class="hs-identifier hs-type">Shape</span></a></span><span class="hs-special">{</span><span id="local-6989586621679072100"><span id="local-6989586621679072101"><span class="annot"><span class="annottext">(Var, Cube)
+</span><a href="RSTT.Tope.html#ppShape"><span class="hs-identifier hs-var hs-var">ppShape</span></a></span></span><span> </span><span class="annot"><a href="RSTT.Tope.html#Shape"><span class="hs-identifier hs-type">Shape</span></a></span><span class="hs-special">{</span><span id="local-6989586621679074515"><span id="local-6989586621679074516"><span class="annot"><span class="annottext">(Var, Cube)
 Tope
 shapeTope :: Tope
 shapePoint :: (Var, Cube)
 shapeTope :: Shape -&gt; Tope
 shapePoint :: Shape -&gt; (Var, Cube)
-</span><a href="#local-6989586621679072100"><span class="hs-glyph hs-var hs-var hs-var hs-var">..</span></a></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679074515"><span class="hs-glyph hs-var hs-var hs-var hs-var">..</span></a></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;{&quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; ShowS
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679072099"><span class="hs-identifier hs-var">t</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; ShowS
+</span><a href="#local-6989586621679074514"><span class="hs-identifier hs-var">t</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; ShowS
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot; : &quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; ShowS
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Cube -&gt; String
 </span><a href="RSTT.Cube.html#ppCube"><span class="hs-identifier hs-var">ppCube</span></a></span><span> </span><span class="annot"><span class="annottext">Cube
-</span><a href="#local-6989586621679072097"><span class="hs-identifier hs-var">cube</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; ShowS
+</span><a href="#local-6989586621679074512"><span class="hs-identifier hs-var">cube</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; ShowS
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot; | &quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; ShowS
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Tope -&gt; String
 </span><a href="RSTT.Tope.html#ppTope"><span class="hs-identifier hs-var">ppTope</span></a></span><span> </span><span class="annot"><span class="annottext">Tope
-</span><a href="#local-6989586621679072100"><span class="hs-identifier hs-var">shapeTope</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; ShowS
+</span><a href="#local-6989586621679074515"><span class="hs-identifier hs-var">shapeTope</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; ShowS
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;}&quot;</span></span><span>
 </span><span id="line-48"></span><span>  </span><span class="hs-keyword">where</span><span>
-</span><span id="line-49"></span><span>    </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Cube.html#Var"><span class="hs-identifier hs-type">Var</span></a></span><span> </span><span id="local-6989586621679072099"><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679072099"><span class="hs-identifier hs-var">t</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679072097"><span class="annot"><span class="annottext">Cube
-</span><a href="#local-6989586621679072097"><span class="hs-identifier hs-var">cube</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Var, Cube)
-</span><a href="#local-6989586621679072101"><span class="hs-identifier hs-var">shapePoint</span></a></span><span>
+</span><span id="line-49"></span><span>    </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Cube.html#Var"><span class="hs-identifier hs-type">Var</span></a></span><span> </span><span id="local-6989586621679074514"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679074514"><span class="hs-identifier hs-var">t</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679074512"><span class="annot"><span class="annottext">Cube
+</span><a href="#local-6989586621679074512"><span class="hs-identifier hs-var">cube</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Var, Cube)
+</span><a href="#local-6989586621679074516"><span class="hs-identifier hs-var">shapePoint</span></a></span><span>
 </span><span id="line-50"></span><span>
 </span><span id="line-51"></span><span class="hs-comment">-- | Pretty-print a 'Tope'.</span><span>
 </span><span id="line-52"></span><span class="annot"><a href="RSTT.Tope.html#ppTope"><span class="hs-identifier hs-type">ppTope</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="RSTT.Tope.html#Tope"><span class="hs-identifier hs-type">Tope</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
@@ -147,73 +184,73 @@ forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span id="line-55"></span><span class="hs-comment">-- | Pretty-print a 'Tope' expression in a given precedence environment.</span><span>
 </span><span id="line-56"></span><span class="annot"><a href="RSTT.Tope.html#ppTopePrec"><span class="hs-identifier hs-type">ppTopePrec</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="RSTT.Tope.html#Tope"><span class="hs-identifier hs-type">Tope</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
 </span><span id="line-57"></span><span id="ppTopePrec"><span class="annot"><span class="annottext">ppTopePrec :: Int -&gt; Tope -&gt; String
-</span><a href="RSTT.Tope.html#ppTopePrec"><span class="hs-identifier hs-var hs-var">ppTopePrec</span></a></span></span><span> </span><span id="local-6989586621679072094"><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679072094"><span class="hs-identifier hs-var">prec</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-glyph">\</span><span class="hs-glyph">case</span><span>
+</span><a href="RSTT.Tope.html#ppTopePrec"><span class="hs-identifier hs-var hs-var">ppTopePrec</span></a></span></span><span> </span><span id="local-6989586621679074509"><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679074509"><span class="hs-identifier hs-var">prec</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-glyph">\</span><span class="hs-glyph">case</span><span>
 </span><span id="line-58"></span><span>  </span><span class="annot"><span class="annottext">Tope
 </span><a href="RSTT.Tope.html#TopeTop"><span class="hs-identifier hs-var">TopeTop</span></a></span><span>         </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;&#8868;&quot;</span></span><span>
 </span><span id="line-59"></span><span>  </span><span class="annot"><span class="annottext">Tope
 </span><a href="RSTT.Tope.html#TopeBottom"><span class="hs-identifier hs-var">TopeBottom</span></a></span><span>      </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;&#8869;&quot;</span></span><span>
-</span><span id="line-60"></span><span>  </span><span class="annot"><a href="RSTT.Tope.html#TopeVar"><span class="hs-identifier hs-type">TopeVar</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Cube.html#Var"><span class="hs-identifier hs-type">Var</span></a></span><span> </span><span id="local-6989586621679072093"><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679072093"><span class="hs-identifier hs-var">x</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679072093"><span class="hs-identifier hs-var">x</span></a></span><span>
-</span><span id="line-61"></span><span>  </span><span class="annot"><a href="RSTT.Tope.html#TopeImplies"><span class="hs-identifier hs-type">TopeImplies</span></a></span><span> </span><span id="local-6989586621679072092"><span class="annot"><span class="annottext">Tope
-</span><a href="#local-6989586621679072092"><span class="hs-identifier hs-var">l</span></a></span></span><span> </span><span id="local-6989586621679072091"><span class="annot"><span class="annottext">Tope
-</span><a href="#local-6989586621679072091"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">(Int -&gt; Tope -&gt; String) -&gt; Int -&gt; Tope -&gt; String -&gt; Tope -&gt; String
+</span><span id="line-60"></span><span>  </span><span class="annot"><a href="RSTT.Tope.html#TopeVar"><span class="hs-identifier hs-type">TopeVar</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Cube.html#Var"><span class="hs-identifier hs-type">Var</span></a></span><span> </span><span id="local-6989586621679074508"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679074508"><span class="hs-identifier hs-var">x</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679074508"><span class="hs-identifier hs-var">x</span></a></span><span>
+</span><span id="line-61"></span><span>  </span><span class="annot"><a href="RSTT.Tope.html#TopeImplies"><span class="hs-identifier hs-type">TopeImplies</span></a></span><span> </span><span id="local-6989586621679074507"><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679074507"><span class="hs-identifier hs-var">l</span></a></span></span><span> </span><span id="local-6989586621679074506"><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679074506"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">(Int -&gt; Tope -&gt; String) -&gt; Int -&gt; Tope -&gt; String -&gt; Tope -&gt; String
 forall {a} {t}.
 (Semigroup a, IsString a) =&gt;
 (Int -&gt; t -&gt; a) -&gt; Int -&gt; t -&gt; a -&gt; t -&gt; a
-</span><a href="#local-6989586621679072090"><span class="hs-identifier hs-var">binOp</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Tope -&gt; String
+</span><a href="#local-6989586621679074505"><span class="hs-identifier hs-var">binOp</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Tope -&gt; String
 </span><a href="RSTT.Tope.html#ppTopePrec"><span class="hs-identifier hs-var">ppTopePrec</span></a></span><span>   </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">1</span></span><span> </span><span class="annot"><span class="annottext">Tope
-</span><a href="#local-6989586621679072092"><span class="hs-identifier hs-var">l</span></a></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679074507"><span class="hs-identifier hs-var">l</span></a></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;&#8658;&quot;</span></span><span> </span><span class="annot"><span class="annottext">Tope
-</span><a href="#local-6989586621679072091"><span class="hs-identifier hs-var">r</span></a></span><span>
-</span><span id="line-62"></span><span>  </span><span class="annot"><a href="RSTT.Tope.html#TopeOr"><span class="hs-identifier hs-type">TopeOr</span></a></span><span>      </span><span id="local-6989586621679072089"><span class="annot"><span class="annottext">Tope
-</span><a href="#local-6989586621679072089"><span class="hs-identifier hs-var">l</span></a></span></span><span> </span><span id="local-6989586621679072088"><span class="annot"><span class="annottext">Tope
-</span><a href="#local-6989586621679072088"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">(Int -&gt; Tope -&gt; String) -&gt; Int -&gt; Tope -&gt; String -&gt; Tope -&gt; String
+</span><a href="#local-6989586621679074506"><span class="hs-identifier hs-var">r</span></a></span><span>
+</span><span id="line-62"></span><span>  </span><span class="annot"><a href="RSTT.Tope.html#TopeOr"><span class="hs-identifier hs-type">TopeOr</span></a></span><span>      </span><span id="local-6989586621679074504"><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679074504"><span class="hs-identifier hs-var">l</span></a></span></span><span> </span><span id="local-6989586621679074503"><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679074503"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">(Int -&gt; Tope -&gt; String) -&gt; Int -&gt; Tope -&gt; String -&gt; Tope -&gt; String
 forall {a} {t}.
 (Semigroup a, IsString a) =&gt;
 (Int -&gt; t -&gt; a) -&gt; Int -&gt; t -&gt; a -&gt; t -&gt; a
-</span><a href="#local-6989586621679072090"><span class="hs-identifier hs-var">binOp</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Tope -&gt; String
+</span><a href="#local-6989586621679074505"><span class="hs-identifier hs-var">binOp</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Tope -&gt; String
 </span><a href="RSTT.Tope.html#ppTopePrec"><span class="hs-identifier hs-var">ppTopePrec</span></a></span><span>   </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">2</span></span><span> </span><span class="annot"><span class="annottext">Tope
-</span><a href="#local-6989586621679072089"><span class="hs-identifier hs-var">l</span></a></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679074504"><span class="hs-identifier hs-var">l</span></a></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;&#8744;&quot;</span></span><span> </span><span class="annot"><span class="annottext">Tope
-</span><a href="#local-6989586621679072088"><span class="hs-identifier hs-var">r</span></a></span><span>
-</span><span id="line-63"></span><span>  </span><span class="annot"><a href="RSTT.Tope.html#TopeAnd"><span class="hs-identifier hs-type">TopeAnd</span></a></span><span>     </span><span id="local-6989586621679072087"><span class="annot"><span class="annottext">Tope
-</span><a href="#local-6989586621679072087"><span class="hs-identifier hs-var">l</span></a></span></span><span> </span><span id="local-6989586621679072086"><span class="annot"><span class="annottext">Tope
-</span><a href="#local-6989586621679072086"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">(Int -&gt; Tope -&gt; String) -&gt; Int -&gt; Tope -&gt; String -&gt; Tope -&gt; String
+</span><a href="#local-6989586621679074503"><span class="hs-identifier hs-var">r</span></a></span><span>
+</span><span id="line-63"></span><span>  </span><span class="annot"><a href="RSTT.Tope.html#TopeAnd"><span class="hs-identifier hs-type">TopeAnd</span></a></span><span>     </span><span id="local-6989586621679074502"><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679074502"><span class="hs-identifier hs-var">l</span></a></span></span><span> </span><span id="local-6989586621679074501"><span class="annot"><span class="annottext">Tope
+</span><a href="#local-6989586621679074501"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">(Int -&gt; Tope -&gt; String) -&gt; Int -&gt; Tope -&gt; String -&gt; Tope -&gt; String
 forall {a} {t}.
 (Semigroup a, IsString a) =&gt;
 (Int -&gt; t -&gt; a) -&gt; Int -&gt; t -&gt; a -&gt; t -&gt; a
-</span><a href="#local-6989586621679072090"><span class="hs-identifier hs-var">binOp</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Tope -&gt; String
+</span><a href="#local-6989586621679074505"><span class="hs-identifier hs-var">binOp</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Tope -&gt; String
 </span><a href="RSTT.Tope.html#ppTopePrec"><span class="hs-identifier hs-var">ppTopePrec</span></a></span><span>   </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">3</span></span><span> </span><span class="annot"><span class="annottext">Tope
-</span><a href="#local-6989586621679072087"><span class="hs-identifier hs-var">l</span></a></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679074502"><span class="hs-identifier hs-var">l</span></a></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;&#8743;&quot;</span></span><span> </span><span class="annot"><span class="annottext">Tope
-</span><a href="#local-6989586621679072086"><span class="hs-identifier hs-var">r</span></a></span><span>
-</span><span id="line-64"></span><span>  </span><span class="annot"><a href="RSTT.Tope.html#TopeEQ"><span class="hs-identifier hs-type">TopeEQ</span></a></span><span>      </span><span id="local-6989586621679072085"><span class="annot"><span class="annottext">Point
-</span><a href="#local-6989586621679072085"><span class="hs-identifier hs-var">l</span></a></span></span><span> </span><span id="local-6989586621679072084"><span class="annot"><span class="annottext">Point
-</span><a href="#local-6989586621679072084"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">(Int -&gt; Point -&gt; String)
+</span><a href="#local-6989586621679074501"><span class="hs-identifier hs-var">r</span></a></span><span>
+</span><span id="line-64"></span><span>  </span><span class="annot"><a href="RSTT.Tope.html#TopeEQ"><span class="hs-identifier hs-type">TopeEQ</span></a></span><span>      </span><span id="local-6989586621679074500"><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679074500"><span class="hs-identifier hs-var">l</span></a></span></span><span> </span><span id="local-6989586621679074499"><span class="annot"><span class="annottext">Point
+</span><a href="#local-6989586621679074499"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">(Int -&gt; Point -&gt; String)
 -&gt; Int -&gt; Point -&gt; String -&gt; Point -&gt; String
 forall {a} {t}.
 (Semigroup a, IsString a) =&gt;
 (Int -&gt; t -&gt; a) -&gt; Int -&gt; t -&gt; a -&gt; t -&gt; a
-</span><a href="#local-6989586621679072090"><span class="hs-identifier hs-var">binOp</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Point -&gt; String
+</span><a href="#local-6989586621679074505"><span class="hs-identifier hs-var">binOp</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Point -&gt; String
 </span><a href="RSTT.Cube.html#ppPointPrec"><span class="hs-identifier hs-var">ppPointPrec</span></a></span><span>  </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">4</span></span><span> </span><span class="annot"><span class="annottext">Point
-</span><a href="#local-6989586621679072085"><span class="hs-identifier hs-var">l</span></a></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679074500"><span class="hs-identifier hs-var">l</span></a></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;&#8801;&quot;</span></span><span> </span><span class="annot"><span class="annottext">Point
-</span><a href="#local-6989586621679072084"><span class="hs-identifier hs-var">r</span></a></span><span>
-</span><span id="line-65"></span><span>  </span><span class="annot"><a href="RSTT.Tope.html#TopeCon"><span class="hs-identifier hs-type">TopeCon</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Cube.html#Label"><span class="hs-identifier hs-type">Label</span></a></span><span> </span><span id="local-6989586621679072081"><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679072081"><span class="hs-identifier hs-var">l</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679072081"><span class="hs-identifier hs-var">l</span></a></span><span>
-</span><span id="line-66"></span><span>  </span><span class="annot"><a href="RSTT.Tope.html#TopeCon"><span class="hs-identifier hs-type">TopeCon</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Cube.html#Label"><span class="hs-identifier hs-type">Label</span></a></span><span> </span><span id="local-6989586621679072080"><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679072080"><span class="hs-identifier hs-var">l</span></a></span></span><span class="hs-special">)</span><span> </span><span id="local-6989586621679072079"><span class="annot"><span class="annottext">[Point]
-</span><a href="#local-6989586621679072079"><span class="hs-identifier hs-var">args</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679072080"><span class="hs-identifier hs-var">l</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; ShowS
+</span><a href="#local-6989586621679074499"><span class="hs-identifier hs-var">r</span></a></span><span>
+</span><span id="line-65"></span><span>  </span><span class="annot"><a href="RSTT.Tope.html#TopeCon"><span class="hs-identifier hs-type">TopeCon</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Cube.html#Label"><span class="hs-identifier hs-type">Label</span></a></span><span> </span><span id="local-6989586621679074496"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679074496"><span class="hs-identifier hs-var">l</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679074496"><span class="hs-identifier hs-var">l</span></a></span><span>
+</span><span id="line-66"></span><span>  </span><span class="annot"><a href="RSTT.Tope.html#TopeCon"><span class="hs-identifier hs-type">TopeCon</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="RSTT.Cube.html#Label"><span class="hs-identifier hs-type">Label</span></a></span><span> </span><span id="local-6989586621679074495"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679074495"><span class="hs-identifier hs-var">l</span></a></span></span><span class="hs-special">)</span><span> </span><span id="local-6989586621679074494"><span class="annot"><span class="annottext">[Point]
+</span><a href="#local-6989586621679074494"><span class="hs-identifier hs-var">args</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679074495"><span class="hs-identifier hs-var">l</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; ShowS
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;(&quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; ShowS
@@ -226,55 +263,55 @@ forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
 </span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Int -&gt; Point -&gt; String
 </span><a href="RSTT.Cube.html#ppPointPrec"><span class="hs-identifier hs-var">ppPointPrec</span></a></span><span> </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">0</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">[Point]
-</span><a href="#local-6989586621679072079"><span class="hs-identifier hs-var">args</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">String -&gt; ShowS
+</span><a href="#local-6989586621679074494"><span class="hs-identifier hs-var">args</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">String -&gt; ShowS
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;)&quot;</span></span><span>
 </span><span id="line-67"></span><span>  </span><span class="hs-keyword">where</span><span>
-</span><span id="line-68"></span><span>    </span><span id="local-6989586621679072072"><span class="annot"><span class="annottext">parens :: a -&gt; a
-</span><a href="#local-6989586621679072072"><span class="hs-identifier hs-var hs-var">parens</span></a></span></span><span> </span><span id="local-6989586621679072071"><span class="annot"><span class="annottext">a
-</span><a href="#local-6989586621679072071"><span class="hs-identifier hs-var">s</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">a
+</span><span id="line-68"></span><span>    </span><span id="local-6989586621679074487"><span class="annot"><span class="annottext">parens :: a -&gt; a
+</span><a href="#local-6989586621679074487"><span class="hs-identifier hs-var hs-var">parens</span></a></span></span><span> </span><span id="local-6989586621679074486"><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679074486"><span class="hs-identifier hs-var">s</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">a
 </span><span class="hs-string">&quot;(&quot;</span></span><span> </span><span class="annot"><span class="annottext">a -&gt; a -&gt; a
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">a
-</span><a href="#local-6989586621679072071"><span class="hs-identifier hs-var">s</span></a></span><span> </span><span class="annot"><span class="annottext">a -&gt; a -&gt; a
+</span><a href="#local-6989586621679074486"><span class="hs-identifier hs-var">s</span></a></span><span> </span><span class="annot"><span class="annottext">a -&gt; a -&gt; a
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">a
 </span><span class="hs-string">&quot;)&quot;</span></span><span>
-</span><span id="line-69"></span><span>    </span><span id="local-6989586621679072090"><span class="annot"><span class="annottext">binOp :: (Int -&gt; t -&gt; a) -&gt; Int -&gt; t -&gt; a -&gt; t -&gt; a
-</span><a href="#local-6989586621679072090"><span class="hs-identifier hs-var hs-var">binOp</span></a></span></span><span> </span><span id="local-6989586621679072059"><span class="annot"><span class="annottext">Int -&gt; t -&gt; a
-</span><a href="#local-6989586621679072059"><span class="hs-identifier hs-var">pp</span></a></span></span><span> </span><span id="local-6989586621679072058"><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679072058"><span class="hs-identifier hs-var">opPrec</span></a></span></span><span> </span><span id="local-6989586621679072057"><span class="annot"><span class="annottext">t
-</span><a href="#local-6989586621679072057"><span class="hs-identifier hs-var">l</span></a></span></span><span> </span><span id="local-6989586621679072056"><span class="annot"><span class="annottext">a
-</span><a href="#local-6989586621679072056"><span class="hs-identifier hs-var">op</span></a></span></span><span> </span><span id="local-6989586621679072055"><span class="annot"><span class="annottext">t
-</span><a href="#local-6989586621679072055"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">(</span><span class="hs-keyword">if</span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679072094"><span class="hs-identifier hs-var">prec</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Bool
+</span><span id="line-69"></span><span>    </span><span id="local-6989586621679074505"><span class="annot"><span class="annottext">binOp :: (Int -&gt; t -&gt; a) -&gt; Int -&gt; t -&gt; a -&gt; t -&gt; a
+</span><a href="#local-6989586621679074505"><span class="hs-identifier hs-var hs-var">binOp</span></a></span></span><span> </span><span id="local-6989586621679074474"><span class="annot"><span class="annottext">Int -&gt; t -&gt; a
+</span><a href="#local-6989586621679074474"><span class="hs-identifier hs-var">pp</span></a></span></span><span> </span><span id="local-6989586621679074473"><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679074473"><span class="hs-identifier hs-var">opPrec</span></a></span></span><span> </span><span id="local-6989586621679074472"><span class="annot"><span class="annottext">t
+</span><a href="#local-6989586621679074472"><span class="hs-identifier hs-var">l</span></a></span></span><span> </span><span id="local-6989586621679074471"><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679074471"><span class="hs-identifier hs-var">op</span></a></span></span><span> </span><span id="local-6989586621679074470"><span class="annot"><span class="annottext">t
+</span><a href="#local-6989586621679074470"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">(</span><span class="hs-keyword">if</span><span> </span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679074509"><span class="hs-identifier hs-var">prec</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Bool
 forall a. Ord a =&gt; a -&gt; a -&gt; Bool
 </span><span class="hs-operator hs-var">&gt;</span></span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679072058"><span class="hs-identifier hs-var">opPrec</span></a></span><span> </span><span class="hs-keyword">then</span><span> </span><span class="annot"><span class="annottext">a -&gt; a
+</span><a href="#local-6989586621679074473"><span class="hs-identifier hs-var">opPrec</span></a></span><span> </span><span class="hs-keyword">then</span><span> </span><span class="annot"><span class="annottext">a -&gt; a
 forall {a}. (Semigroup a, IsString a) =&gt; a -&gt; a
-</span><a href="#local-6989586621679072072"><span class="hs-identifier hs-var">parens</span></a></span><span> </span><span class="hs-keyword">else</span><span> </span><span class="annot"><span class="annottext">a -&gt; a
+</span><a href="#local-6989586621679074487"><span class="hs-identifier hs-var">parens</span></a></span><span> </span><span class="hs-keyword">else</span><span> </span><span class="annot"><span class="annottext">a -&gt; a
 forall a. a -&gt; a
 </span><span class="hs-identifier hs-var">id</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">(a -&gt; a) -&gt; a -&gt; a
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span>
 </span><span id="line-70"></span><span>      </span><span class="annot"><span class="annottext">Int -&gt; t -&gt; a
-</span><a href="#local-6989586621679072059"><span class="hs-identifier hs-var">pp</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679072058"><span class="hs-identifier hs-var">opPrec</span></a></span><span> </span><span class="annot"><span class="annottext">t
-</span><a href="#local-6989586621679072057"><span class="hs-identifier hs-var">l</span></a></span><span> </span><span class="annot"><span class="annottext">a -&gt; a -&gt; a
+</span><a href="#local-6989586621679074474"><span class="hs-identifier hs-var">pp</span></a></span><span> </span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679074473"><span class="hs-identifier hs-var">opPrec</span></a></span><span> </span><span class="annot"><span class="annottext">t
+</span><a href="#local-6989586621679074472"><span class="hs-identifier hs-var">l</span></a></span><span> </span><span class="annot"><span class="annottext">a -&gt; a -&gt; a
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">a
 </span><span class="hs-string">&quot; &quot;</span></span><span> </span><span class="annot"><span class="annottext">a -&gt; a -&gt; a
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">a
-</span><a href="#local-6989586621679072056"><span class="hs-identifier hs-var">op</span></a></span><span> </span><span class="annot"><span class="annottext">a -&gt; a -&gt; a
+</span><a href="#local-6989586621679074471"><span class="hs-identifier hs-var">op</span></a></span><span> </span><span class="annot"><span class="annottext">a -&gt; a -&gt; a
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">a
 </span><span class="hs-string">&quot; &quot;</span></span><span> </span><span class="annot"><span class="annottext">a -&gt; a -&gt; a
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Int -&gt; t -&gt; a
-</span><a href="#local-6989586621679072059"><span class="hs-identifier hs-var">pp</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679072058"><span class="hs-identifier hs-var">opPrec</span></a></span><span> </span><span class="annot"><span class="annottext">t
-</span><a href="#local-6989586621679072055"><span class="hs-identifier hs-var">r</span></a></span><span>
+</span><a href="#local-6989586621679074474"><span class="hs-identifier hs-var">pp</span></a></span><span> </span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679074473"><span class="hs-identifier hs-var">opPrec</span></a></span><span> </span><span class="annot"><span class="annottext">t
+</span><a href="#local-6989586621679074470"><span class="hs-identifier hs-var">r</span></a></span><span>
 </span><span id="line-71"></span><span>
 </span><span id="line-72"></span></pre></body></html>
