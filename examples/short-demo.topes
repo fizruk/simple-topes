@@ -3,9 +3,7 @@ cube 𝟚 with
   point 𝟬 -- ^ 𝟬 point (left point).
   point 𝟭 -- ^ 𝟭 point (right point).
 
--- | Inequality tope for the strict interval cube.
--- Here axioms are formulated in sequent calculus form.
--- TODO: find out a formulation that does not require cut
+-- | Inequality tope (≤) for the strict interval cube 𝟚.
 -- NOTE: the order of the rules affects the proof search!
 tope ≤(𝟚, 𝟚) with
   rule "(≤) distinct" where
@@ -20,22 +18,11 @@ tope ≤(𝟚, 𝟚) with
     ————————————————————————————————————————————————
     t : 𝟚, s : 𝟚, u : 𝟚 | ≤(t, s), ≤(s, u) ⊢ ≤(t, u)
 
-  rule "(≤) excluded middle" where
-    ————————————————————————————————————
-    t : 𝟚, s : 𝟚 | ⋅ ⊢ ≤(t, s) ∨ ≤(s, t)
-
   rule "(≤) one" where
     ———————————————————
     t : 𝟚 | ⋅ ⊢ ≤(t, 𝟭)
 
-  rule "(≤) zero" where
-    ———————————————————
-    t : 𝟚 | ⋅ ⊢ ≤(𝟬, t)
+  -- more rules ...
 
-  rule "(≤) reflexivity" where
-    ———————————————————————
-    t : 𝟚 | ⋅ ⊢ ≤(t, t)
-
-shape Δ⁰ := { t : 𝟙 | ⊤ }
-shape Δ¹ := { t : 𝟚 | ⊤ }
-shape Δ² := { ⟨t₁, t₂⟩ : 𝟚 × 𝟚 | ≤(t₂, t₁) }
+prove
+  t : 𝟚, s : 𝟚 | ≤(t, 𝟬), ≤(𝟭, t) ⊢ t ≡ s
