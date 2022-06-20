@@ -11,7 +11,7 @@ Simple theorem prover for the tope layer of Riehl and Shulman type theory with s
 ## About
 
 This is an experimental project, related to [rzk](https://github.com/fizruk/rzk) proof assistant.
-The tope layer in RSTT serves as a tool to specify higher-dimensional diagrams (in particular for (∞,1)-categories).
+The tope layer in RSTT serves as a tool to specify higher-dimensional diagrams (in particular for (∞,1)-categories, see e.g. [«∞-Category Theory for Undergraduates» talk by Emily Riehl](https://youtu.be/A6hXn6QCu0k), specifically Act II, for an explanation).
 However, it appears that in practice (at least for the proofs in RSTT)
 statements about topes are fairly straightforward and should __always__ be solved automatically.
 Moreover, it seems that the prover need not be very efficient either, since the proof search space is supposed to be relatively small.
