@@ -23,14 +23,53 @@ Once stable, this implementation will likely be incorporated into [rzk](https://
 
 ## Development
 
-For quick local development and testing it is recommended to work with [Stack tool](https://docs.haskellstack.org/en/stable/README/).
-Clone this project and simply run `stack build`:
+The project is developed with both Stack and Nix (for GHCJS version).
+
+### Building with GHC
+
+For quick local development and testing it is recommended to work with a GHC version, using [Stack tool](https://docs.haskellstack.org/en/stable/README/). Clone this project and simply run `stack build`:
 
 ```sh
 git clone git@github.com:fizruk/simple-topes.git
-cd rzk
+cd simple-topes
 stack build
 ```
+
+The build provides an executable `simple-topes` which can be used to run theorem prover on a file:
+
+```sh
+stack exec -- simple-topes < FILE
+```
+
+To build (if needed) and run executable, use `stack run`:
+
+```sh
+stack run < FILE
+```
+
+### Building with GHCJS
+
+`try-simple-topes` package is designed to be compiled using GHCJS for an in-browser version of the theorem prover.
+To build this package you need to use [Nix](https://nixos.org/nix).
+It is recommended that you use [Cachix](https://www.cachix.org) to avoid recompiling lots of dependencies, especially [Miso](https://haskell-miso.org):
+
+```sh
+# Install Nix
+curl https://nixos.org/nix/install | sh
+# (optionally) Install Cachix
+nix-env -iA cachix -f https://cachix.org/api/v1/install
+# (optionally) Use cached miso from Cachix
+cachix use miso-haskell
+```
+
+Clone the repository, enter `try-simple-topes` directory and use `nix-build`:
+```sh
+git clone git@github.com:fizruk/simple-topes.git
+cd simple-topes/try-simple-topes
+nix-build
+```
+
+Now open `index.html` to see the result. Note that if local GHCJS build results are unavailable, `index.html` will use the [JS file from GitHub Pages](https://fizruk.github.io/rzk/result/bin/try-simple-topes.jsexe/all.js) as a fallback.
 
 # References
 
