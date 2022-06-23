@@ -6,12 +6,12 @@ cabal-version: 1.24
 
 name:           simple-topes
 version:        0.1.0.0
-description:    Please see the README on GitHub at <https://github.com/githubuser/simple-topes#readme>
-homepage:       https://github.com/githubuser/simple-topes#readme
-bug-reports:    https://github.com/githubuser/simple-topes/issues
-author:         Author name here
-maintainer:     example@example.com
-copyright:      2022 Author name here
+description:    Please see the README on GitHub at <https://github.com/fizruk/simple-topes#readme>
+homepage:       https://github.com/fizruk/simple-topes#readme
+bug-reports:    https://github.com/fizruk/simple-topes/issues
+author:         Nikolai Kudasov
+maintainer:     nickolay.kudasov@gmail.com
+copyright:      2022 Nikolai Kudasov
 license:        BSD3
 license-file:   LICENSE
 build-type:     Custom
@@ -21,7 +21,7 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/githubuser/simple-topes
+  location: https://github.com/fizruk/simple-topes
 
 custom-setup
   setup-depends:

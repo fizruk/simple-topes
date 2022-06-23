@@ -13,6 +13,6 @@ mkDerivation {
   testHaskellDepends = [
     array base doctest Glob logict mtl QuickCheck template-haskell
   ];
-  homepage = "https://github.com/githubuser/simple-topes#readme";
+  homepage = "https://github.com/fizruk/simple-topes#readme";
   license = lib.licenses.bsd3;
 }
