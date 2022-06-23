@@ -3,7 +3,7 @@
 
 
 -- | Please see the README on GitHub at
---   <a>https://github.com/githubuser/simple-topes#readme</a>
+--   <a>https://github.com/fizruk/simple-topes#readme</a>
 @package simple-topes
 @version 0.1.0.0
 
