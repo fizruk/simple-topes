@@ -653,6 +653,20 @@ ex3 = Sequent []
 --       └─ [≡L(trans)]  ⋅ | u ≡ t, t ≡ u, s ≡ u ⊢ t ≡ s
 --          └─ [≡L(sym)]  ⋅ | s ≡ t, u ≡ t, t ≡ u, s ≡ u ⊢ t ≡ s
 --             └─ [Ax]  ⋅ | t ≡ s, s ≡ t, u ≡ t, t ≡ u, s ≡ u ⊢ t ≡ s
+ex4 :: Sequent
+ex4 = Sequent []
+  [ (TopeEQ "t" "s" `TopeOr` TopeEQ "t" "u") `TopeAnd` TopeEQ "s" "u" ]
+  (TopeEQ "t" "s")
+
+-- |
+-- >>> putStrLn (ppSequent ex5)
+-- ⋅ | (≤(t, s) ∨ ≤(s, u)) ∧ ≤(t, u) ⊢ ≤(t, u) ∨ ≤(s, t) ∨ ≤(u, s)
+--
+-- >>> proveAndPrintBFS 5 (fromDefinedRules rulesLJE) ex5
+-- [∧L]  ⋅ | (≤(t, s) ∨ ≤(s, u)) ∧ ≤(t, u) ⊢ ≤(t, u) ∨ ≤(s, t) ∨ ≤(u, s)
+-- └─ [∨L]  ⋅ | ≤(t, s) ∨ ≤(s, u), ≤(t, u) ⊢ ≤(t, u) ∨ ≤(s, t) ∨ ≤(u, s)
+--    ├─ [∨R₁]  ⋅ | ≤(t, s), ≤(t, u) ⊢ ≤(t, u) ∨ ≤(s, t) ∨ ≤(u, s)
+--    │  └─ [∨R₁]  ⋅ | ≤(t, s), ≤(t, u) ⊢ ≤(t, u) ∨ ≤(s, t)
 --    │     └─ [Ax]  ⋅ | ≤(t, s), ≤(t, u) ⊢ ≤(t, u)
 --    └─ [∨R₁]  ⋅ | ≤(s, u), ≤(t, u) ⊢ ≤(t, u) ∨ ≤(s, t) ∨ ≤(u, s)
 --       └─ [∨R₁]  ⋅ | ≤(s, u), ≤(t, u) ⊢ ≤(t, u) ∨ ≤(s, t)
