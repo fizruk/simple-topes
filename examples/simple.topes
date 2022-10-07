@@ -78,3 +78,25 @@ prove
 
 prove
   t : 𝟚 | ≤(t, 𝟬), ≤(𝟭, s), ≤(s, t) ⊢ ≤(𝟭, 𝟬)
+
+prove
+  t : 𝟚, s : 𝟚 | t ≡ 𝟬, s ≡ 𝟬 ⊢ ≤(t, s)
+
+prove
+  t : 𝟚, s : 𝟚 | t ≡ 𝟬 ⊢ ≤(t, s)
+
+prove
+  t : 𝟚, s : 𝟚 | t ≡ s ⊢ ≤(t, s)
+
+prove
+  t : 𝟚, s : 𝟚 | t ≡ 𝟬, s ≡ 𝟭 ⊢ ≤(t, s)
+
+prove
+  t : 𝟚, s : 𝟚, u : 𝟚
+    | (𝟬 ≡ u ∧ ≤(u, s) ∧ ≤(s, t))
+            ∨ (u ≡ s ∧ ≤(s, t))
+            ∨ (≤(u, s) ∧ s ≡ t)
+            ∨ (≤(u, s) ∧ ≤(s, t) ∧ t ≡ 𝟭)
+    ⊢ ≤(u, s) ∧ ≤(s, t)
+
+
