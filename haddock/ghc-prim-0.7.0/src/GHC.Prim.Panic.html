@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-pragma">{-# LANGUAGE GHCForeignImportPrim #-}</span><span>
+</span><span id="line-2"></span><span class="hs-pragma">{-# LANGUAGE UnliftedFFITypes #-}</span><span>
+</span><span id="line-3"></span><span class="hs-pragma">{-# LANGUAGE MagicHash #-}</span><span>
+</span><span id="line-4"></span><span class="hs-pragma">{-# LANGUAGE UnboxedTuples #-}</span><span>
+</span><span id="line-5"></span><span class="hs-pragma">{-# LANGUAGE NoImplicitPrelude #-}</span><span>
+</span><span id="line-6"></span><span class="hs-pragma">{-# LANGUAGE EmptyCase #-}</span><span>
+</span><span id="line-7"></span><span>
+</span><span id="line-8"></span><span class="hs-comment">-- | Primitive panics.</span><span>
+</span><span id="line-9"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">GHC.Prim.Panic</span><span>
+</span><span id="line-10"></span><span>   </span><span class="hs-special">(</span><span> </span><span class="annot"><a href="GHC.Prim.Panic.html#absentSumFieldError"><span class="hs-identifier">absentSumFieldError</span></a></span><span>
+</span><span id="line-11"></span><span>   </span><span class="hs-special">,</span><span> </span><span class="annot"><a href="GHC.Prim.Panic.html#panicError"><span class="hs-identifier">panicError</span></a></span><span>
+</span><span id="line-12"></span><span>   </span><span class="hs-special">)</span><span>
+</span><span id="line-13"></span><span class="hs-keyword">where</span><span>
+</span><span id="line-14"></span><span>
+</span><span id="line-15"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="GHC.Prim.html"><span class="hs-identifier">GHC.Prim</span></a></span><span>
+</span><span id="line-16"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="GHC.Magic.html"><span class="hs-identifier">GHC.Magic</span></a></span><span>
+</span><span id="line-17"></span><span>
+</span><span id="line-18"></span><span class="hs-keyword">default</span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span> </span><span class="hs-comment">-- Double and Integer aren't available yet</span><span>
+</span><span id="line-19"></span><span>
+</span><span id="line-20"></span><span class="hs-comment">-- `stg_panic#` never returns but it can't just return `State# RealWorld` so we</span><span>
+</span><span id="line-21"></span><span class="hs-comment">-- indicate that it returns `Void#` too to make the compiler happy.</span><span>
+</span><span id="line-22"></span><span class="hs-keyword">foreign</span><span> </span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-keyword">prim</span></span><span> </span><span class="annot"><span class="hs-string">&quot;stg_paniczh&quot;</span></span><span> </span><span id="panic%23"><span class="annot"><a href="GHC.Prim.Panic.html#panic%23"><span class="hs-identifier hs-var">panic#</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="GHC.Prim.html#Addr%23"><span class="hs-identifier hs-type">Addr#</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="GHC.Prim.html#State%23"><span class="hs-identifier hs-type">State#</span></a></span><span> </span><span class="annot"><a href="GHC.Prim.html#RealWorld"><span class="hs-identifier hs-type">RealWorld</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">(#</span><span> </span><span class="annot"><a href="GHC.Prim.html#State%23"><span class="hs-identifier hs-type">State#</span></a></span><span> </span><span class="annot"><a href="GHC.Prim.html#RealWorld"><span class="hs-identifier hs-type">RealWorld</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="GHC.Prim.html#Void%23"><span class="hs-identifier hs-type">Void#</span></a></span><span> </span><span class="hs-special">#)</span><span>
+</span><span id="line-23"></span><span>
+</span><span id="line-24"></span><span class="hs-comment">-- | Display the CString whose address is given as an argument and exit.</span><span>
+</span><span id="line-25"></span><span id="local-6989586621679074066"><span class="annot"><a href="GHC.Prim.Panic.html#panicError"><span class="hs-identifier hs-type">panicError</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="GHC.Prim.html#Addr%23"><span class="hs-identifier hs-type">Addr#</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679074066"><span class="hs-identifier hs-type">a</span></a></span></span><span>
+</span><span id="line-26"></span><span id="panicError"><span class="annot"><span class="annottext">panicError :: forall a. Addr# -&gt; a
+</span><a href="GHC.Prim.Panic.html#panicError"><span class="hs-identifier hs-var hs-var">panicError</span></a></span></span><span> </span><span id="local-6989586621679074058"><span class="annot"><span class="annottext">Addr#
+</span><a href="#local-6989586621679074058"><span class="hs-identifier hs-var">errmsg</span></a></span></span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-27"></span><span>  </span><span class="annot"><span class="annottext">(State# RealWorld -&gt; a) -&gt; a
+forall o. (State# RealWorld -&gt; o) -&gt; o
+</span><a href="GHC.Magic.html#runRW%23"><span class="hs-identifier hs-var">runRW#</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">\</span><span id="local-6989586621679074057"><span class="annot"><span class="annottext">State# RealWorld
+</span><a href="#local-6989586621679074057"><span class="hs-identifier hs-var">s</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span>
+</span><span id="line-28"></span><span>    </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">Addr# -&gt; State# RealWorld -&gt; (# State# RealWorld, Void# #)
+</span><a href="GHC.Prim.Panic.html#panic%23"><span class="hs-identifier hs-var">panic#</span></a></span><span> </span><span class="annot"><span class="annottext">Addr#
+</span><a href="#local-6989586621679074058"><span class="hs-identifier hs-var">errmsg</span></a></span><span> </span><span class="annot"><span class="annottext">State# RealWorld
+</span><a href="#local-6989586621679074057"><span class="hs-identifier hs-var">s</span></a></span><span> </span><span class="hs-keyword">of</span><span>
+</span><span id="line-29"></span><span>      </span><span class="hs-special">(#</span><span> </span><span class="annot"><span class="annottext">State# RealWorld
+</span><span class="hs-identifier">_</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Void#
+</span><span class="hs-identifier">_</span></span><span> </span><span class="hs-special">#)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-comment">-- This bottom is unreachable but we can't</span><span>
+</span><span id="line-30"></span><span>                    </span><span class="hs-comment">-- use an empty case lest the pattern match</span><span>
+</span><span id="line-31"></span><span>                    </span><span class="hs-comment">-- checker squawks.</span><span>
+</span><span id="line-32"></span><span>                    </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679074056"><span class="annot"><span class="annottext">x :: t
+</span><a href="#local-6989586621679074056"><span class="hs-identifier hs-var hs-var">x</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">t
+</span><a href="#local-6989586621679074056"><span class="hs-identifier hs-var">x</span></a></span><span> </span><span class="hs-keyword">in</span><span> </span><span class="annot"><span class="annottext">a
+forall {t}. t
+</span><a href="#local-6989586621679074056"><span class="hs-identifier hs-var">x</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-33"></span><span>
+</span><span id="line-34"></span><span class="hs-comment">-- | Closure introduced by GHC.Stg.Unarise for unused unboxed sum fields.</span><span>
+</span><span id="line-35"></span><span class="hs-comment">--</span><span>
+</span><span id="line-36"></span><span class="hs-comment">-- See Note [aBSENT_SUM_FIELD_ERROR_ID] in GHC.Core.Make</span><span>
+</span><span id="line-37"></span><span id="local-6989586621679074055"><span class="annot"><a href="GHC.Prim.Panic.html#absentSumFieldError"><span class="hs-identifier hs-type">absentSumFieldError</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679074055"><span class="hs-identifier hs-type">a</span></a></span></span><span>
+</span><span id="line-38"></span><span id="absentSumFieldError"><span class="annot"><span class="annottext">absentSumFieldError :: forall {t}. t
+</span><a href="GHC.Prim.Panic.html#absentSumFieldError"><span class="hs-identifier hs-var hs-var">absentSumFieldError</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Addr# -&gt; a
+forall a. Addr# -&gt; a
+</span><a href="GHC.Prim.Panic.html#panicError"><span class="hs-identifier hs-var">panicError</span></a></span><span> </span><span class="annot"><span class="annottext">Addr#
+</span><span class="hs-string">&quot;entered absent sum field!&quot;#</span></span><span>
+</span><span id="line-39"></span><span>
+</span><span id="line-40"></span><span class="hs-comment">-- GHC.Core.Make.aBSENT_SUM_FIELD_ERROR_ID gives absentSumFieldError a bottoming</span><span>
+</span><span id="line-41"></span><span class="hs-comment">-- demand signature. But if we ever inlined it (to a call to panicError) we'd</span><span>
+</span><span id="line-42"></span><span class="hs-comment">-- lose that information.  Should not happen because absentSumFieldError is only</span><span>
+</span><span id="line-43"></span><span class="hs-comment">-- introduced in Stg.Unarise, long after inlining has stopped, but it seems</span><span>
+</span><span id="line-44"></span><span class="hs-comment">-- more direct simply to give it a NOINLINE pragma</span><span>
+</span><span id="line-45"></span><span class="hs-pragma">{-# NOINLINE</span><span> </span><span class="annot"><a href="GHC.Prim.Panic.html#absentSumFieldError"><span class="hs-pragma hs-type">absentSumFieldError</span></a></span><span> </span><span class="hs-pragma">#-}</span><span>
+</span><span id="line-46"></span></pre></body></html>

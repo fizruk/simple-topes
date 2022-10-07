@@ -605,6 +605,15 @@ ppTope :: Tope -> String
 -- | Pretty-print a <a>Tope</a> expression in a given precedence
 --   environment.
 ppTopePrec :: Int -> Tope -> String
+
+-- | Replace a point subterm everywhere in a tope term.
+replacePointInTope :: Point -> Point -> Tope -> Tope
+
+-- | Replace a point subterm everywhere in a point term.
+replacePoint :: Point -> Point -> Point -> Point
+
+-- | Check whether a point term is a subterm of another point term.
+subPointOf :: Point -> Point -> Bool
 instance GHC.Show.Show RSTT.Tope.Tope
 instance GHC.Classes.Ord RSTT.Tope.Tope
 instance GHC.Classes.Eq RSTT.Tope.Tope
@@ -688,6 +697,7 @@ rulesLJ :: DefinedRules
 --   <li>reflexivity (<a>reflEQ</a>)</li>
 --   <li>symmetry (<a>symEQ</a>)</li>
 --   <li>transitivity (<a>transEQ</a>)</li>
+--   <li>substitution (<a>substEQ</a>)</li>
 --   </ul>
 rulesEQ :: DefinedRules
 
@@ -747,6 +757,17 @@ transEQ :: Rules
 --    x ≡ y, y ≡ x ⊢ φ
 --   </pre>
 symEQ :: Rules
+
+-- | Substitution rule for equality tope (see <a>TopeEQ</a>).
+--   
+--   <pre>
+--      Г, x ≡ y ⊢ φ
+--   —————————————————
+--    Г[y<i>x] ⊢ φ[y</i>x]
+--   </pre>
+--   
+--   NOTE: limited to replacing a variable, not an arbitrary point subterm.
+substEQ :: Rules
 reflLEQ :: Rules
 transLEQ :: Rules
 antisymLEQ :: Rules
@@ -754,6 +775,28 @@ lemLEQ :: Rules
 zeroLEQ :: Rules
 oneLEQ :: Rules
 distinctLEQ :: Rules
+
+-- | Try the second computation only if the first one fails (i.e. no
+--   backtracking).
+--   
+--   The following examples show the difference between <a>orElse</a> and
+--   <a>mplus</a> for <a>Logic</a>:
+--   
+--   <pre>
+--   &gt;&gt;&gt; observeAll (pure 1 `orElse` pure 2)
+--   [1]
+--   
+--   &gt;&gt;&gt; observeAll (pure 1 `mplus` pure 2)
+--   [1,2]
+--   </pre>
+--   
+--   <pre>
+--   &gt;&gt;&gt; observeAll $ do { x &lt;- pure 1 `orElse` pure 2; guard (even x); return x }
+--   []
+--   
+--   &gt;&gt;&gt; observeAll $ do { x &lt;- pure 1 `mplus` pure 2; guard (even x); return x }
+--   [2]
+--   </pre>
 orElse :: MonadLogic m => m a -> m a -> m a
 
 -- | Nondeterministically select exactly &lt;math&gt; elements from a given
