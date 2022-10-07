@@ -69,3 +69,44 @@ ppTopePrec prec = \case
     binOp pp opPrec l op r = (if prec > opPrec then parens else id) $
       pp opPrec l <> " " <> op <> " " <> pp opPrec r
 
+-- | Replace a point subterm everywhere in a tope term.
+replacePointInTope :: Point -> Point -> Tope -> Tope
+replacePointInTope old new = go
+  where
+    go = \case
+      TopeTop          -> TopeTop
+      TopeBottom       -> TopeBottom
+      TopeAnd l r      -> TopeAnd (go l) (go r)
+      TopeOr l r       -> TopeOr (go l) (go r)
+      TopeImplies l r  -> TopeImplies (go l) (go r)
+      TopeEQ t s       -> TopeEQ (go' t) (go' s)
+      TopeVar phi      -> TopeVar phi
+      TopeCon con args -> TopeCon con (go' <$> args)
+
+    go' = replacePoint old new
+
+-- | Replace a point subterm everywhere in a point term.
+replacePoint :: Point -> Point -> Point -> Point
+replacePoint old new = go
+  where
+    go = \case
+      p | p == old      -> new
+      PointUnit         -> PointUnit
+      PointPair t s     -> PointPair (go t) (go s)
+      PointFirst t      -> PointFirst (go t)
+      PointSecond t     -> PointSecond (go t)
+      PointCon con args -> PointCon con (go <$> args)
+      PointVar var      -> PointVar var
+
+-- | Check whether a point term is a subterm of another point term.
+subPointOf :: Point -> Point -> Bool
+subPointOf p = go
+  where
+    go = \case
+      p' | p == p'       -> True
+      PointPair t s      -> any go [t, s]
+      PointFirst t       -> go t
+      PointSecond t      -> go t
+      PointCon _con args -> any go args
+      _                  -> False
+

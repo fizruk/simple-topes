@@ -123,11 +123,12 @@ rulesLJ = DefinedRules
 -- * reflexivity ('reflEQ')
 -- * symmetry ('symEQ')
 -- * transitivity ('transEQ')
+-- * substitution ('substEQ')
 rulesEQ :: DefinedRules
 rulesEQ = DefinedRules
   { invertibleRules     = mconcat [ reflEQ, transEQ, symEQ ]
   , invertibleCutRules  = mempty
-  , tableauxRules       = mempty
+  , tableauxRules       = mconcat [ substEQ ]
   , tableauxCutRules    = mempty
   }
 
@@ -270,6 +271,29 @@ symEQ = do
   guard (x /= y && TopeEQ y x `notElem` ts)
   pure ("≡L(sym)", [Sequent{sequentTopeContext = TopeEQ y x : sequentTopeContext, ..}])
 
+-- | Substitution rule for equality tope (see 'TopeEQ').
+--
+-- @
+--    Г, x ≡ y ⊢ φ
+-- —————————————————
+--  Г[y/x] ⊢ φ[y/x]
+-- @
+--
+-- NOTE: limited to replacing a variable, not an arbitrary point subterm.
+substEQ :: Rules
+substEQ = do
+  Sequent{..} <- ask
+  (TopeEQ x y, ts) <- selectOne sequentTopeContext
+  guard (isVar x) -- TODO: generalize
+  guard (not (x `subPointOf` y))
+  pure ("≡L(subst)", [Sequent
+    { sequentTopeContext = map (replacePointInTope x y) ts
+    , sequentTope = replacePointInTope x y sequentTope
+    , .. }])
+  where
+    isVar PointVar{} = True
+    isVar _          = False
+
 -- ** Inequality tope \((\leq)\) rules
 
 reflLEQ :: Rules
@@ -317,6 +341,19 @@ distinctLEQ = do
 
 -- ** Helpers
 
+-- | Try the second computation only if the first one fails (i.e. no backtracking).
+--
+-- The following examples show the difference between 'orElse' and 'mplus' for 'Logic':
+--
+-- >>> observeAll (pure 1 `orElse` pure 2)
+-- [1]
+-- >>> observeAll (pure 1 `mplus` pure 2)
+-- [1,2]
+--
+-- >>> observeAll $ do { x <- pure 1 `orElse` pure 2; guard (even x); return x }
+-- []
+-- >>> observeAll $ do { x <- pure 1 `mplus` pure 2; guard (even x); return x }
+-- [2]
 orElse :: MonadLogic m => m a -> m a -> m a
 orElse mx my =
   msplit mx >>= \case
@@ -616,20 +653,6 @@ ex3 = Sequent []
 --       └─ [≡L(trans)]  ⋅ | u ≡ t, t ≡ u, s ≡ u ⊢ t ≡ s
 --          └─ [≡L(sym)]  ⋅ | s ≡ t, u ≡ t, t ≡ u, s ≡ u ⊢ t ≡ s
 --             └─ [Ax]  ⋅ | t ≡ s, s ≡ t, u ≡ t, t ≡ u, s ≡ u ⊢ t ≡ s
-ex4 :: Sequent
-ex4 = Sequent []
-  [ (TopeEQ "t" "s" `TopeOr` TopeEQ "t" "u") `TopeAnd` TopeEQ "s" "u" ]
-  (TopeEQ "t" "s")
-
--- |
--- >>> putStrLn (ppSequent ex5)
--- ⋅ | (≤(t, s) ∨ ≤(s, u)) ∧ ≤(t, u) ⊢ ≤(t, u) ∨ ≤(s, t) ∨ ≤(u, s)
---
--- >>> proveAndPrintBFS 5 (fromDefinedRules rulesLJE) ex5
--- [∧L]  ⋅ | (≤(t, s) ∨ ≤(s, u)) ∧ ≤(t, u) ⊢ ≤(t, u) ∨ ≤(s, t) ∨ ≤(u, s)
--- └─ [∨L]  ⋅ | ≤(t, s) ∨ ≤(s, u), ≤(t, u) ⊢ ≤(t, u) ∨ ≤(s, t) ∨ ≤(u, s)
---    ├─ [∨R₁]  ⋅ | ≤(t, s), ≤(t, u) ⊢ ≤(t, u) ∨ ≤(s, t) ∨ ≤(u, s)
---    │  └─ [∨R₁]  ⋅ | ≤(t, s), ≤(t, u) ⊢ ≤(t, u) ∨ ≤(s, t)
 --    │     └─ [Ax]  ⋅ | ≤(t, s), ≤(t, u) ⊢ ≤(t, u)
 --    └─ [∨R₁]  ⋅ | ≤(s, u), ≤(t, u) ⊢ ≤(t, u) ∨ ≤(s, t) ∨ ≤(u, s)
 --       └─ [∨R₁]  ⋅ | ≤(s, u), ≤(t, u) ⊢ ≤(t, u) ∨ ≤(s, t)
