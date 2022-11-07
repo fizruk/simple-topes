@@ -307,7 +307,7 @@ transLEQ = do
   Sequent{..} <- ask
   (TopeCon (Label "≤") [x, y], ts) <- selectOne sequentTopeContext
   (TopeCon (Label "≤") [y', z], _) <- selectOne ts
-  guard (y == y' && x /= z && TopeCon (Label "≤") [x, z] `notElem` sequentTopeContext)
+  guard (y == y' && TopeCon (Label "≤") [x, z] `notElem` sequentTopeContext)
   pure ("≤L(trans)", [Sequent{sequentTopeContext = TopeCon (Label "≤") [x, z] : sequentTopeContext, ..}])
 
 antisymLEQ :: Rules
