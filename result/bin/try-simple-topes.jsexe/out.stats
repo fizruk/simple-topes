@@ -11,7 +11,7 @@ logict-0.6.0.3-FFz1HOIPvRtKFfQKkTep5Q:39488
 main:                    38112
 miso-1.6.0.0-BIKrBXAalCmHCL9FedlhiP:42256
 scientific-0.3.6.2-GYzjCtWA1vQ45VE9CYiZoV:14775
-simple-topes-0.1.0.0-FKmxmNHjomy2eR8EJCIHGR:279026
+simple-topes-0.1.0.0-FKmxmNHjomy2eR8EJCIHGR:279041
 text-1.2.3.1-2mMWCa8HNEL4R4p8nnvwO2:1164
 unordered-containers-0.2.9.0-FFYvp66GotsBzKKo1KOI6a:702
 vector-0.12.0.3-Ljxp3Ug7QBk3GWhyQE0Ewc:13310
@@ -132,7 +132,7 @@ simple-topes-0.1.0.0-FKmxmNHjomy2eR8EJCIHGR
     RSTT.Syntax.Layout:                 26514
     RSTT.Syntax.Lex:                    39998
     RSTT.Syntax.Par:                    16839
-    RSTT.Tope:                          47650
+    RSTT.Tope:                          47665
     RSTT.Tope.Proof:                    170
 
 text-1.2.3.1-2mMWCa8HNEL4R4p8nnvwO2
@@ -149,5 +149,5 @@ vector-0.12.0.3-Ljxp3Ug7QBk3GWhyQE0Ewc
 
 
 
-packed metadata: 388132
+packed metadata: 388300
 
