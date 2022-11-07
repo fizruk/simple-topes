@@ -17,7 +17,7 @@ import           Control.Monad.Fail   (MonadFail)
 #endif
 import           Control.Monad.Logic
 import           Control.Monad.Reader
-import           Data.List            (inits, intercalate, tails)
+import           Data.List            (inits, intercalate, tails, nub)
 import           Data.Void
 
 import           RSTT.Cube
@@ -287,7 +287,7 @@ substEQ = do
   guard (isVar x) -- TODO: generalize
   guard (not (x `subPointOf` y))
   pure ("≡L(subst)", [Sequent
-    { sequentTopeContext = map (replacePointInTope x y) ts
+    { sequentTopeContext = nub (map (replacePointInTope x y) ts)
     , sequentTope = replacePointInTope x y sequentTope
     , .. }])
   where
