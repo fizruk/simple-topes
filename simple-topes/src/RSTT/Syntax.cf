@@ -14,6 +14,7 @@ DeclCube.         Decl ::= "cube" Label "with" "{" [PointConDecl] "}" ;
 DeclTopePrefix.   Decl ::= "tope" Label "(" [Cube] ")" "with" "{" [TopeRule] "}" ;
 DeclShape.        Decl ::= "shape" Var ":=" Shape ;
 DeclCommandProve. Decl ::= "prove" "{" Sequent "}" ;
+DeclCommandRenderLatex.  Decl ::= "render" "latex" Shape ;
 separator Decl ";" ;
 
 Shape.  Shape ::= "{" PointPattern ":" Cube "|" Tope "}" ;

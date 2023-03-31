@@ -1,5 +1,6 @@
 {-# LANGUAGE CPP             #-}
 {-# LANGUAGE LambdaCase      #-}
+{-# LANGUAGE OverloadedStrings      #-}
 {-# LANGUAGE RecordWildCards #-}
 module RSTT.Interpret where
 
@@ -14,11 +15,13 @@ import           Control.Monad.Writer
 #if __GLASGOW_HASKELL__ < 808
 import           Control.Monad.Fail   (MonadFail)
 #endif
+import qualified Data.List            as List
 import           Data.Maybe           (fromMaybe)
 
 import           RSTT.Syntax.Abs
 import qualified RSTT.Syntax.Layout   as RSTT
 import qualified RSTT.Syntax.Par      as RSTT
+import qualified RSTT.Syntax.Print    as Printer
 
 import qualified RSTT.Cube            as RSTT
 import qualified RSTT.Tope            as RSTT
@@ -39,6 +42,12 @@ interpret :: String -> Either String [String]
 interpret input = do
   let tokens = RSTT.resolveLayout True (RSTT.myLexer input)
   interpretProgram <$> RSTT.pProgram tokens
+
+unsafeParseTope :: String -> RSTT.Tope
+unsafeParseTope input =
+  case RSTT.pTope (RSTT.myLexer input) of
+    Left err -> error (err <> "\nwhen parsing " <> input) 
+    Right t -> convertTope t
 
 interpretProgram :: Program -> [String]
 interpretProgram (Program decls) =
@@ -75,6 +84,49 @@ interpretDecl = \case
         Just proof -> do
           tell [ Prover.ppProof proof ]
       tell [ "" ]
+  DeclCommandRenderLatex
+    shape@(Shape
+      (PointPatternPair (PointPatternVar "t") (PointPatternVar "s"))
+      (CubeProduct (CubeCon "𝟚") (CubeCon "𝟚"))
+      tope) -> do
+        rules <- gets Prover.fromDefinedRules
+        let maxDepth = 20
+            k = 1
+            hasShape s = Prover.Sequent
+              [("t", RSTT.CubeCon "𝟚"), ("s", RSTT.CubeCon "𝟚")]
+              [unsafeParseTope s]
+              (convertTope tope)
+            sub s no yes =
+              case Prover.proveWithBFSviaDFS' maxDepth k rules (hasShape s) of
+                Nothing -> no
+                Just{} -> yes
+            cornerLeftTop     = sub "s ≡ 𝟬 ∧ t ≡ 𝟬" "\\;" "\\cdot"
+            cornerLeftBottom  = sub "s ≡ 𝟭 ∧ t ≡ 𝟬" "\\;" "\\cdot"
+            cornerRightTop    = sub "s ≡ 𝟬 ∧ t ≡ 𝟭" "\\;" "\\cdot"
+            cornerRightBottom = sub "s ≡ 𝟭 ∧ t ≡ 𝟭" "\\;" "\\cdot"
+            edgeTop     = sub "s ≡ 𝟬" "" "\\arrow[rr]"
+            edgeBottom  = sub "s ≡ 𝟭" "" "\\arrow[rr]"
+            edgeLeft    = sub "t ≡ 𝟬" "" "\\arrow[dd]"
+            edgeRight   = sub "t ≡ 𝟭" "" "\\arrow[dd]"
+            edgeDiag    = sub "s ≡ t" "" "\\arrow[ddrr]"
+            triangleTop = sub "≤(s, t)" "" "\\fill[blue, opacity=0.2] (p00.center) -- (p10.center) -- (p11.center) -- cycle;"
+            triangleBottom = sub "≤(t, s)" "" "\\fill[blue, opacity=0.2] (p00.center) -- (p01.center) -- (p11.center) -- cycle;"
+        tell
+          [ "% diagram for the shape"
+          , "% " <> unwords (words (List.intercalate " " (lines (Printer.printTree shape))))
+          , "\\begin{tikzcd}["
+          , " execute at end picture={"
+          , "   \\scoped[on background layer]"
+          , "   " <> triangleTop
+          , "   " <> triangleBottom
+          , " }]"
+          , " |[alias=p00]|"<>cornerLeftTop<>" "<>edgeTop<>" "<>edgeDiag<>" "<>edgeLeft<>" & \\; & |[alias=p10]|"<>cornerRightTop<>" "<>edgeRight<>" \\\\"
+          , " \\; & \\; & \\; \\\\"
+          , " |[alias=p01]|"<>cornerLeftBottom<>" "<>edgeBottom<>" & \\; & |[alias=p11]|"<>cornerRightBottom
+          , "\\end{tikzcd}" ]
+  DeclCommandRenderLatex shape ->
+    tell ["WARNING: render latex unsupported for shape " <> show shape]
+
 
 -- ** Compiling rules
 
