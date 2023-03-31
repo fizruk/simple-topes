@@ -101,6 +101,7 @@ DeclCube :: Label -> [PointConDecl] -> Decl
 DeclTopePrefix :: Label -> [Cube] -> [TopeRule] -> Decl
 DeclShape :: Var -> Shape -> Decl
 DeclCommandProve :: Sequent -> Decl
+DeclCommandRenderLatex :: Shape -> Decl
 data Shape
 Shape :: PointPattern -> Cube -> Tope -> Shape
 data PointPattern
@@ -1019,6 +1020,7 @@ module RSTT.Interpret
 interpretIO :: String -> IO ()
 interpretProgramIO :: Program -> IO ()
 interpret :: String -> Either String [String]
+unsafeParseTope :: String -> Tope
 interpretProgram :: Program -> [String]
 interpretDecl :: Decl -> StateT DefinedRules (Writer [String]) ()
 convertRule :: TopeRule -> DefinedRules
