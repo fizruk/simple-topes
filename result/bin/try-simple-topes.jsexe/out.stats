@@ -1,20 +1,20 @@
 code size summary per package:
 
 aeson-1.4.2.0-6oFZmLVQz2fGtrfaZYcFm5:41765
-base:                    308047
-containers-0.6.0.1-BAqcfV1UBBeCIRjPbUYeSG:61201
-ghc-prim:                72739
-ghcjs-base-0.2.0.0-JozYZ7GHc7JEfhDrWZm3NT:32214
-ghcjs-prim-0.1.1.0-EXzjGVHQlAS2XAXcu0iCbS:4034
+base:                    307770
+containers-0.6.0.1-BAqcfV1UBBeCIRjPbUYeSG:61323
+ghc-prim:                75273
+ghcjs-base-0.2.0.0-JozYZ7GHc7JEfhDrWZm3NT:32101
+ghcjs-prim-0.1.1.0-EXzjGVHQlAS2XAXcu0iCbS:4033
 integer-gmp:             2733
 logict-0.6.0.3-FFz1HOIPvRtKFfQKkTep5Q:39488
 main:                    38112
 miso-1.6.0.0-BIKrBXAalCmHCL9FedlhiP:42256
 scientific-0.3.6.2-GYzjCtWA1vQ45VE9CYiZoV:14880
-simple-topes-0.1.0.0-FKmxmNHjomy2eR8EJCIHGR:357993
+simple-topes-0.1.0.0-FKmxmNHjomy2eR8EJCIHGR:378517
 text-1.2.3.1-2mMWCa8HNEL4R4p8nnvwO2:1164
 unordered-containers-0.2.9.0-FFYvp66GotsBzKKo1KOI6a:702
-vector-0.12.0.3-Ljxp3Ug7QBk3GWhyQE0Ewc:13311
+vector-0.12.0.3-Ljxp3Ug7QBk3GWhyQE0Ewc:13310
 
 
 code size per module:
@@ -27,14 +27,14 @@ base
     Control.Exception.Base:             1
     Data.Either:                        241
     Data.Functor.Identity:              608
-    Data.Maybe:                         5781
+    Data.Maybe:                         5504
     Data.OldList:                       1
     Data.Tuple:                         42640
     Data.Typeable.Internal:             9850
     Foreign.C.Error:                    873
     Foreign.Marshal.Alloc:              2644
     Foreign.Storable:                   2370
-    GHC.Arr:                            3710
+    GHC.Arr:                            3709
     GHC.Base:                           6139
     GHC.Conc.Sync:                      144
     GHC.Enum:                           842
@@ -53,7 +53,7 @@ base
     GHC.IO.Encoding:                    592
     GHC.IO.Encoding.Failure:            1
     GHC.IO.Encoding.Types:              58059
-    GHC.IO.Encoding.UTF8:               10735
+    GHC.IO.Encoding.UTF8:               10736
     GHC.IO.Exception:                   25411
     GHC.IO.FD:                          274
     GHC.IO.Handle:                      4932
@@ -77,7 +77,7 @@ base
     System.Posix.Internals:             3612
 
 containers-0.6.0.1-BAqcfV1UBBeCIRjPbUYeSG
-    Data.Map.Internal:                  22010
+    Data.Map.Internal:                  22132
     Data.Sequence.Internal:             37258
     Data.Set.Internal:                  1933
 
@@ -86,12 +86,12 @@ ghc-prim
     GHC.Classes:                        139
     GHC.IntWord64:                      1747
     GHC.Tuple:                          125
-    GHC.Types:                          67149
+    GHC.Types:                          69683
 
 ghcjs-base-0.2.0.0-JozYZ7GHc7JEfhDrWZm3NT
     Data.JSString:                      1
     Data.JSString.Internal.Type:        390
-    GHCJS.Foreign.Internal:             27222
+    GHCJS.Foreign.Internal:             27109
     GHCJS.Marshal:                      1
     GHCJS.Marshal.Internal:             290
     GHCJS.Marshal.Pure:                 1
@@ -100,7 +100,7 @@ ghcjs-base-0.2.0.0-JozYZ7GHc7JEfhDrWZm3NT
 
 ghcjs-prim-0.1.1.0-EXzjGVHQlAS2XAXcu0iCbS
     GHCJS.Prim:                         2476
-    GHCJS.Prim.Internal:                1558
+    GHCJS.Prim.Internal:                1557
 
 integer-gmp
     GHC.Integer.Type:                   2733
@@ -127,11 +127,11 @@ scientific-0.3.6.2-GYzjCtWA1vQ45VE9CYiZoV
     Data.Scientific:                    14880
 
 simple-topes-0.1.0.0-FKmxmNHjomy2eR8EJCIHGR
-    RSTT.Cube:                          132629
+    RSTT.Cube:                          152798
     RSTT.Interpret:                     18771
-    RSTT.Syntax.Abs:                    48207
-    RSTT.Syntax.Layout:                 26710
-    RSTT.Syntax.Lex:                    40320
+    RSTT.Syntax.Abs:                    48393
+    RSTT.Syntax.Layout:                 26880
+    RSTT.Syntax.Lex:                    40319
     RSTT.Syntax.Par:                    26694
     RSTT.Syntax.Print:                  16648
     RSTT.Tope:                          47844
@@ -147,9 +147,9 @@ unordered-containers-0.2.9.0-FFYvp66GotsBzKKo1KOI6a
 
 vector-0.12.0.3-Ljxp3Ug7QBk3GWhyQE0Ewc
     Data.Vector:                        499
-    Data.Vector.Mutable:                12812
+    Data.Vector.Mutable:                12811
 
 
 
-packed metadata: 447051
+packed metadata: 437257
 
