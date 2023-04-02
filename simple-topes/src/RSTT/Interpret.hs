@@ -101,10 +101,10 @@ interpretDecl = \case
               case Prover.proveWithBFSviaDFS' maxDepth k rules (hasShape s) of
                 Nothing -> no
                 Just{} -> yes
-            cornerLeftTop     = sub "s ≡ 𝟬 ∧ t ≡ 𝟬" "\\;" "\\cdot"
-            cornerLeftBottom  = sub "s ≡ 𝟭 ∧ t ≡ 𝟬" "\\;" "\\cdot"
-            cornerRightTop    = sub "s ≡ 𝟬 ∧ t ≡ 𝟭" "\\;" "\\cdot"
-            cornerRightBottom = sub "s ≡ 𝟭 ∧ t ≡ 𝟭" "\\;" "\\cdot"
+            cornerLeftTop     = sub "s ≡ 𝟬 ∧ t ≡ 𝟬" "\\;" "\\bullet"
+            cornerLeftBottom  = sub "s ≡ 𝟭 ∧ t ≡ 𝟬" "\\;" "\\bullet"
+            cornerRightTop    = sub "s ≡ 𝟬 ∧ t ≡ 𝟭" "\\;" "\\bullet"
+            cornerRightBottom = sub "s ≡ 𝟭 ∧ t ≡ 𝟭" "\\;" "\\bullet"
             edgeTop     = sub "s ≡ 𝟬" "" "\\arrow[rr]"
             edgeBottom  = sub "s ≡ 𝟭" "" "\\arrow[rr]"
             edgeLeft    = sub "t ≡ 𝟬" "" "\\arrow[dd]"
@@ -143,83 +143,85 @@ interpretDecl = \case
               case Prover.proveWithBFSviaDFS' maxDepth k rules (hasShape s) of
                 Nothing -> no
                 Just{} -> yes
+            sub4 s (x, y, z, w) = sub s "" $ List.intercalate "\n"
+              [ "\\fill[red, opacity=0.2, transform canvas={scale around={0.3:(barycentric cs:"<>p1<>"=0.5,"<>p2<>"=0.5,"<>p3<>"=0.5,"<>p4<>"=0.5)}}] ("<>p1<>".center) -- ("<>p2<>".center) -- ("<>p3<>".center) -- cycle;" | [p1, p2, p3, p4] <- [ [x, y, z, w], [x, y, w, z], [x, z, w, y], [y, z, w, x] ] ]
 
-            corner000 = sub "t3 ≡ 𝟬 ∧ t2 ≡ 𝟬 ∧ t1 ≡ 𝟬" "\\;" "\\cdot"
-            corner001 = sub "t3 ≡ 𝟬 ∧ t2 ≡ 𝟬 ∧ t1 ≡ 𝟭" "\\;" "\\cdot"
-            corner010 = sub "t3 ≡ 𝟬 ∧ t2 ≡ 𝟭 ∧ t1 ≡ 𝟬" "\\;" "\\cdot"
-            corner011 = sub "t3 ≡ 𝟬 ∧ t2 ≡ 𝟭 ∧ t1 ≡ 𝟭" "\\;" "\\cdot"
-            corner100 = sub "t3 ≡ 𝟭 ∧ t2 ≡ 𝟬 ∧ t1 ≡ 𝟬" "\\;" "\\cdot"
-            corner101 = sub "t3 ≡ 𝟭 ∧ t2 ≡ 𝟬 ∧ t1 ≡ 𝟭" "\\;" "\\cdot"
-            corner110 = sub "t3 ≡ 𝟭 ∧ t2 ≡ 𝟭 ∧ t1 ≡ 𝟬" "\\;" "\\cdot"
-            corner111 = sub "t3 ≡ 𝟭 ∧ t2 ≡ 𝟭 ∧ t1 ≡ 𝟭" "\\;" "\\cdot"
+            corner000 = sub "t3 ≡ 𝟬 ∧ t2 ≡ 𝟬 ∧ t1 ≡ 𝟬" "\\;" "\\bullet"
+            corner001 = sub "t3 ≡ 𝟬 ∧ t2 ≡ 𝟬 ∧ t1 ≡ 𝟭" "\\;" "\\bullet"
+            corner010 = sub "t3 ≡ 𝟬 ∧ t2 ≡ 𝟭 ∧ t1 ≡ 𝟬" "\\;" "\\bullet"
+            corner011 = sub "t3 ≡ 𝟬 ∧ t2 ≡ 𝟭 ∧ t1 ≡ 𝟭" "\\;" "\\bullet"
+            corner100 = sub "t3 ≡ 𝟭 ∧ t2 ≡ 𝟬 ∧ t1 ≡ 𝟬" "\\;" "\\bullet"
+            corner101 = sub "t3 ≡ 𝟭 ∧ t2 ≡ 𝟬 ∧ t1 ≡ 𝟭" "\\;" "\\bullet"
+            corner110 = sub "t3 ≡ 𝟭 ∧ t2 ≡ 𝟭 ∧ t1 ≡ 𝟬" "\\;" "\\bullet"
+            corner111 = sub "t3 ≡ 𝟭 ∧ t2 ≡ 𝟭 ∧ t1 ≡ 𝟭" "\\;" "\\bullet"
 
-            edge000_001 = sub "t3 ≡ 𝟬 ∧ t2 ≡ 𝟬" "\\;" "\\arrow[rr]"
-            edge010_011 = sub "t3 ≡ 𝟬 ∧ t2 ≡ 𝟭" "\\;" "\\arrow[rr]"
-            edge100_101 = sub "t3 ≡ 𝟭 ∧ t2 ≡ 𝟬" "\\;" "\\arrow[rr]"
-            edge110_111 = sub "t3 ≡ 𝟭 ∧ t2 ≡ 𝟭" "\\;" "\\arrow[rr]"
-
-            edge000_010 = sub "t3 ≡ 𝟬 ∧ t1 ≡ 𝟬" "\\;" "\\arrow[dd]"
-            edge001_011 = sub "t3 ≡ 𝟬 ∧ t1 ≡ 𝟭" "\\;" "\\arrow[dd]"
-            edge100_110 = sub "t3 ≡ 𝟭 ∧ t1 ≡ 𝟬" "\\;" "\\arrow[dd]"
-            edge101_111 = sub "t3 ≡ 𝟭 ∧ t1 ≡ 𝟭" "\\;" "\\arrow[dd]"
-
-            edge000_100 = sub "t2 ≡ 𝟬 ∧ t1 ≡ 𝟬" "\\;" "\\arrow[dl]"
-            edge001_101 = sub "t2 ≡ 𝟬 ∧ t1 ≡ 𝟭" "\\;" "\\arrow[dl]"
-            edge010_110 = sub "t2 ≡ 𝟭 ∧ t1 ≡ 𝟬" "\\;" "\\arrow[dl]"
-            edge011_111 = sub "t2 ≡ 𝟭 ∧ t1 ≡ 𝟭" "\\;" "\\arrow[dl]"
-
-            edge000_011 = sub "t3 ≡ 𝟬 ∧ t2 ≡ t1" "\\;" "\\arrow[ddrr]"
-            edge100_111 = sub "t3 ≡ 𝟭 ∧ t2 ≡ t1" "\\;" "\\arrow[ddrr]"
-
-            edge000_101 = sub "t2 ≡ 𝟬 ∧ t3 ≡ t1" "\\;" "\\arrow[dr]"
-            edge010_111 = sub "t2 ≡ 𝟭 ∧ t3 ≡ t1" "\\;" "\\arrow[dr]"
-
-            edge000_110 = sub "t1 ≡ 𝟬 ∧ t3 ≡ t2" "\\;" "\\arrow[dddl]"
-            edge001_111 = sub "t1 ≡ 𝟭 ∧ t3 ≡ t2" "\\;" "\\arrow[dddl]"
-
-            edge000_111 = sub "t3 ≡ t2 ∧ t2 ≡ t1" "\\;" "\\arrow[dddr]"
         tell $ filter (not . null . filter (not . isSpace))
           [ "% diagram for the shape"
           , "% " <> unwords (words (List.intercalate " " (lines (Printer.printTree shape))))
           , "\\begin{tikzcd}["
           , " execute at end picture={"
-          , "   \\scoped[on background layer]"
-          , sub "t3 ≡ 𝟬 ∧ ≤(t2, t1)" "" "\\fill[blue, opacity=0.2] (p000.center) -- (p001.center) -- (p011.center) -- cycle;"
-          , sub "t3 ≡ 𝟬 ∧ ≤(t1, t2)" "" "\\fill[blue, opacity=0.2] (p000.center) -- (p010.center) -- (p011.center) -- cycle;"
-          , sub "t3 ≡ 𝟭 ∧ ≤(t2, t1)" "" "\\fill[blue, opacity=0.2] (p100.center) -- (p101.center) -- (p111.center) -- cycle;"
-          , sub "t3 ≡ 𝟭 ∧ ≤(t1, t2)" "" "\\fill[blue, opacity=0.2] (p100.center) -- (p110.center) -- (p111.center) -- cycle;"
+          -- , "   \\scoped[on background layer]"
+          , sub "t3 ≡ 𝟬 ∧ ≤(t2, t1)" "" "\\fill[blue, opacity=0.2, transform canvas={scale around={0.9:(barycentric cs:p000=0.5,p001=0.5,p011=0.5)}}] (p000.center) -- (p001.center) -- (p011.center) -- cycle;"
+          , sub "t3 ≡ 𝟬 ∧ ≤(t1, t2)" "" "\\fill[blue, opacity=0.2, transform canvas={scale around={0.9:(barycentric cs:p000=0.5,p010=0.5,p011=0.5)}}] (p000.center) -- (p010.center) -- (p011.center) -- cycle;"
+          , sub "t3 ≡ 𝟭 ∧ ≤(t2, t1)" "" "\\fill[blue, opacity=0.2, transform canvas={scale around={0.9:(barycentric cs:p100=0.5,p101=0.5,p111=0.5)}}] (p100.center) -- (p101.center) -- (p111.center) -- cycle;"
+          , sub "t3 ≡ 𝟭 ∧ ≤(t1, t2)" "" "\\fill[blue, opacity=0.2, transform canvas={scale around={0.9:(barycentric cs:p100=0.5,p110=0.5,p111=0.5)}}] (p100.center) -- (p110.center) -- (p111.center) -- cycle;"
 
-          , sub "t2 ≡ 𝟬 ∧ ≤(t3, t1)" "" "\\fill[blue, opacity=0.2] (p000.center) -- (p001.center) -- (p101.center) -- cycle;"
-          , sub "t2 ≡ 𝟬 ∧ ≤(t1, t3)" "" "\\fill[blue, opacity=0.2] (p000.center) -- (p100.center) -- (p101.center) -- cycle;"
-          , sub "t2 ≡ 𝟭 ∧ ≤(t3, t1)" "" "\\fill[blue, opacity=0.2] (p010.center) -- (p011.center) -- (p111.center) -- cycle;"
-          , sub "t2 ≡ 𝟭 ∧ ≤(t1, t3)" "" "\\fill[blue, opacity=0.2] (p010.center) -- (p110.center) -- (p111.center) -- cycle;"
+          , sub "t2 ≡ 𝟬 ∧ ≤(t3, t1)" "" "\\fill[blue, opacity=0.2, transform canvas={scale around={0.9:(barycentric cs:p000=0.5,p001=0.5,p101=0.5)}}] (p000.center) -- (p001.center) -- (p101.center) -- cycle;"
+          , sub "t2 ≡ 𝟬 ∧ ≤(t1, t3)" "" "\\fill[blue, opacity=0.2, transform canvas={scale around={0.9:(barycentric cs:p000=0.5,p100=0.5,p101=0.5)}}] (p000.center) -- (p100.center) -- (p101.center) -- cycle;"
+          , sub "t2 ≡ 𝟭 ∧ ≤(t3, t1)" "" "\\fill[blue, opacity=0.2, transform canvas={scale around={0.9:(barycentric cs:p010=0.5,p011=0.5,p111=0.5)}}] (p010.center) -- (p011.center) -- (p111.center) -- cycle;"
+          , sub "t2 ≡ 𝟭 ∧ ≤(t1, t3)" "" "\\fill[blue, opacity=0.2, transform canvas={scale around={0.9:(barycentric cs:p010=0.5,p110=0.5,p111=0.5)}}] (p010.center) -- (p110.center) -- (p111.center) -- cycle;"
 
-          , sub "t1 ≡ 𝟬 ∧ ≤(t3, t2)" "" "\\fill[blue, opacity=0.2] (p000.center) -- (p010.center) -- (p110.center) -- cycle;"
-          , sub "t1 ≡ 𝟬 ∧ ≤(t2, t3)" "" "\\fill[blue, opacity=0.2] (p000.center) -- (p100.center) -- (p110.center) -- cycle;"
-          , sub "t1 ≡ 𝟭 ∧ ≤(t3, t2)" "" "\\fill[blue, opacity=0.2] (p001.center) -- (p011.center) -- (p111.center) -- cycle;"
-          , sub "t1 ≡ 𝟭 ∧ ≤(t2, t3)" "" "\\fill[blue, opacity=0.2] (p001.center) -- (p101.center) -- (p111.center) -- cycle;"
+          , sub "t1 ≡ 𝟬 ∧ ≤(t3, t2)" "" "\\fill[blue, opacity=0.2, transform canvas={scale around={0.9:(barycentric cs:p000=0.5,p010=0.5,p110=0.5)}}] (p000.center) -- (p010.center) -- (p110.center) -- cycle;"
+          , sub "t1 ≡ 𝟬 ∧ ≤(t2, t3)" "" "\\fill[blue, opacity=0.2, transform canvas={scale around={0.9:(barycentric cs:p000=0.5,p100=0.5,p110=0.5)}}] (p000.center) -- (p100.center) -- (p110.center) -- cycle;"
+          , sub "t1 ≡ 𝟭 ∧ ≤(t3, t2)" "" "\\fill[blue, opacity=0.2, transform canvas={scale around={0.9:(barycentric cs:p001=0.5,p011=0.5,p111=0.5)}}] (p001.center) -- (p011.center) -- (p111.center) -- cycle;"
+          , sub "t1 ≡ 𝟭 ∧ ≤(t2, t3)" "" "\\fill[blue, opacity=0.2, transform canvas={scale around={0.9:(barycentric cs:p001=0.5,p101=0.5,p111=0.5)}}] (p001.center) -- (p101.center) -- (p111.center) -- cycle;"
 
-          , sub "t3 ≡ t2 ∧ ≤(t2, t1)" "" "\\fill[blue, opacity=0.2] (p000.center) -- (p001.center) -- (p111.center) -- cycle;"
-          , sub "t3 ≡ t2 ∧ ≤(t1, t2)" "" "\\fill[blue, opacity=0.2] (p000.center) -- (p110.center) -- (p111.center) -- cycle;"
-          , sub "t2 ≡ t1 ∧ ≤(t3, t1)" "" "\\fill[blue, opacity=0.2] (p000.center) -- (p011.center) -- (p111.center) -- cycle;"
-          , sub "t2 ≡ t1 ∧ ≤(t1, t3)" "" "\\fill[blue, opacity=0.2] (p000.center) -- (p100.center) -- (p111.center) -- cycle;"
-          , sub "t3 ≡ t1 ∧ ≤(t3, t2)" "" "\\fill[blue, opacity=0.2] (p000.center) -- (p010.center) -- (p111.center) -- cycle;"
-          , sub "t3 ≡ t1 ∧ ≤(t2, t3)" "" "\\fill[blue, opacity=0.2] (p000.center) -- (p101.center) -- (p111.center) -- cycle;"
+          , sub "t3 ≡ t2 ∧ ≤(t2, t1)" "" "\\fill[blue, opacity=0.2, transform canvas={scale around={0.9:(barycentric cs:p000=0.5,p001=0.5,p111=0.5)}}] (p000.center) -- (p001.center) -- (p111.center) -- cycle;"
+          , sub "t3 ≡ t2 ∧ ≤(t1, t2)" "" "\\fill[blue, opacity=0.2, transform canvas={scale around={0.9:(barycentric cs:p000=0.5,p110=0.5,p111=0.5)}}] (p000.center) -- (p110.center) -- (p111.center) -- cycle;"
+          , sub "t2 ≡ t1 ∧ ≤(t3, t1)" "" "\\fill[blue, opacity=0.2, transform canvas={scale around={0.9:(barycentric cs:p000=0.5,p011=0.5,p111=0.5)}}] (p000.center) -- (p011.center) -- (p111.center) -- cycle;"
+          , sub "t2 ≡ t1 ∧ ≤(t1, t3)" "" "\\fill[blue, opacity=0.2, transform canvas={scale around={0.9:(barycentric cs:p000=0.5,p100=0.5,p111=0.5)}}] (p000.center) -- (p100.center) -- (p111.center) -- cycle;"
+          , sub "t3 ≡ t1 ∧ ≤(t3, t2)" "" "\\fill[blue, opacity=0.2, transform canvas={scale around={0.9:(barycentric cs:p000=0.5,p010=0.5,p111=0.5)}}] (p000.center) -- (p010.center) -- (p111.center) -- cycle;"
+          , sub "t3 ≡ t1 ∧ ≤(t2, t3)" "" "\\fill[blue, opacity=0.2, transform canvas={scale around={0.9:(barycentric cs:p000=0.5,p101=0.5,p111=0.5)}}] (p000.center) -- (p101.center) -- (p111.center) -- cycle;"
+
+          , sub4 "≤(t3, t2) ∧ ≤(t2, t1)" ("p000", "p001", "p011", "p111")
+          , sub4 "≤(t3, t1) ∧ ≤(t1, t2)" ("p000", "p010", "p011", "p111")
+          , sub4 "≤(t2, t3) ∧ ≤(t3, t1)" ("p000", "p001", "p101", "p111")
+          , sub4 "≤(t1, t3) ∧ ≤(t3, t2)" ("p000", "p010", "p110", "p111")
+          , sub4 "≤(t1, t2) ∧ ≤(t2, t3)" ("p000", "p100", "p110", "p111")
+          , sub4 "≤(t2, t1) ∧ ≤(t1, t3)" ("p000", "p100", "p101", "p111")
+
           , " }]"
-          , "\\;"
-            <> "& |[alias=p000]|" <> corner000 <> List.intercalate " " [edge000_001, edge000_010, edge000_011, edge000_100, edge000_101, edge000_110, edge000_111]
-            <> "& \\; & |[alias=p001]|" <> corner001 <> List.intercalate " " [edge001_011, edge001_101, edge001_111]
-            <> "\\\\"
-          , "|[alias=p100]|" <> corner100 <> List.intercalate " " [edge100_101, edge100_110, edge100_111]
-            <> "& \\; & |[alias=p101]|" <> corner101 <> List.intercalate " " [edge101_111]
-            <> "& \\; \\\\"
-          , "\\;"
-            <> "& |[alias=p010]|" <> corner010 <> List.intercalate " " [edge010_011, edge010_110, edge010_111]
-            <> "& \\; & |[alias=p011]|" <> corner011 <> List.intercalate " " [edge011_111]
-            <> "\\\\"
-          , "|[alias=p110]|" <> corner110 <> List.intercalate " " [edge110_111]
-            <> "& \\; & |[alias=p111]|" <> corner111
-            <> "& \\;"
+
+          , "\\;" <> "& |[alias=p000]|" <> corner000 <> "& \\; & |[alias=p001]|" <> corner001 <> "\\\\"
+          , "|[alias=p100]|" <> corner100 <> "& \\; & |[alias=p101]|" <> corner101 <> "& \\; \\\\"
+          , "\\;" <> "& |[alias=p010]|" <> corner010 <> "& \\; & |[alias=p011]|" <> corner011 <> "\\\\"
+          , "|[alias=p110]|" <> corner110 <> "& \\; & |[alias=p111]|" <> corner111 <> "& \\; \\\\"
+
+          -- edges at the back, left, and bottom faces
+          , sub "t3 ≡ 𝟬 ∧ t2 ≡ 𝟬" "" "\\arrow[from=p000, to=p001]"
+          , sub "t3 ≡ 𝟬 ∧ t1 ≡ 𝟬" "" "\\arrow[from=p000, to=p010]"
+          , sub "t3 ≡ 𝟬 ∧ t1 ≡ 𝟭" "" "\\arrow[from=p001, to=p011]"
+          , sub "t3 ≡ 𝟬 ∧ t2 ≡ 𝟭" "" "\\arrow[from=p010, to=p011]"
+          , sub "t3 ≡ 𝟬 ∧ t2 ≡ t1" "" "\\arrow[from=p000, to=p011]"
+          , sub "t2 ≡ 𝟬 ∧ t1 ≡ 𝟬" "" "\\arrow[from=p000, to=p100]"
+          , sub "t1 ≡ 𝟬 ∧ t3 ≡ t2" "" "\\arrow[from=p000, to=p110]"
+          , sub "t2 ≡ 𝟭 ∧ t1 ≡ 𝟬" "" "\\arrow[from=p010, to=p110]"
+          , sub "t3 ≡ 𝟭 ∧ t1 ≡ 𝟬" "" "\\arrow[from=p100, to=p110]"
+          , sub "t2 ≡ 𝟭 ∧ t3 ≡ t1" "" "\\arrow[from=p010, to=p111]"
+          , sub "t2 ≡ 𝟭 ∧ t1 ≡ 𝟭" "" "\\arrow[from=p011, to=p111]"
+          , sub "t3 ≡ 𝟭 ∧ t2 ≡ 𝟭" "" "\\arrow[from=p110, to=p111]"
+
+          -- edge in the middle
+          , sub "t3 ≡ t2 ∧ t2 ≡ t1" "" "\\arrow[from=p000, to=p111, crossing over]"
+
+          -- edges at the front, right, and top faces
+          , sub "t2 ≡ 𝟬 ∧ t3 ≡ t1" "" "\\arrow[from=p000, to=p101]"
+          , sub "t1 ≡ 𝟭 ∧ t3 ≡ t2" "" "\\arrow[from=p001, to=p111, crossing over]"
+          , sub "t2 ≡ 𝟬 ∧ t1 ≡ 𝟭" "" "\\arrow[from=p001, to=p101]"
+          , sub "t3 ≡ 𝟭 ∧ t2 ≡ 𝟬" "" "\\arrow[from=p100, to=p101, crossing over]"
+          , sub "t3 ≡ 𝟭 ∧ t2 ≡ t1" "" "\\arrow[from=p100, to=p111, crossing over]"
+          , sub "t3 ≡ 𝟭 ∧ t1 ≡ 𝟭" "" "\\arrow[from=p101, to=p111, crossing over]"
+
           , "\\end{tikzcd}" ]
   DeclCommandRenderLatex shape ->
     tell ["WARNING: render latex unsupported for shape " <> show shape]
