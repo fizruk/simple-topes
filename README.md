@@ -21,6 +21,66 @@ These new rules should not complicate matters too much, but I have yet to figure
 
 Once stable, this implementation will likely be incorporated into [rzk](https://github.com/fizruk/rzk) proof assistant.
 
+## Usage
+
+### Generating LaTeX for simplicial shapes
+
+Current version supports rendering for 2D and 3D shapes in LaTeX. For example:
+
+```
+render latex { ⟨t, s⟩ : 𝟚 × 𝟚 | ≤(s, t) }
+render latex { ⟨t1, ⟨t2, t3⟩⟩ : 𝟚 × (𝟚 × 𝟚) | ≤(t2, t1) ∧ ≤(t1, t3)  }
+```
+
+Please, note that names for point variables are fixed due to limitations in the implementation.
+
+The generated code relies of `tikz-cd` package:
+
+```tex
+\usepackage{tikz-cd}
+```
+
+Here is an example of a non-trivial tope, generated LaTeX, its rendering, and a hand-modified version with labels on vertices and edges:
+
+```
+render latex { ⟨t1, ⟨t2, t3⟩⟩ : 𝟚 × (𝟚 × 𝟚) | ≤(t2, t3) ∧ ≤(t3, t1) ∨ t1 ≡ 𝟭 ∨ t2 ≡ 𝟬 }
+```
+
+![Rendered LaTeX for a tope used in associativity statement in sHoTT.](images/assoc-tope-example.png)
+
+```tex
+% diagram for the shape
+% { ⟨ t1, ⟨ t2, t3 ⟩ ⟩ : 𝟚 × (𝟚 × 𝟚) | ≤ (t2, t3) ∧ ≤ (t3, t1) ∨ t1 ≡ 𝟭 () ∨ t2 ≡ 𝟬 () }
+\begin{tikzcd}[
+ execute at end picture={
+\fill[blue, opacity=0.2, transform canvas={scale around={0.9:(barycentric cs:p000=0.5,p001=0.5,p101=0.5)}}] (p000.center) -- (p001.center) -- (p101.center) -- cycle;
+\fill[blue, opacity=0.2, transform canvas={scale around={0.9:(barycentric cs:p000=0.5,p100=0.5,p101=0.5)}}] (p000.center) -- (p100.center) -- (p101.center) -- cycle;
+\fill[blue, opacity=0.2, transform canvas={scale around={0.9:(barycentric cs:p001=0.5,p011=0.5,p111=0.5)}}] (p001.center) -- (p011.center) -- (p111.center) -- cycle;
+\fill[blue, opacity=0.2, transform canvas={scale around={0.9:(barycentric cs:p001=0.5,p101=0.5,p111=0.5)}}] (p001.center) -- (p101.center) -- (p111.center) -- cycle;
+\fill[blue, opacity=0.2, transform canvas={scale around={0.9:(barycentric cs:p000=0.5,p001=0.5,p111=0.5)}}] (p000.center) -- (p001.center) -- (p111.center) -- cycle;
+\fill[blue, opacity=0.2, transform canvas={scale around={0.9:(barycentric cs:p000=0.5,p101=0.5,p111=0.5)}}] (p000.center) -- (p101.center) -- (p111.center) -- cycle;
+\fill[red, opacity=0.2, transform canvas={scale around={0.3:(barycentric cs:p000=0.5,p001=0.5,p101=0.5,p111=0.5)}}] (p000.center) -- (p001.center) -- (p101.center) -- cycle;
+\fill[red, opacity=0.2, transform canvas={scale around={0.3:(barycentric cs:p000=0.5,p001=0.5,p111=0.5,p101=0.5)}}] (p000.center) -- (p001.center) -- (p111.center) -- cycle;
+\fill[red, opacity=0.2, transform canvas={scale around={0.3:(barycentric cs:p000=0.5,p101=0.5,p111=0.5,p001=0.5)}}] (p000.center) -- (p101.center) -- (p111.center) -- cycle;
+\fill[red, opacity=0.2, transform canvas={scale around={0.3:(barycentric cs:p001=0.5,p101=0.5,p111=0.5,p000=0.5)}}] (p001.center) -- (p101.center) -- (p111.center) -- cycle;
+ }]
+\;& |[alias=p000]|\bullet& \; & |[alias=p001]|\bullet\\
+|[alias=p100]|\bullet& \; & |[alias=p101]|\bullet& \; \\
+\;& |[alias=p010]|\;& \; & |[alias=p011]|\bullet\\
+|[alias=p110]|\;& \; & |[alias=p111]|\bullet& \; \\
+\arrow[from=p000, to=p001]
+\arrow[from=p001, to=p011]
+\arrow[from=p000, to=p100]
+\arrow[from=p011, to=p111]
+\arrow[from=p000, to=p111, crossing over]
+\arrow[from=p000, to=p101]
+\arrow[from=p001, to=p111, crossing over]
+\arrow[from=p001, to=p101]
+\arrow[from=p100, to=p101, crossing over]
+\arrow[from=p101, to=p111, crossing over]
+\end{tikzcd}
+```
+
 ## Development
 
 The project is developed with both Stack and Nix (for GHCJS version).
